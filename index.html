@@ -1350,15 +1350,12 @@ function checkFlagAnswer(selectedBtn, chosenName) {
     if (isCorrect) {
         selectedBtn.classList.add('correct');
         flagScore++;
-        flagRound++; // Раунд увеличивается только при правильном ответе
-     } else {
+        // ЛИШНЕЕ УДВОЕНИЕ flagRound++ ОТСЮДА УБРАНО!
+    } else {
         selectedBtn.classList.add('wrong');
         document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
             if(b.innerHTML.startsWith(currentFlagTarget.name)) b.classList.add('correct');
         });
-        
-        // РЕКОРДЫ В ПАМЯТИ НЕ ТРОГАЕМ, НО РАУНД В ПАМЯТИ ГОТОВИМ К СБРОСУ НА СЛЕДУЮЩИЙ КЛИК:
-        // flagRound не увеличиваем, оставляем текущий, на котором запнулись.
     }
     
     // Проверяем и обновляем High Score в памяти телефона на лету
@@ -1378,11 +1375,12 @@ function checkFlagAnswer(selectedBtn, chosenName) {
         flagRound = 1; // В памяти ставим 1. При клике на кнопку сработает сброс очков
     } else {
         nextBtn.textContent = 'Следующий флаг';
-        flagRound++; // При успехе просто двигаемся дальше
+        flagRound++; // При успехе раунд мягко увеличивается строго на +1
     }
     
     nextBtn.style.display = 'inline-block';
 }
+
 
 let capScore = 0, capRound = 1, currentCapTarget;
 function loadQuizCapitalRound() {
