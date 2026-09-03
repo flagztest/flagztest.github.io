@@ -1401,21 +1401,47 @@ function loadQuizCapitalRound() {
         btn.onclick = () => checkCapitalAnswer(btn, capital);
         container.appendChild(btn);
     });
+    let bestCap = localStorage.getItem('highScore_capitals') || 0;
+    document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
 }
 function checkCapitalAnswer(selectedBtn, chosenCapital) {
     document.querySelectorAll('#quizCapitalOptions .option-btn').forEach(b => b.disabled = true);
-    if (chosenCapital === currentCapTarget.capital) {
+    
+    let isCorrect = (chosenCapital === currentCapTarget.capital);
+    
+    if (isCorrect) {
         selectedBtn.classList.add('correct');
         capScore++;
+        capRound++;
     } else {
         selectedBtn.classList.add('wrong');
         document.querySelectorAll('#quizCapitalOptions .option-btn').forEach(b => {
             if(b.textContent === currentCapTarget.capital) b.classList.add('correct');
         });
+        
+        /* 🌟 СБРОС СЕССИИ ПРИ ОШИБКЕ: */
+        capScore = 0;
+        capRound = 1;
     }
-    document.getElementById('quizCapitalStats').textContent = `Очки: ${capScore} | Раунд: ${capRound++}`;
-    document.getElementById('nextCapitalBtn').style.display = 'inline-block';
+    
+    // Проверяем и обновляем рекорд столиц в памяти устройства
+    let bestCap = localStorage.getItem('highScore_capitals') || 0;
+    if (capScore > parseInt(bestCap)) {
+        localStorage.setItem('highScore_capitals', capScore);
+        bestCap = capScore;
+    }
+    
+    document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
+    
+    const nextBtn = document.getElementById('nextCapitalBtn');
+    if (!isCorrect) {
+        nextBtn.textContent = 'Начать заново';
+    } else {
+        nextBtn.textContent = 'Следующий вопрос';
+    }
+    nextBtn.style.display = 'inline-block';
 }
+
 
 let countryScore = 0, countryRound = 1, currentCountryTarget;
 function loadQuizCountryRound() {
@@ -1439,21 +1465,47 @@ function loadQuizCountryRound() {
         btn.onclick = () => checkCountryAnswer(btn, name);
         container.appendChild(btn);
     });
+    let bestCountry = localStorage.getItem('highScore_countries') || 0;
+    document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
 }
 function checkCountryAnswer(selectedBtn, chosenName) {
     document.querySelectorAll('#quizCountryOptions .option-btn').forEach(b => b.disabled = true);
-    if (chosenName === currentCountryTarget.name) {
+    
+    let isCorrect = (chosenName === currentCountryTarget.name);
+    
+    if (isCorrect) {
         selectedBtn.classList.add('correct');
         countryScore++;
+        countryRound++;
     } else {
         selectedBtn.classList.add('wrong');
         document.querySelectorAll('#quizCountryOptions .option-btn').forEach(b => {
             if(b.textContent === currentCountryTarget.name) b.classList.add('correct');
         });
+        
+        /* 🌟 СБРОС СЕССИИ ПРИ ОШИБКЕ: */
+        countryScore = 0;
+        countryRound = 1;
     }
-    document.getElementById('quizCountryStats').textContent = `Очки: ${countryScore} | Раунд: ${countryRound++}`;
-    document.getElementById('nextCountryBtn').style.display = 'inline-block';
+    
+    // Проверяем и обновляем рекорд стран в памяти устройства
+    let bestCountry = localStorage.getItem('highScore_countries') || 0;
+    if (countryScore > parseInt(bestCountry)) {
+        localStorage.setItem('highScore_countries', countryScore);
+        bestCountry = countryScore;
+    }
+    
+    document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
+    
+    const nextBtn = document.getElementById('nextCountryBtn');
+    if (!isCorrect) {
+        nextBtn.textContent = 'Начать заново';
+    } else {
+        nextBtn.textContent = 'Следующий вопрос';
+    }
+    nextBtn.style.display = 'inline-block';
 }
+
 function openFlagModal(imgSrc) {
     const modal = document.getElementById('flagModal');
     const modalImg = document.getElementById('flagModalImg');
