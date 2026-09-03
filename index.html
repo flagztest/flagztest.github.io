@@ -500,38 +500,71 @@
          font-size: 15px !important;
      }
 
-/* 🌟 МОДАЛЬНОЕ ОКНО ДЛЯ ПОЛНОЭКРАННОГО ФЛАГА С БЛОКИРОВКОЙ СКРОЛЛА И СДВИГОВ: */
+/* 🌟 ГРАФИТОВЫЙ МОБИЛЬНЫЙ ЩИТ С ЗАЩИТОЙ ТЕМНЫХ ПОЛОС */
 .flag-modal {
     position: fixed;
-    /* Намертво привязываем окно по углам дисплея без создания скрытых правых хвостов: */
-    inset: 0px !important;
-    background-color: rgba(0, 0, 0, 0.9) !important; /* Глубокое красивое затемнение */
+    top: -5px !important;    
+    left: -5px !important;
+    right: -5px !important;
+    bottom: -5px !important;
+    background-color: #1a1a1a !important; /* Насыщенный темно-серый цвет разделяет темные полосы флагов */
     display: none; 
     align-items: center;
     justify-content: center;
-    z-index: 4000 !important; /* Железно перекрывает шапку и весь интерфейс */
+    z-index: 9999 !important; 
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
     cursor: pointer;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 .flag-modal.open {
     display: flex !important;
     opacity: 1 !important;
 }
+/* 🌟 МОБИЛЬНАЯ КАРТИНКА: ПОЛНОЕ УНИЧТОЖЕНИЕ ПРЯМОУГОЛЬНЫХ СЕРЫХ СБОЕВ SAFARI */
 .flag-modal-img {
-    max-width: 92% !important;
+    max-width: 95% !important;
     max-height: 75% !important;
-    object-fit: contain !important; /* Нативно сохраняет оригинальную форму Википедии */
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    border-radius: 4px;
-    transform: scale(0.92);
+    object-fit: contain !important;
+    outline: none !important;
+    transform: scale(0.95);
     transition: transform 0.2s ease-in-out;
+    background-color: transparent !important;
+    
+    /* НАМЕРТВО СТИРАЕМ СЕРЫЙ BORDER, КОТОРЫЙ ЛОМАЛ SAFARI: */
+    border: none !important;
+    border-width: 0px !important;
+    border-style: none !important;
+    
+    /* ЮВЕЛИРНАЯ СВЕТЛАЯ ПОДСВЕТКА КРАЕВ: Отделяет темные полосы Ирака от графитового фона */
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
 }
+
+/* ИСКЛЮЧЕНИЕ ДЛЯ НЕПАЛА: Полностью стираем любые тени и свечения, чтобы треугольник был идеально чистым! */
+.flag-modal-img[src*="NP.svg"], .flag-modal-img[src*="np.svg"] {
+    border: none !important;
+    border-width: 0px !important;
+    box-shadow: none !important;
+}
+
+
 .flag-modal.open .flag-modal-img {
     transform: scale(1) !important;
 }
 
+     /* ВСТАВЛЯЕМ СЮДА: Делаем шрифт рекордов компактным на экранах Айфонов */
+     .quiz-stats {
+         font-size: 14px !important;
+         font-weight: 600 !important;
+         color: #495057 !important;
+         letter-spacing: 0.3px !important;
+     }
+
 } /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
+
+
     
      
     </style>
@@ -589,10 +622,12 @@
 
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
-<!-- Контейнер для полноэкранного просмотра флага: Вставили строго сюда -->
+<!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
-    <img id="flagModalImg" class="flag-modal-img" src="" alt="Крупный флан">
+    <img id="flagModalImg" class="flag-modal-img" src="" alt="Крупный флаг">
 </div>
+
+
 
 <script>
 const specialFlags = {
@@ -1302,6 +1337,8 @@ function loadQuizFlagRound() {
         btn.onclick = () => checkFlagAnswer(btn, c.name);
         container.appendChild(btn);
     });
+    const bestFlag = localStorage.getItem('highScore_flags') || 0;
+    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
 }
 function checkFlagAnswer(selectedBtn, chosenName) {
     document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => b.disabled = true);
@@ -1314,7 +1351,14 @@ function checkFlagAnswer(selectedBtn, chosenName) {
             if(b.innerHTML.startsWith(currentFlagTarget.name)) b.classList.add('correct');
         });
     }
-    document.getElementById('quizFlagStats').textContent = `Очки: ${flagScore} | Раунд: ${flagRound++}`;
+/* ЗАМЕНИЛИ СТРОЧКУ НА ЭТОТ ИГРОВОЙ БЛОК АВТОСОХРАНЕНИЯ РЕКОРДА: */
+    let bestFlag = localStorage.getItem('highScore_flags') || 0;
+    if (flagScore > bestFlag) {
+        localStorage.setItem('highScore_flags', flagScore);
+        bestFlag = flagScore;
+    }
+    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound++}`;
+
     document.getElementById('nextFlagBtn').style.display = 'inline-block';
 }
 
@@ -1393,11 +1437,23 @@ function checkCountryAnswer(selectedBtn, chosenName) {
     document.getElementById('quizCountryStats').textContent = `Очки: ${countryScore} | Раунд: ${countryRound++}`;
     document.getElementById('nextCountryBtn').style.display = 'inline-block';
 }
-/* НЕУБИВАЕМАЯ БЛОКИРОВКА СДВИГОВ И ОТКРЫТИЕ ФЛАГА */
 function openFlagModal(imgSrc) {
     const modal = document.getElementById('flagModal');
     const modalImg = document.getElementById('flagModalImg');
     modalImg.src = imgSrc;
+    
+    /* 🌟 УЛЬТИМАТИВНЫЙ ПЕРЕХВАТ СТИЛЕЙ ПОД SAFARI IOS */
+    if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg')) {
+        // Для Непала: чисто растворяем белую коробку Википедии прямо в черном фоне окна
+        modalImg.style.setProperty('mix-blend-mode', 'multiply', 'important');
+        modalImg.style.setProperty('background-color', 'transparent', 'important');
+        modalImg.style.setProperty('clip-path', 'none', 'important');
+    } else {
+        // Для всех остальных стран: убираем белые боковые уши фона и возвращаем нормальный режим полотна
+        modalImg.style.setProperty('mix-blend-mode', 'normal', 'important');
+        modalImg.style.setProperty('background-color', 'transparent', 'important');
+        modalImg.style.setProperty('clip-path', 'none', 'important');
+    }
     
     // Замораживаем страницу от любых боковых сдвигов жестами в Safari
     document.body.style.overflow = 'hidden';
@@ -1405,6 +1461,7 @@ function openFlagModal(imgSrc) {
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('open'), 10);
 }
+
 
 function closeFlagModal() {
     const modal = document.getElementById('flagModal');
