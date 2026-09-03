@@ -1284,6 +1284,11 @@ function shuffle(arr) {
 
 let flagScore = 0, flagRound = 1, currentFlagTarget;
 function loadQuizFlagRound() {
+    /* 🌟 ОБНУЛЯЕМ СЧЁТ СТРОГО ПРИ НАЖАТИИ «НАЧАТЬ ЗАНОВО» */
+    if (flagRound === 1) {
+        flagScore = 0;
+    }
+    
     document.getElementById('nextFlagBtn').style.display = 'none';
     currentFlagTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
     
@@ -1346,41 +1351,46 @@ function checkFlagAnswer(selectedBtn, chosenName) {
         selectedBtn.classList.add('correct');
         flagScore++;
         flagRound++; // Раунд увеличивается только при правильном ответе
-    } else {
+     } else {
         selectedBtn.classList.add('wrong');
         document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
             if(b.innerHTML.startsWith(currentFlagTarget.name)) b.classList.add('correct');
         });
         
-        /* 🌟 НАШЕ ОБНУЛЕНИЕ ПРИ ОШИБКЕ: */
-        flagScore = 0; // Очки сгорают
-        flagRound = 1; // Возвращаемся на 1 раунд
+        // РЕКОРДЫ В ПАМЯТИ НЕ ТРОГАЕМ, НО РАУНД В ПАМЯТИ ГОТОВИМ К СБРОСУ НА СЛЕДУЮЩИЙ КЛИК:
+        // flagRound не увеличиваем, оставляем текущий, на котором запнулись.
     }
     
-    // Проверяем и обновляем High Score в памяти телефона
+    // Проверяем и обновляем High Score в памяти телефона на лету
     let bestFlag = localStorage.getItem('highScore_flags') || 0;
     if (flagScore > parseInt(bestFlag)) {
         localStorage.setItem('highScore_flags', flagScore);
         bestFlag = flagScore;
     }
     
-    // Выводим обновленную статистику на экран
+    // Выводим статистику: Очки и Раунд остаются ТЕКУЩИМИ (не обнуляются раньше времени!)
     document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
 
-    // Переименовываем кнопку на «Начать заново», если была ошибка, для наглядности
+    // Переименовываем кнопку и взводим триггер сброса на единицу для следующего раунда
     const nextBtn = document.getElementById('nextFlagBtn');
     if (!isCorrect) {
         nextBtn.textContent = 'Начать заново';
+        flagRound = 1; // В памяти ставим 1. При клике на кнопку сработает сброс очков
     } else {
         nextBtn.textContent = 'Следующий флаг';
+        flagRound++; // При успехе просто двигаемся дальше
     }
     
     nextBtn.style.display = 'inline-block';
 }
 
-
 let capScore = 0, capRound = 1, currentCapTarget;
 function loadQuizCapitalRound() {
+    /* 🌟 ОБНУЛЯЕМ СЧЁТ СТРОГО ПРИ НАЖАТИИ «НАЧАТЬ ЗАНОВО» */
+    if (capRound === 1) {
+        capScore = 0;
+    }
+    
     document.getElementById('nextCapitalBtn').style.display = 'none';
     currentCapTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
     document.getElementById('quizCapitalQuestionTarget').textContent = currentCapTarget.name;
@@ -1412,39 +1422,40 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
     if (isCorrect) {
         selectedBtn.classList.add('correct');
         capScore++;
-        capRound++;
     } else {
         selectedBtn.classList.add('wrong');
         document.querySelectorAll('#quizCapitalOptions .option-btn').forEach(b => {
             if(b.textContent === currentCapTarget.capital) b.classList.add('correct');
         });
-        
-        /* 🌟 СБРОС СЕССИИ ПРИ ОШИБКЕ: */
-        capScore = 0;
-        capRound = 1;
     }
     
-    // Проверяем и обновляем рекорд столиц в памяти устройства
     let bestCap = localStorage.getItem('highScore_capitals') || 0;
     if (capScore > parseInt(bestCap)) {
         localStorage.setItem('highScore_capitals', capScore);
         bestCap = capScore;
     }
     
+    // Показываем финальный счёт, на котором споткнулись
     document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
     
     const nextBtn = document.getElementById('nextCapitalBtn');
     if (!isCorrect) {
         nextBtn.textContent = 'Начать заново';
+        capRound = 1; // Готовим сброс в 1 на следующий раунд
     } else {
         nextBtn.textContent = 'Следующий вопрос';
+        capRound++;
     }
     nextBtn.style.display = 'inline-block';
 }
 
-
 let countryScore = 0, countryRound = 1, currentCountryTarget;
-function loadQuizCountryRound() {
+ffunction loadQuizCountryRound() {
+    /* 🌟 ОБНУЛЯЕМ СЧЁТ СТРОГО ПРИ НАЖАТИИ «НАЧАТЬ ЗАНОВО» */
+    if (countryRound === 1) {
+        countryScore = 0;
+    }
+    
     document.getElementById('nextCountryBtn').style.display = 'none';
     currentCountryTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
     document.getElementById('quizCountryQuestionTarget').textContent = currentCountryTarget.capital;
@@ -1476,35 +1487,33 @@ function checkCountryAnswer(selectedBtn, chosenName) {
     if (isCorrect) {
         selectedBtn.classList.add('correct');
         countryScore++;
-        countryRound++;
     } else {
         selectedBtn.classList.add('wrong');
         document.querySelectorAll('#quizCountryOptions .option-btn').forEach(b => {
             if(b.textContent === currentCountryTarget.name) b.classList.add('correct');
         });
-        
-        /* 🌟 СБРОС СЕССИИ ПРИ ОШИБКЕ: */
-        countryScore = 0;
-        countryRound = 1;
     }
     
-    // Проверяем и обновляем рекорд стран в памяти устройства
     let bestCountry = localStorage.getItem('highScore_countries') || 0;
     if (countryScore > parseInt(bestCountry)) {
         localStorage.setItem('highScore_countries', countryScore);
         bestCountry = countryScore;
     }
     
+    // Показываем финальный счёт, на котором споткнулись
     document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
     
     const nextBtn = document.getElementById('nextCountryBtn');
     if (!isCorrect) {
         nextBtn.textContent = 'Начать заново';
+        countryRound = 1; // Готовим сброс в 1 на следующий раунд
     } else {
         nextBtn.textContent = 'Следующий вопрос';
+        countryRound++;
     }
     nextBtn.style.display = 'inline-block';
 }
+
 
 function openFlagModal(imgSrc) {
     const modal = document.getElementById('flagModal');
