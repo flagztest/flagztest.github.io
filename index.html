@@ -1339,25 +1339,45 @@ function loadQuizFlagRound() {
 }
 function checkFlagAnswer(selectedBtn, chosenName) {
     document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => b.disabled = true);
-    if (chosenName === currentFlagTarget.name) {
+    
+    let isCorrect = (chosenName === currentFlagTarget.name);
+    
+    if (isCorrect) {
         selectedBtn.classList.add('correct');
         flagScore++;
+        flagRound++; // Раунд увеличивается только при правильном ответе
     } else {
         selectedBtn.classList.add('wrong');
         document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
             if(b.innerHTML.startsWith(currentFlagTarget.name)) b.classList.add('correct');
         });
+        
+        /* 🌟 НАШЕ ОБНУЛЕНИЕ ПРИ ОШИБКЕ: */
+        flagScore = 0; // Очки сгорают
+        flagRound = 1; // Возвращаемся на 1 раунд
     }
-/* ЗАМЕНИЛИ СТРОЧКУ НА ЭТОТ ИГРОВОЙ БЛОК АВТОСОХРАНЕНИЯ РЕКОРДА: */
+    
+    // Проверяем и обновляем High Score в памяти телефона
     let bestFlag = localStorage.getItem('highScore_flags') || 0;
-    if (flagScore > bestFlag) {
+    if (flagScore > parseInt(bestFlag)) {
         localStorage.setItem('highScore_flags', flagScore);
         bestFlag = flagScore;
     }
-    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound++}`;
+    
+    // Выводим обновленную статистику на экран
+    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
 
-    document.getElementById('nextFlagBtn').style.display = 'inline-block';
+    // Переименовываем кнопку на «Начать заново», если была ошибка, для наглядности
+    const nextBtn = document.getElementById('nextFlagBtn');
+    if (!isCorrect) {
+        nextBtn.textContent = 'Начать заново';
+    } else {
+        nextBtn.textContent = 'Следующий флаг';
+    }
+    
+    nextBtn.style.display = 'inline-block';
 }
+
 
 let capScore = 0, capRound = 1, currentCapTarget;
 function loadQuizCapitalRound() {
