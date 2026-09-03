@@ -1125,16 +1125,11 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('dbControls').style.display = 'none';
     
-    /* 🌟 НАША ЖЕЛЕЗНАЯ ЗАЩИТА: ПРИ ЛЮБОМ ПЕРЕКЛЮЧЕНИИ ВКЛАДОК СБРАСЫВАЕМ ВСЕ ТЕКУЩИЕ СЕССИИ ИГР В 0 */
-    resetFlagGame();
-    resetCapitalGame();
-    resetCountryGame();
-    
-    // Также на всякий случай восстанавливаем дефолтную HTML-разметку карточек,
-    // чтобы убрать экраны итогов, если игрок ушёл из игры на экране финала
-    restoreQuizPanelHTML('quizFlagsView');
-    restoreQuizPanelHTML('quizCapitalsView');
-    restoreQuizPanelHTML('quizCountriesView');
+    /* 🌟 НАША БЕЗОПАСНАЯ СИНХРОННАЯ ЗАЩИТА: */
+    /* При каждом нажатии на меню сбрасываем очки и возвращаем раунды на 1 */
+    flagScore = 0; flagRound = 1;
+    capScore = 0; capRound = 1;
+    countryScore = 0; countryRound = 1;
     
     if (viewId === 'db') {
         document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
