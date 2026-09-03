@@ -398,16 +398,27 @@
            text-align: left !important;
      }
 
-     /* 2. Задаем строгие мобильные доли колонок по умолчанию */
+     /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
      .col-flag {
-            width: 85px !important;        /* Фиксированная ширина ячейки флага для идеального ряда */
-            padding: 10px 0px !important;   /* Обнулили внутренние зазоры ячейки флага */
+            width: 85px !important;        
+            padding: 10px 0px !important;   
      }
+     /* Отдельно центрируем заголовок «Флаг» в шапке таблицы */
+     th.col-flag {
+            text-align: center !important;
+     }
+     
      td:nth-child(2) {
-            width: 48% !important;         /* Стране отдаем половину экрана дисплея */
-            padding-left: 15px !important; /* Отступ названий стран от края обычного флага */
+            width: 48% !important;         
+            padding-left: 15px !important; /* Родной отступ ткани флага от букв страны */
             padding-right: 5px !important;
      }
+     /* Выравниваем заголовок «Страна» строго по первой букве названий стран */
+     th:nth-child(3) {
+            text-align: left !important;
+            padding-left: 15px !important; /* Жестко повторяем отступ 15px, чтобы буквы встали по линеечке! */
+     }
+
      td:nth-child(3) {
             width: 32% !important;         /* Столица заперта в границах и не вылетает */
             padding-left: 5px !important;
