@@ -523,7 +523,7 @@
     display: flex !important;
     opacity: 1 !important;
 }
-/* 🌟 МОБИЛЬНАЯ КАРТИНКА: ПОЛНОЕ УНИЧТОЖЕНИЕ ПРЯМОУГОЛЬНЫХ СЕРЫХ СБОЕВ SAFARI */
+/* 🌟 МОБИЛЬНАЯ КАРТИНКА: ТОТАЛЬНОЕ ОБНУЛЕНИЕ ВСЕХ КОНТУРОВ И ТЕНЕЙ SAFARI */
 .flag-modal-img {
     max-width: 95% !important;
     max-height: 75% !important;
@@ -533,22 +533,12 @@
     transition: transform 0.2s ease-in-out;
     background-color: transparent !important;
     
-    /* НАМЕРТВО СТИРАЕМ СЕРЫЙ BORDER, КОТОРЫЙ ЛОМАЛ SAFARI: */
+    /* НАМЕРТВО СТИРАЕМ ЛЮБЫЕ ГРАНИЦЫ, РАМКИ, ТЕНИ И СВЕЧЕНИЯ: */
     border: none !important;
     border-width: 0px !important;
     border-style: none !important;
-    
-    /* ЮВЕЛИРНАЯ СВЕТЛАЯ ПОДСВЕТКА КРАЕВ: Отделяет темные полосы Ирака от графитового фона */
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
-}
-
-/* ИСКЛЮЧЕНИЕ ДЛЯ НЕПАЛА: Полностью стираем любые тени и свечения, чтобы треугольник был идеально чистым! */
-.flag-modal-img[src*="NP.svg"], .flag-modal-img[src*="np.svg"] {
-    border: none !important;
-    border-width: 0px !important;
     box-shadow: none !important;
 }
-
 
 .flag-modal.open .flag-modal-img {
     transform: scale(1) !important;
@@ -1442,18 +1432,18 @@ function openFlagModal(imgSrc) {
     const modalImg = document.getElementById('flagModalImg');
     modalImg.src = imgSrc;
     
-    /* 🌟 УЛЬТИМАТИВНЫЙ ПЕРЕХВАТ СТИЛЕЙ ПОД SAFARI IOS */
+    /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ НЕПАЛА */
     if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg')) {
-        // Для Непала: чисто растворяем белую коробку Википедии прямо в черном фоне окна
         modalImg.style.setProperty('mix-blend-mode', 'multiply', 'important');
-        modalImg.style.setProperty('background-color', 'transparent', 'important');
-        modalImg.style.setProperty('clip-path', 'none', 'important');
     } else {
-        // Для всех остальных стран: убираем белые боковые уши фона и возвращаем нормальный режим полотна
         modalImg.style.setProperty('mix-blend-mode', 'normal', 'important');
-        modalImg.style.setProperty('background-color', 'transparent', 'important');
-        modalImg.style.setProperty('clip-path', 'none', 'important');
     }
+    
+    // Страхуемся в памяти и принудительно обнуляем все параметры подложек при каждом клике
+    modalImg.style.setProperty('background-color', 'transparent', 'important');
+    modalImg.style.setProperty('border', 'none', 'important');
+    modalImg.style.setProperty('box-shadow', 'none', 'important');
+    modalImg.style.setProperty('clip-path', 'none', 'important');
     
     // Замораживаем страницу от любых боковых сдвигов жестами в Safari
     document.body.style.overflow = 'hidden';
@@ -1461,6 +1451,7 @@ function openFlagModal(imgSrc) {
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('open'), 10);
 }
+
 
 
 function closeFlagModal() {
