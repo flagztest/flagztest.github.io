@@ -348,16 +348,39 @@
             background-color: #000000;
         }
 @media (max-width: 600px) {
+     /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок пиксель в пиксель по ширине поиска */
      .nav-tabs {
-         border-bottom: none !important; /* Удаляем серую черту */
+         border-bottom: none !important; 
          padding-bottom: 0px !important;
+         display: grid !important;
+         grid-template-columns: repeat(4, 1fr) !important; /* Делим меню на 4 абсолютно равные доли */
+         width: 100% !important; /* Растягиваем ровно по ширине поисковой строки */
+         gap: 4px !important;    /* Компактные аккуратные зазоры между синими кнопками */
+         box-sizing: border-box !important;
      }
+     
+     /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
+     .tab-btn {
+         width: 100% !important;
+         padding: 6px 0px !important; /* Намертво зануляем боковые поля, убирая раздувание Safari! */
+         font-size: 15px !important;  /* ВАШ КРУПНЫЙ ШРИФТ ОСТАЁТСЯ НЕИЗМЕННЫМ */
+         font-weight: 600 !important;
+         text-align: center !important;
+         white-space: nowrap !important; /* СТРОГИЙ ЗАПРЕТ НА ПЕРЕНОС СЛОВ */
+         overflow: visible !important;
+         box-sizing: border-box !important;
+     }
+
      .clear-search-btn {
          right: 15px !important;
      } 
+     
+     /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 4px 10px !important; /* Сжали высоту шапки */
+         padding: 6px 12px !important; 
+         box-sizing: border-box !important;
      }
+
      .header-content {
          gap: 2px !important; /* Прижали поиск к вкладкам */
      }
