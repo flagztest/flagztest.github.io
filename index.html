@@ -496,11 +496,13 @@
 
      /* 📋 ТАБЛИЦЫ БАЗЫ СТРАН: Выравнивание и адаптация под матовый стиль */
      body {
-          background-color: #121212 !important; /* Спокойный глубокий черный фон всего сайта */
+          background-color: #121212 !important; 
           color: #ffffff !important;
           padding: 10px 8px !important;
-          padding-top: 140px !important; /* Ювелирный отступ под новую тонкую плоскую шапку */
+          /* 🌟 ЖЕЛЕЗНЫЙ ОТСТУП НА СТАРТЕ САЙТА: СВОБОДНО ОПУСКАЕТ ЕВРОПУ ИЗ-ПОД ШАПКИ */
+          padding-top: 185px !important; 
      }
+
      
      table {
            width: 100% !important;
@@ -1268,7 +1270,8 @@ function toggleBlock(id) {
         if (content && content.style.display === 'block') {
             setTimeout(() => {
                 const header = block.querySelector('.continent-header');
-                const offset = 120; // Высота фиксированного меню в пикселях
+                const offset = 175; // 🌟 ЗАЩИТНЫЙ ОТСТУП: Оставляет развернутый континент строго видимым под шапкой
+
                 
                 const elementPosition = header.getBoundingClientRect().top + window.scrollY;
                 const offsetPosition = elementPosition - offset;
