@@ -59,10 +59,11 @@
             transition: all 0.2s;
             border-radius: 4px;
         }
-        .tab-btn.active {
-            color: var(--primary-color);
-            background-color: #e7f1ff;
-        }
+         .tab-btn.active {
+            color: inherit !important;          /* Текст и эмодзи сохраняют свой оригинальный цвет */
+            background-color: #e9ecef !important; /* Новый благородный плоский светло-серый фон подсветки */
+}
+
         .controls-row {
             display: flex;
             gap: 15px;
