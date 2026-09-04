@@ -458,11 +458,17 @@
      th, td {
             padding: 10px 2px !important;
             vertical-align: middle !important;
-            /* Наш щит автопереноса длинных слов */
             white-space: normal !important;
             word-wrap: break-word !important;
             overflow-wrap: break-word !important;
+            
+            /* 🌟 УЛЬТИМАТИВНАЯ ЗАЧИСТКА БОКОВЫХ РАМОК: */
+            border-left: none !important;   /* Намертво стираем границу таблицы слева */
+            border-right: none !important;  /* Намертво стираем границу таблицы справа */
+            border-top: none !important;    /* Убираем верхние обводки */
+            border-bottom: 1px solid var(--border-color) !important; /* ОСТАВЛЯЕМ ТОЛЬКО ЛИНИИ МЕЖДУ СТРАНАМИ */
      }
+
      
      .col-num, th.col-num {
             display: none !important;
