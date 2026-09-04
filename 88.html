@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страны, столицы и флаги мира</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --primary-color: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --panel-bg: #ffffff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            padding-top: 165px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--panel-bg);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 15px 20px;
+        }
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+        .tab-btn {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+         .tab-btn.active {
+            color: inherit !important;          /* Текст и эмодзи сохраняют свой оригинальный цвет */
+            background-color: #e9ecef !important; /* Новый благородный плоский светло-серый фон подсветки */
+}
+
+        .controls-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            gap: 5px;
+            position: relative;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            padding-right: 35px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 15px;
+        }
+        .clear-search-btn {
+            position: absolute;
+            right: 85px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #6c757d;
+            cursor: pointer;
+            display: none;
+            padding: 0;
+            line-height: 1;
+        }
+        .clear-search-btn:hover {
+            color: #212529;
+        }
+        button.action-btn {
+            padding: 10px 18px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        button.action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        button.btn-secondary {
+            background-color: #6c757d;
+        }
+        button.btn-secondary:hover {
+            background-color: #5c636a;
+        }
+        .view-section {
+            display: none;
+        }
+        .view-section.active {
+            display: block;
+        }
+        .continent-block {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .continent-header {
+            background-color: #f1f3f5;
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+            user-select: none;
+        }
+        .continent-header:hover {
+            background-color: #e9ecef;
+        }
+        /* 1. По умолчанию для ОТКРЫТОГО блока стрелка смотрит вниз */
+.continent-header::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.2s;
+    margin-left: auto;
+    transform: rotate(0deg); /* Стрелка вниз */
+}
+
+/* 2. Когда блок СВЕРНУТ (collapsed), принудительно разворачиваем стрелку ВПРАВО */
+.continent-block.collapsed .continent-header::after {
+    transform: rotate(-90deg) !important; /* Поворот влево на 90 градусов превратит ▼ в ▶ */
+}
+        .continent-content {
+            padding: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            display: none;
+        }
+        .continent-block.collapsed .continent-content {
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .col-num { display: none !important; }
+        .col-flag { width: 150px; text-align: center; }
+        
+        .flag-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+            width: 120px;
+        }
+        .flag-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 2px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0,0,0,0.08);
+            box-sizing: border-box;
+        }
+        
+      .flag-img[src*="/CH.svg"], 
+        .flag-img[src*="Austria"], 
+        .flag-img[src*="Andorra"], 
+        .flag-img[src*="Belarus"] {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        /* ВЫНЕСЛИ НЕПАЛ В ОТДЕЛЬНОЕ НЕУБИВАЕМОЕ ПРАВИЛО: */
+        .flag-img[src*="/NP.svg"], .flag-img[src*="np.svg"], .flag-img[alt*="Непал"] {
+            mix-blend-mode: multiply !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        
+        tr.hidden { display: none; }
+        .count-badge {
+            background: #6c757d;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+        .quiz-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            text-align: center;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .quiz-question {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+         .quiz-flag-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            width: auto;                  /* Разрешаем контейнеру сжиматься по ширине флага */
+            margin-bottom: 25px;
+            background: transparent !important; /* Убираем фоновый прямоугольник сзади флага */
+        }
+        .quiz-flag-img {
+            height: 120px;                /* Жестко фиксируем высоту на ПК для одинакового масштаба */
+            width: auto;                  /* Ширина пропорционально растянется сама по форме флага */
+            object-fit: contain;
+            border-radius: 4px;
+            /* Рамка и тень теперь обнимают СТРОГО саму ткань флага, а не пустой воздух! */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            background-color: #ffffff;    /* Защитный слой для белых элементов флагов */
+        }
+
+
+        
+        /* Защита Швейцарии от рамок (Ватикан отсюда убрали, чтобы вернуть ему контур) */
+        .quiz-flag-img[src*="/CH.svg"] {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Персональная очистка Непала для квизов на ПК */
+        .quiz-flag-img[src*="/NP.svg"], .quiz-flag-img[src*="np.svg"] {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 500px) {
+            .quiz-options { grid-template-columns: 1fr; }
+        }
+        .option-btn {
+            padding: 14px 20px;
+            background-color: #f8f9fa;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .option-btn:hover:not([disabled]) {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+        .option-btn.correct {
+            background-color: #d1e7dd !important;
+            border-color: #a3cfbb !important;
+            color: #0f5132 !important;
+            font-weight: bold;
+        }
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: #f1aeb5 !important;
+            color: #842029 !important;
+        }
+        .quiz-stats {
+            margin-top: 20px;
+            font-size: 15px;
+            color: #6c757d;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #212529;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: opacity 0.2s;
+            z-index: 999;
+        }
+        .scroll-top-btn:hover {
+            background-color: #000000;
+        }
+@media (max-width: 600px) {
+     /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок пиксель в пиксель по ширине поиска */
+     .nav-tabs {
+         border-bottom: none !important; 
+         padding-bottom: 0px !important;
+         display: grid !important;
+         grid-template-columns: repeat(4, 1fr) !important; /* Делим меню на 4 абсолютно равные доли */
+         width: 100% !important; /* Растягиваем ровно по ширине поисковой строки */
+         gap: 4px !important;    /* Компактные аккуратные зазоры между синими кнопками */
+         box-sizing: border-box !important;
+     }
+     
+     /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
+     .tab-btn {
+         width: 100% !important;
+         padding: 6px 0px !important; /* Намертво зануляем боковые поля, убирая раздувание Safari! */
+         font-size: 15px !important;  /* ВАШ КРУПНЫЙ ШРИФТ ОСТАЁТСЯ НЕИЗМЕННЫМ */
+         font-weight: 600 !important;
+         text-align: center !important;
+         white-space: nowrap !important; /* СТРОГИЙ ЗАПРЕТ НА ПЕРЕНОС СЛОВ */
+         overflow: visible !important;
+         box-sizing: border-box !important;
+     }
+
+     .clear-search-btn {
+         right: 15px !important;
+     } 
+     
+     /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
+     .fixed-header {
+         padding: 6px 12px !important; 
+         box-sizing: border-box !important;
+     }
+
+     .header-content {
+         gap: 2px !important; /* Прижали поиск к вкладкам */
+     }
+     body {
+         padding: 10px 4px !important;
+         padding-top: 135px !important; /* Идеальный отступ под новую тонкую шапку */
+     }
+     .controls-row {
+          gap: 8px !important;
+     }
+     input[type="text"] {
+          padding: 6px 10px !important; 
+          font-size: 16px !important; /* ЖЕЛЕЗНЫЙ БЛОК АВТОЗУМА: Safari больше не сдвинет экран! */
+     }
+
+            .flag-wrapper {
+           height: 44px !important;
+           width: auto !important;
+           display: inline-flex !important;
+           align-items: center !important;
+           justify-content: center !important; /* Центрирует флаг внутри его ячейки */
+     }
+
+     .flag-img {
+           height: 100% !important;
+           width: auto !important;
+           object-fit: contain !important;
+     }
+
+
+     /* 1. Возвращаем монолитную жесткую сетку таблиц */
+     table {
+           width: 100% !important;
+           table-layout: fixed !important; 
+           border-collapse: collapse !important;
+     }
+     th {
+           text-align: left !important;
+     }
+
+     /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
+     .col-flag {
+            width: 85px !important;        
+            padding: 10px 0px !important;   
+     }
+     /* Отдельно центрируем заголовок «Флаг» в шапке таблицы */
+     th.col-flag {
+            text-align: center !important;
+     }
+     
+     td:nth-child(2) {
+            width: 48% !important;         
+            padding-left: 15px !important; /* Родной отступ ткани флага от букв страны */
+            padding-right: 5px !important;
+     }
+     /* Выравниваем заголовок «Страна» строго по первой букве названий стран */
+     th:nth-child(3) {
+            text-align: left !important;
+            padding-left: 15px !important; /* Жестко повторяем отступ 15px, чтобы буквы встали по линеечке! */
+     }
+
+     td:nth-child(3) {
+            width: 32% !important;         /* Столица заперта в границах и не вылетает */
+            padding-left: 5px !important;
+     }
+     th, td {
+            padding: 10px 2px !important;
+            vertical-align: middle !important;
+            /* Наш щит автопереноса длинных слов */
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+     }
+     
+     .col-num, th.col-num {
+            display: none !important;
+     }
+     td {
+            text-align: left !important;
+            font-size: 14px !important;
+     }
+
+     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Честные пропорции, одинаковая высота */
+     .flag-wrapper {
+           width: 85px !important;         /* Стандартный контейнер */
+           height: 44px !important;        /* Фиксированная высота для идеального масштаба всего ряда */
+           display: inline-flex !important;
+           align-items: center !important;
+           justify-content: center !important; 
+     }
+     .flag-img {
+           height: 100% !important;        /* Картинка заполняет рамку строго по высоте */
+           width: auto !important;         /* Ширина пропорционально растягивается сама */
+           object-fit: contain !important; /* Сохраняет истинные пропорции без белых полей */
+           border-radius: 2px !important;
+     }
+
+     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
+     /* Освобождаем Катар от ограничений и разрешаем ему вытянуться вправо поверх отступа страны */
+     .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
+           max-width: none !important;     /* Снимаем блокировку Википедии */
+           width: 115px !important;        /* Вытягиваем его во всю законную супер-длину */
+           object-fit: fill !important;
+     }
+
+     /* КВИЗЫ: Положение на мобильном */
+     .view-section:not(#dbView) {
+         padding-top: 0px !important;
+         margin-top: -40px !important; 
+     }
+     .quiz-panel {
+         padding: 10px !important;
+         margin: 0px auto !important;
+     }
+
+           /* 🌟 ИЗОЛИРОВАННЫЙ МОБИЛЬНЫЙ ЩИТ ДЛЯ НЕПАЛА (В базе и в квизе): */
+     tr[data-name*="непал"] .flag-wrapper, 
+     tr[data-name*="непал"] .flag-img,
+     .quiz-flag-img[alt*="Непал"], .quiz-flag-img[src*="NP.svg"], .quiz-flag-img[src*="np.svg"] {
+           mix-blend-mode: multiply !important; 
+           border: none !important;
+           border-width: 0px !important;
+           border-style: none !important;
+           box-shadow: none !important;
+     }
+
+     /* КВИЗЫ: Положение на мобильном */
+     .view-section:not(#dbView) {
+         padding-top: 0px !important;
+         margin-top: -40px !important; 
+     }
+     .quiz-panel {
+         padding: 10px !important;
+         margin: 0px auto !important;
+     }
+
+     .quiz-flag-container {
+         height: 100px !important;       
+         width: auto !important;          
+         margin-bottom: 20px !important; 
+         margin-top: 5px !important;
+         background: transparent !important;
+     }
+     .quiz-flag-img {
+         height: 100px !important;        
+         width: auto !important;          
+     }
+
+      .option-btn {
+         padding: 10px 15px !important;
+         font-size: 15px !important;
+         background-color: #f8f9fa !important; 
+         border: 2px solid #dee2e6 !important; 
+         color: #495057 !important;            /* 🌟 БУКВЫ СТАЛИ ЧУТОЧКУ ТЕМНЕЕ И НА СТУПЕНЬ КОНТРАСТНЕЕ */
+     }
+
+/* 🌟 ГРАФИТОВЫЙ МОБИЛЬНЫЙ ЩИТ С ЗАЩИТОЙ ТЕМНЫХ ПОЛОС */
+.flag-modal {
+    position: fixed;
+    top: -5px !important;    
+    left: -5px !important;
+    right: -5px !important;
+    bottom: -5px !important;
+    background-color: #1a1a1a !important; /* Насыщенный темно-серый цвет разделяет темные полосы флагов */
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    z-index: 9999 !important; 
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    cursor: pointer;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+.flag-modal.open {
+    display: flex !important;
+    opacity: 1 !important;
+}
+/* 🌟 МОБИЛЬНАЯ КАРТИНКА: ТОТАЛЬНОЕ ОБНУЛЕНИЕ ВСЕХ КОНТУРОВ И ТЕНЕЙ SAFARI */
+.flag-modal-img {
+    max-width: 95% !important;
+    max-height: 75% !important;
+    object-fit: contain !important;
+    outline: none !important;
+    transform: scale(0.95);
+    transition: transform 0.2s ease-in-out;
+    background-color: transparent !important;
+    
+    /* НАМЕРТВО СТИРАЕМ ЛЮБЫЕ ГРАНИЦЫ, РАМКИ, ТЕНИ И СВЕЧЕНИЯ: */
+    border: none !important;
+    border-width: 0px !important;
+    border-style: none !important;
+    box-shadow: none !important;
+}
+
+.flag-modal.open .flag-modal-img {
+    transform: scale(1) !important;
+}
+
+     /* ВСТАВЛЯЕМ СЮДА: Делаем шрифт рекордов компактным на экранах Айфонов */
+     .quiz-stats {
+         font-size: 14px !important;
+         font-weight: 600 !important;
+         color: #495057 !important;
+         letter-spacing: 0.3px !important;
+     }
+
+} /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
+
+
+    
+     
+    </style>
+</head>
+<body>
+
+<div class="fixed-header">
+    <div class="header-content">
+        <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
+        <button class="tab-btn" onclick="switchView('quiz-flags')">🇷🇺<br>Квиз:<br>Флаги</button>
+        <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
+        <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
+        </div>
+          <div class="controls-row" id="dbControls">
+            <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск...">
+            <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()">✖</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="dbView" class="view-section active">
+        <div id="tablesContainer"></div>
+    </div>
+    <div id="quizFlagsView" class="view-section">
+        <div class="quiz-panel">
+            <div class="quiz-flag-container">
+                <img id="quizFlagImg" class="quiz-flag-img" src="" alt="Флаг">
+            </div>
+            <div class="quiz-options" id="quizFlagOptions"></div>
+            <button id="nextFlagBtn" class="action-btn" style="display:none;" onclick="loadQuizFlagRound()">Следующий флаг</button>
+            <div class="quiz-stats" id="quizFlagStats">Очки: 0 | Раунд: 1</div>
+        </div>
+    </div>
+    <div id="quizCapitalsView" class="view-section">
+        <div class="quiz-panel">
+        <div class="quiz-question" id="quizCapitalQuestionTarget" style="color:#000000; font-size:26px;"></div>
+            <div class="quiz-options" id="quizCapitalOptions"></div>
+            <button id="nextCapitalBtn" class="action-btn" style="display:none;" onclick="loadQuizCapitalRound()">Следующий вопрос</button>
+            <div class="quiz-stats" id="quizCapitalStats">Очки: 0 | Раунд: 1</div>
+        </div>
+    </div>
+    <div id="quizCountriesView" class="view-section">
+        <div class="quiz-panel">
+            <div class="quiz-question" id="quizCountryQuestionTarget" style="color:#000000; font-size:26px;"></div>
+            <div class="quiz-options" id="quizCountryOptions"></div>
+            <button id="nextCountryBtn" class="action-btn" style="display:none;" onclick="loadQuizCountryRound()">Следующий вопрос</button>
+            <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
+        </div>
+    </div>
+</div>
+
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+
+<!-- Контейнер для полноэкранного просмотра флага -->
+<div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
+    <img id="flagModalImg" class="flag-modal-img" src="" alt="Крупный флаг">
+</div>
+
+
+
+<script>
+const specialFlags = {
+    "prid": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Transnistria_%28state%29.svg",
+    "abh": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Flag_of_the_Republic_of_Abkhazia.svg",
+    "ossetia": "https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_South_Ossetia.svg",
+    "ncyprus": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg",
+    "somaliland": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Flag_of_Somaliland.svg",
+    "va": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Flag_of_Vatican_City_%282023%E2%80%93present%29.svg",
+    "pt": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Flag_of_Portugal_%28official%29.svg",
+    "al": "https://upload.wikimedia.org/wikipedia/commons/3/36/Flag_of_Albania.svg",
+    "ad": "https://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Andorra.svg",
+    "by": "https://upload.wikimedia.org/wikipedia/commons/8/85/Flag_of_Belarus.svg",
+    "at": "https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg",
+    "es": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg",
+    "ch": "https://upload.wikimedia.org/wikipedia/commons/0/08/Flag_of_Switzerland_%28Pantone%29.svg",
+    "be": "https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Belgium.svg",
+    "bg": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Bulgaria.svg",
+    "ba": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Flag_of_Bosnia_and_Herzegovina.svg",
+    "gb": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg",
+    "hu": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Flag_of_Hungary.svg",
+    "de": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg",
+    "gr": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Greece.svg",
+    "dk": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Flag_of_Denmark.svg",
+    "ie": "https://upload.wikimedia.org/wikipedia/commons/4/45/Flag_of_Ireland.svg",
+    "is": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Iceland.svg",
+    "it": "https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg",
+    "lv": "https://upload.wikimedia.org/wikipedia/commons/8/84/Flag_of_Latvia.svg",
+    "lt": "https://upload.wikimedia.org/wikipedia/commons/1/11/Flag_of_Lithuania.svg",
+    "li": "https://upload.wikimedia.org/wikipedia/commons/4/47/Flag_of_Liechtenstein.svg",
+    "lu": "https://upload.wikimedia.org/wikipedia/commons/d/da/Flag_of_Luxembourg.svg",
+    "md": "https://upload.wikimedia.org/wikipedia/commons/2/27/Flag_of_Moldova.svg",
+    "mc": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Flag_of_Monaco.svg",
+    "nl": "https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_the_Netherlands.svg",
+    "no": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg",
+    "pl": "https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Poland.svg",
+    "ru": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Russia.svg",
+    "ro": "https://upload.wikimedia.org/wikipedia/commons/7/73/Flag_of_Romania.svg",
+    "sm": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Flag_of_San_Marino.svg",
+    "mk": "https://upload.wikimedia.org/wikipedia/commons/7/79/Flag_of_North_Macedonia.svg",
+    "rs": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Flag_of_Serbia.svg",
+    "sk": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Flag_of_Slovakia.svg",
+    "si": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Flag_of_Slovenia.svg",
+    "ua": "https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Ukraine.svg",
+    "fi": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Finland.svg",
+    "fr": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg",
+    "hr": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Croatia.svg",
+    "me": "https://upload.wikimedia.org/wikipedia/commons/6/64/Flag_of_Montenegro.svg",
+    "cz": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_Czech_Republic.svg",
+    "se": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Sweden.svg",
+    "ee": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Flag_of_Estonia.svg",
+    "xk": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Flag_of_Kosovo.svg",
+    "az": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Flag_of_Azerbaijan.svg",
+    "am": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Flag_of_Armenia.svg",
+    "af": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_the_Taliban.svg",
+    "bd": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Flag_of_Bangladesh.svg",
+    "bh": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Bahrain.svg",
+    "bn": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Flag_of_Brunei.svg",
+    "bt": "https://upload.wikimedia.org/wikipedia/commons/9/91/Flag_of_Bhutan.svg",
+    "vn": "https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg",
+    "ge": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Flag_of_Georgia.svg",
+    "il": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Flag_of_Israel.svg",
+    "in": "https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg",
+    "id": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Indonesia.svg",
+    "jo": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Flag_of_Jordan.svg",
+    "iq": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Flag_of_Iraq.svg",
+    "ir": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg",
+    "ye": "https://upload.wikimedia.org/wikipedia/commons/8/89/Flag_of_Yemen.svg",
+    "kz": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Flag_of_Kazakhstan.svg",
+    "kh": "https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_Cambodia.svg",
+    "qa": "https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Qatar.svg",
+    "cy": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Flag_of_Cyprus.svg",
+    "cn": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_the_People%27s_Republic_of_China.svg",
+    "kp": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Flag_of_North_Korea_%28March_2026%E2%80%93present%29.svg",
+    "kr": "https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg",
+    "kw": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Flag_of_Kuwait.svg",
+    "kg": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Flag_of_Kyrgyzstan.svg",
+    "la": "https://upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Laos.svg",
+    "lb": "https://upload.wikimedia.org/wikipedia/commons/5/59/Flag_of_Lebanon.svg",
+    "my": "https://upload.wikimedia.org/wikipedia/commons/6/66/Flag_of_Malaysia.svg",
+    "mv": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Flag_of_Maldives.svg",
+    "mn": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Mongolia.svg",
+    "mm": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Flag_of_Myanmar.svg",
+    "np": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Flag_of_Nepal.svg",
+    "ae": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_United_Arab_Emirates.svg",
+    "om": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Flag_of_Oman.svg",
+    "pk": "https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg",
+    "ps": "https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Palestine.svg",
+    "sa": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Saudi_Arabia.svg",
+    "sg": "https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Singapore.svg",
+    "sy": "https://upload.wikimedia.org/wikipedia/commons/5/54/Flag_of_Syria_%282025-%29.svg",
+    "tj": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Flag_of_Tajikistan.svg",
+    "th": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg",
+    "tl": "https://upload.wikimedia.org/wikipedia/commons/2/26/Flag_of_East_Timor.svg",
+    "tm": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Turkmenistan.svg",
+    "tr": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg",
+    "uz": "https://upload.wikimedia.org/wikipedia/commons/8/84/Flag_of_Uzbekistan.svg",
+    "ph": "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_the_Philippines.svg",
+    "lk": "https://upload.wikimedia.org/wikipedia/commons/1/11/Flag_of_Sri_Lanka.svg",
+    "jp": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg",
+    "tw": "https://upload.wikimedia.org/wikipedia/commons/7/72/Flag_of_the_Republic_of_China.svg",
+    "dz": "https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_Algeria.svg",
+    "ao": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Flag_of_Angola.svg",
+    "bj": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Flag_of_Benin.svg",
+    "bw": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_Botswana.svg",
+    "bf": "https://upload.wikimedia.org/wikipedia/commons/3/31/Flag_of_Burkina_Faso.svg",
+    "bi": "https://upload.wikimedia.org/wikipedia/commons/5/50/Flag_of_Burundi.svg",
+    "ga": "https://upload.wikimedia.org/wikipedia/commons/0/04/Flag_of_Gabon.svg",
+    "gm": "https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_The_Gambia.svg",
+    "gh": "https://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Ghana.svg",
+    "gn": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Flag_of_Guinea.svg",
+    "gw": "https://upload.wikimedia.org/wikipedia/commons/0/01/Flag_of_Guinea-Bissau.svg",
+    "dj": "https://upload.wikimedia.org/wikipedia/commons/3/34/Flag_of_Djibouti.svg",
+    "eg": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Egypt.svg",
+    "zm": "https://upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Zambia.svg",
+    "zw": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Flag_of_Zimbabwe.svg",
+    "cv": "https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Cape_Verde_%2810-17%29.svg",
+    "cm": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Flag_of_Cameroon.svg",
+    "ke": "https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Kenya.svg",
+    "km": "https://upload.wikimedia.org/wikipedia/commons/9/94/Flag_of_the_Comoros.svg",
+    "cg": "https://upload.wikimedia.org/wikipedia/commons/9/92/Flag_of_the_Republic_of_the_Congo.svg",
+    "cd": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Flag_of_the_Democratic_Republic_of_the_Congo.svg",
+    "ci": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_C%C3%B4te_d%27Ivoire.svg",
+    "ls": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Flag_of_Lesotho.svg",
+    "lr": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Flag_of_Liberia.svg",
+    "ly": "https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Libya.svg",
+    "mg": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Madagascar.svg",
+    "mw": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Flag_of_Malawi.svg",
+    "ml": "https://upload.wikimedia.org/wikipedia/commons/9/92/Flag_of_Mali.svg",
+    "mr": "https://upload.wikimedia.org/wikipedia/commons/4/43/Flag_of_Mauritania.svg",
+    "mu": "https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_Mauritius.svg",
+    "ma": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Morocco.svg",
+    "mz": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Flag_of_Mozambique.svg",
+    "na": "https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Namibia.svg",
+    "ne": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Flag_of_Niger.svg",
+    "ng": "https://upload.wikimedia.org/wikipedia/commons/7/79/Flag_of_Nigeria.svg",
+    "rw": "https://upload.wikimedia.org/wikipedia/commons/1/17/Flag_of_Rwanda.svg",
+    "st": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Flag_of_S%C3%A3o_Tom%C3%A9_and_Pr%C3%ADncipe.svg",
+    "sz": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Flag_of_Eswatini.svg",
+    "sc": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Seychelles.svg",
+    "sn": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Flag_of_Senegal.svg",
+    "so": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Flag_of_Somalia.svg",
+    "sd": "https://upload.wikimedia.org/wikipedia/commons/0/01/Flag_of_Sudan.svg",
+    "sl": "https://upload.wikimedia.org/wikipedia/commons/1/17/Flag_of_Sierra_Leone.svg",
+    "tz": "https://upload.wikimedia.org/wikipedia/commons/3/38/Flag_of_Tanzania.svg",
+    "tg": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Flag_of_Togo_%283-2%29.svg",
+    "tn": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Tunisia.svg",
+    "ug": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Flag_of_Uganda.svg",
+    "cf": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Flag_of_the_Central_African_Republic.svg",
+    "td": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Flag_of_Chad.svg",
+    "gq": "https://upload.wikimedia.org/wikipedia/commons/3/31/Flag_of_Equatorial_Guinea.svg",
+    "er": "https://upload.wikimedia.org/wikipedia/commons/2/29/Flag_of_Eritrea.svg",
+    "et": "https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg",
+    "za": "https://upload.wikimedia.org/wikipedia/commons/a/af/Flag_of_South_Africa.svg",
+    "ss": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Flag_of_South_Sudan.svg",
+    "eh": "https://upload.wikimedia.org/wikipedia/commons/2/26/Flag_of_the_Sahrawi_Arab_Democratic_Republic.svg",
+    "ag": "https://upload.wikimedia.org/wikipedia/commons/8/89/Flag_of_Antigua_and_Barbuda.svg",
+    "bs": "https://upload.wikimedia.org/wikipedia/commons/9/93/Flag_of_the_Bahamas.svg",
+    "bb": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Flag_of_Barbados.svg",
+    "bz": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Flag_of_Belize.svg",
+    "ht": "https://upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Haiti.svg",
+    "gt": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Flag_of_Guatemala.svg",
+    "hn": "https://upload.wikimedia.org/wikipedia/commons/7/79/Flag_of_Honduras_%281949%E2%80%932022%2C_2026%E2%80%93present%29.svg",
+    "gd": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Grenada.svg",
+    "dm": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Flag_of_Dominica.svg",
+    "do": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_the_Dominican_Republic.svg",
+    "ca": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Canada_%28Pantone%29.svg",
+    "cr": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Flag_of_Costa_Rica.svg",
+    "cu": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Flag_of_Cuba.svg",
+    "mx": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg",
+    "ni": "https://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Nicaragua.svg",
+    "pa": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Flag_of_Panama.svg",
+    "sv": "https://upload.wikimedia.org/wikipedia/commons/3/34/Flag_of_El_Salvador.svg",
+    "vc": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Flag_of_Saint_Vincent_and_the_Grenadines.svg",
+    "kn": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Saint_Kitts_and_Nevis.svg",
+    "lc": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Saint_Lucia.svg",
+    "us": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Flag_of_the_United_States_%28Pantone%29.svg",
+    "tt": "https://upload.wikimedia.org/wikipedia/commons/6/64/Flag_of_Trinidad_and_Tobago.svg",
+    "jm": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Flag_of_Jamaica.svg",
+    "ar": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Flag_of_Argentina.svg",
+    "bo": "https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Bolivia.svg",
+    "br": "https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg",
+    "ve": "https://upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Venezuela.svg",
+    "gy": "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_Guyana.svg",
+    "co": "https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Colombia.svg",
+    "py": "https://upload.wikimedia.org/wikipedia/commons/2/27/Flag_of_Paraguay.svg",
+    "pe": "https://upload.wikimedia.org/wikipedia/commons/5/54/War_flag_of_Peru.svg",
+    "sr": "https://upload.wikimedia.org/wikipedia/commons/6/60/Flag_of_Suriname.svg",
+    "uy": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_Uruguay.svg",
+    "cl": "https://upload.wikimedia.org/wikipedia/commons/7/78/Flag_of_Chile.svg",
+    "ec": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Flag_of_Ecuador.svg",
+    "au": "https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg",
+    "vu": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Vanuatu.svg",
+    "ki": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Flag_of_Kiribati.svg",
+    "mh": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Flag_of_the_Marshall_Islands.svg",
+    "fm": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Flag_of_the_Federated_States_of_Micronesia.svg",
+    "nr": "https://upload.wikimedia.org/wikipedia/commons/3/30/Flag_of_Nauru.svg",
+    "nz": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg",
+    "pw": "https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Palau.svg",
+    "pg": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Flag_of_Papua_New_Guinea.svg",
+    "ws": "https://upload.wikimedia.org/wikipedia/commons/3/31/Flag_of_Samoa.svg",
+    "sb": "https://upload.wikimedia.org/wikipedia/commons/7/74/Flag_of_the_Solomon_Islands.svg",
+    "to": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Tonga.svg",
+    "tv": "https://upload.wikimedia.org/wikipedia/commons/3/38/Flag_of_Tuvalu.svg",
+    "fj": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Fiji.svg"
+
+};
+
+const countriesData = {
+    "Европа": [
+        { name: "Австрия", capital: "Вена", iso: "at", special: true },
+        { name: "Албания", capital: "Тирана", iso: "al", special: true },
+        { name: "Андорра", capital: "Андорра-ла-Велья", iso: "ad", special: true },
+        { name: "Беларусь", capital: "Минск", iso: "by", special: true },
+        { name: "Бельгия", capital: "Брюссель", iso: "be", special: true },
+        { name: "Болгария", capital: "София", iso: "bg", special: true },
+        { name: "Босния и Герцеговина", capital: "Сараево", iso: "ba", special: true },
+        { name: "Ватикан", capital: "Ватикан", iso: "va", special: true },
+        { name: "Великобритания", capital: "Лондон", iso: "gb", special: true },
+        { name: "Венгрия", capital: "Будапешт", iso: "hu", special: true },
+        { name: "Германия", capital: "Берлин", iso: "de", special: true },
+        { name: "Греция", capital: "Афины", iso: "gr", special: true },
+        { name: "Дания", capital: "Копенгаген", iso: "dk", special: true },
+        { name: "Ирландия", capital: "Дублин", iso: "ie", special: true },
+        { name: "Исландия", capital: "Рейкьявик", iso: "is", special: true },
+        { name: "Испания", capital: "Мадрид", iso: "es", special: true },
+        { name: "Италия", capital: "Рим", iso: "it", special: true },
+        { name: "Латвия", capital: "Рига", iso: "lv", special: true },
+        { name: "Литва", capital: "Вильнюс", iso: "lt", special: true },
+        { name: "Лихтенштейн", capital: "Вадуц", iso: "li", special: true },
+        { name: "Люксембург", capital: "Люксембург", iso: "lu", special: true },
+        { name: "Молдова", capital: "Кишинёв", iso: "md", special: true },
+        { name: "Монако", capital: "Монако", iso: "mc", special: true },
+        { name: "Нидерланды", capital: "Амстердам", iso: "nl", special: true },
+        { name: "Норвегия", capital: "Осло", iso: "no", special: true },
+        { name: "Польша", capital: "Варшава", iso: "pl", special: true },
+        { name: "Португалия", capital: "Лиссабон", iso: "pt", special: true },
+        { name: "Россия", capital: "Москва", iso: "ru", special: true },
+        { name: "Румыния", capital: "Бухарест", iso: "ro", special: true },
+        { name: "Сан-Марино", capital: "Сан-Марино", iso: "sm", special: true },
+        { name: "Северная Македония", capital: "Скопье", iso: "mk", special: true },
+        { name: "Сербия", capital: "Белград", iso: "rs", special: true },
+        { name: "Словакия", capital: "Братислава", iso: "sk", special: true },
+        { name: "Словения", capital: "Любляна", iso: "si", special: true },
+        { name: "Украина", capital: "Киев", iso: "ua", special: true },
+        { name: "Финляндия", capital: "Хельсинки", iso: "fi", special: true },
+        { name: "Франция", capital: "Париж", iso: "fr", special: true },
+        { name: "Хорватия", capital: "Загреб", iso: "hr", special: true },
+        { name: "Черногория", capital: "Подгорица", iso: "me", special: true },
+        { name: "Чехия", capital: "Прага", iso: "cz", special: true },
+        { name: "Швейцария", capital: "Берн", iso: "ch", special: true },
+        { name: "Швеция", capital: "Стокгольм", iso: "se", special: true },
+        { name: "Эстония", capital: "Таллин", iso: "ee", special: true },
+        { name: "Приднестровье", capital: "Тирасполь", iso: "prid", special: true, note: "(Непризнанное государство)" },
+        { name: "Косово", capital: "Приштина", iso: "xk", special: true, note: "(Частично признанное государство)" }
+    ],
+    "Азия": [
+        { name: "Азербайджан", capital: "Баку", iso: "az", special: true },
+        { name: "Армения", capital: "Ереван", iso: "am", special: true },
+        { name: "Афганистан", capital: "Кабул", iso: "af", special: true },
+        { name: "Бангладеш", capital: "Дакка", iso: "bd", special: true },
+        { name: "Бахрейн", capital: "Манама", iso: "bh", special: true },
+        { name: "Бруней", capital: "Бандар-Сери-Бегаван", iso: "bn", special: true },
+        { name: "Бутан", capital: "Тхимпху", iso: "bt", special: true },
+        { name: "Вьетнам", capital: "Ханой", iso: "vn", special: true },
+        { name: "Грузия", capital: "Тбилиси", iso: "ge", special: true },
+        { name: "Израиль", capital: "Иерусалим", iso: "il", special: true },
+        { name: "Индия", capital: "Нью-Дели", iso: "in", special: true },
+        { name: "Индонезия", capital: "Джакарта", iso: "id", special: true },
+        { name: "Иордания", capital: "Амман", iso: "jo", special: true },
+        { name: "Ирак", capital: "Багдад", iso: "iq", special: true },
+        { name: "Иран", capital: "Тегеран", iso: "ir", special: true },
+        { name: "Йемен", capital: "Сана", iso: "ye", special: true },
+        { name: "Казахстан", capital: "Астана", iso: "kz", special: true },
+        { name: "Камбоджа", capital: "Пномпень", iso: "kh", special: true },
+        { name: "Катар", capital: "Доха", iso: "qa", special: true },
+        { name: "Кипр", capital: "Никосия", iso: "cy", special: true },
+        { name: "Китай", capital: "Пекин", iso: "cn", special: true },
+        { name: "КНДР", capital: "Пхеньян", iso: "kp", special: true },
+        { name: "Южная Корея", capital: "Сеул", iso: "kr", special: true },
+        { name: "Кувейт", capital: "Эль-Кувейт", iso: "kw", special: true },
+        { name: "Кыргызстан", capital: "Бишкек", iso: "kg", special: true },
+        { name: "Лаос", capital: "Вьентьян", iso: "la", special: true },
+        { name: "Ливан", capital: "Бейрут", iso: "lb", special: true },
+        { name: "Малайзия", capital: "Куала-Лумпур", iso: "my", special: true },
+        { name: "Мальдивы", capital: "Мале", iso: "mv", special: true },
+        { name: "Монголия", capital: "Улан-Батор", iso: "mn", special: true },
+        { name: "Мьянма", capital: "Нейпьидо", iso: "mm", special: true },
+        { name: "Непал", capital: "Катманду", iso: "np", special: true },
+        { name: "ОАЭ", capital: "Абу-Даби", iso: "ae", special: true },
+        { name: "Оман", capital: "Маскат", iso: "om", special: true },
+        { name: "Пакистан", capital: "Исламабад", iso: "pk", special: true },
+        { name: "Палестина", capital: "Рамалла", iso: "ps", special: true },
+        { name: "Саудовская Аравия", capital: "Эр-Рияд", iso: "sa", special: true },
+        { name: "Сингапур", capital: "Сингапур", iso: "sg", special: true },
+        { name: "Сирия", capital: "Дамаск", iso: "sy", special: true },
+        { name: "Таджикистан", capital: "Душанбе", iso: "tj", special: true },
+        { name: "Таиланд", capital: "Бангкок", iso: "th", special: true },
+        { name: "Тимор-Леште", capital: "Дили", iso: "tl", special: true },
+        { name: "Туркменистан", capital: "Ашхабад", iso: "tm", special: true },
+        { name: "Турция", capital: "Анкара", iso: "tr", special: true },
+        { name: "Узбекистан", capital: "Ташкент", iso: "uz", special: true },
+        { name: "Филиппины", capital: "Манила", iso: "ph", special: true },
+        { name: "Шри-Ланка", capital: "Шри-Джаяварденепура-Котте", iso: "lk", special: true },
+        { name: "Япония", capital: "Токио", iso: "jp", special: true },
+        { name: "Тайвань", capital: "Тайбэй", iso: "tw", special: true, note: "(Частично признанное государство)" },
+        { name: "Абхазия", capital: "Сухум", iso: "abh", special: true, note: "(Частично признанное государство)" },
+        { name: "Южная Осетия", capital: "Цхинвал", iso: "ossetia", special: true, note: "(Частично признанное государство)" },
+        { name: "Северный Кипр", capital: "Лефкоша", iso: "ncyprus", special: true, note: "(Частично признанное государство)" }     
+    ],
+    "Африка": [
+        { name: "Алжир", capital: "Алжир", iso: "dz", special: true },
+        { name: "Ангола", capital: "Луанда", iso: "ao", special: true },
+        { name: "Бенин", capital: "Порто-Ново", iso: "bj", special: true },
+        { name: "Ботсвана", capital: "Габороне", iso: "bw", special: true },
+        { name: "Буркина-Фасо", capital: "Уагадугу", iso: "bf", special: true },
+        { name: "Бурунди", capital: "Гитега", iso: "bi", special: true },
+        { name: "Габон", capital: "Либревиль", iso: "ga", special: true },
+        { name: "Гамбия", capital: "Банжул", iso: "gm", special: true },
+        { name: "Гана", capital: "Аккра", iso: "gh", special: true },
+        { name: "Гвинея", capital: "Конакри", iso: "gn", special: true },
+        { name: "Гвинея-Бисау", capital: "Бисау", iso: "gw", special: true },
+        { name: "Джибути", capital: "Джибути", iso: "dj", special: true },
+        { name: "Египет", capital: "Каир", iso: "eg", special: true },
+        { name: "Замбия", capital: "Лусака", iso: "zm", special: true },
+        { name: "Зимбабве", capital: "Хараре", iso: "zw", special: true },
+        { name: "Кабо-Верде", capital: "Прая", iso: "cv", special: true },
+        { name: "Камерун", capital: "Яунде", iso: "cm", special: true },
+        { name: "Кения", capital: "Найроби", iso: "ke", special: true },
+        { name: "Коморы", capital: "Морони", iso: "km", special: true },
+        { name: "Конго", capital: "Браззавиль", iso: "cg", special: true },
+        { name: "ДР Конго", capital: "Киншаса", iso: "cd", special: true },
+        { name: "Кот-д'Ивуар", capital: "Ямусукро", iso: "ci", special: true },
+        { name: "Лесото", capital: "Масеру", iso: "ls", special: true },
+        { name: "Либерия", capital: "Монровия", iso: "lr", special: true },
+        { name: "Ливия", capital: "Триполи", iso: "ly", special: true },
+        { name: "Мадагаскар", capital: "Антананариву", iso: "mg", special: true },
+        { name: "Малави", capital: "Лилонгве", iso: "mw", special: true },
+        { name: "Мали", capital: "Бамако", iso: "ml", special: true },
+        { name: "Мавритания", capital: "Нуакшот", iso: "mr", special: true },
+        { name: "Маврикий", capital: "Порт-Луи", iso: "mu", special: true },
+        { name: "Марокко", capital: "Рабат", iso: "ma", special: true },
+        { name: "Мозамбик", capital: "Мапуту", iso: "mz", special: true },
+        { name: "Намибия", capital: "Виндхук", iso: "na", special: true },
+        { name: "Нигер", capital: "Ниамей", iso: "ne", special: true },
+        { name: "Нигерия", capital: "Абуджа", iso: "ng", special: true },
+        { name: "Руанда", capital: "Кигали", iso: "rw", special: true },
+        { name: "Сан-Томе и Принсипи", capital: "Сан-Томе", iso: "st", special: true },
+        { name: "Эсватини", capital: "Мбабане", iso: "sz", special: true },
+        { name: "Сейшелы", capital: "Виктория", iso: "sc", special: true },
+        { name: "Сенегал", capital: "Дакар", iso: "sn", special: true },
+        { name: "Сомали", capital: "Могадишо", iso: "so", special: true },
+        { name: "Судан", capital: "Хартум", iso: "sd", special: true },
+        { name: "Сьерра-Леоне", capital: "Фритаун", iso: "sl", special: true },
+        { name: "Танзания", capital: "Додома", iso: "tz", special: true },
+        { name: "Того", capital: "Ломе", iso: "tg", special: true },
+        { name: "Тунис", capital: "Тунис", iso: "tn", special: true },
+        { name: "Уганда", capital: "Кампала", iso: "ug", special: true },
+        { name: "ЦАР", capital: "Банги", iso: "cf", special: true },
+        { name: "Чад", capital: "Нджамена", iso: "td", special: true },
+        { name: "Экваториальная Гвинея", capital: "Малабо", iso: "gq", special: true },
+        { name: "Эритрея", capital: "Асмэра", iso: "er", special: true },
+        { name: "Эфиопия", capital: "Аддис-Абеба", iso: "et", special: true },
+        { name: "ЮАР", capital: "Претория", iso: "za", special: true },
+        { name: "Южный Судан", capital: "Джуба", iso: "ss", special: true },
+        { name: "Сомалиленд", capital: "Харгейса", iso: "somaliland", special: true, note: "(Непризнанное государство)" },
+        { name: "САДР", capital: "Эль-Аюн", iso: "eh", special: true, note: "(Частично признанное государство)" }
+    ],
+    "Северная Америка": [
+        { name: "Антигуа и Барбуда", capital: "Сент-Джонс", iso: "ag", special: true },
+        { name: "Багамы", capital: "Нассау", iso: "bs", special: true },
+        { name: "Барбадос", capital: "Бриджтаун", iso: "bb", special: true },
+        { name: "Белиз", capital: "Бельмопан", iso: "bz", special: true },
+        { name: "Гаити", capital: "Порт-о-Пренс", iso: "ht", special: true },
+        { name: "Гватемала", capital: "Гватемала", iso: "gt", special: true },
+        { name: "Гондурас", capital: "Тегусигальпа", iso: "hn", special: true },
+        { name: "Гренада", capital: "Сент-Джорджес", iso: "gd", special: true },
+        { name: "Доминика", capital: "Розо", iso: "dm", special: true },
+        { name: "Доминиканская Республика", capital: "Санто-Доминго", iso: "do", special: true },
+        { name: "Канада", capital: "Оттава", iso: "ca", special: true },
+        { name: "Коста-Рика", capital: "Сан-Хосе", iso: "cr", special: true },
+        { name: "Куба", capital: "Гавана", iso: "cu", special: true },
+        { name: "Мексика", capital: "Мехико", iso: "mx", special: true },
+        { name: "Никарагуа", capital: "Манагуа", iso: "ni", special: true },
+        { name: "Панама", capital: "Панама", iso: "pa", special: true },
+        { name: "Сальвадор", capital: "Сан-Сальвадор", iso: "sv", special: true },
+        { name: "Сент-Винсент и Гренадины", capital: "Кингстаун", iso: "vc", special: true },
+        { name: "Сент-Китс и Невис", capital: "Бастер", iso: "kn", special: true },
+        { name: "Сент-Люсия", capital: "Кастри", iso: "lc", special: true },
+        { name: "США", capital: "Вашингтон", iso: "us", special: true },
+        { name: "Тринидад и Тобаго", capital: "Порт-оф-Спейн", iso: "tt", special: true },
+        { name: "Ямайка", capital: "Кингстон", iso: "jm", special: true }
+    ],
+    "Южная Америка": [
+        { name: "Аргентина", capital: "Буэнос-Айрес", iso: "ar", special: true },
+        { name: "Боливия", capital: "Сукре", iso: "bo", special: true },
+        { name: "Бразилия", capital: "Бразилиа", iso: "br", special: true },
+        { name: "Венесуэла", capital: "Каракас", iso: "ve", special: true },
+        { name: "Гайана", capital: "Джорджтаун", iso: "gy", special: true },
+        { name: "Колумбия", capital: "Богота", iso: "co", special: true },
+        { name: "Парагвай", capital: "Асунсьон", iso: "py", special: true },
+        { name: "Перу", capital: "Лима", iso: "pe", special: true },
+        { name: "Суринам", capital: "Парамарибо", iso: "sr", special: true },
+        { name: "Уругвай", capital: "Монтевидео", iso: "uy", special: true },
+        { name: "Чили", capital: "Сантьяго", iso: "cl", special: true },
+        { name: "Эквадор", capital: "Кито", iso: "ec", special: true }
+    ],
+    "Австралия и Океания": [
+        { name: "Австралия", capital: "Канберра", iso: "au", special: true },
+        { name: "Вануату", capital: "Порт-Вила", iso: "vu", special: true },
+        { name: "Кирибати", capital: "Южная Тарава", iso: "ki", special: true },
+        { name: "Маршалловы Острова", capital: "Маджуро", iso: "mh", special: true },
+        { name: "Микронезия", capital: "Паликир", iso: "fm", special: true },
+        { name: "Науру", capital: "Ярен", iso: "nr", special: true },
+        { name: "Новая Зеландия", capital: "Веллингтон", iso: "nz", special: true },
+        { name: "Палау", capital: "Нгерулмуд", iso: "pw", special: true },
+        { name: "Папуа — Новая Гвинея", capital: "Порт-Морсби", iso: "pg", special: true },
+        { name: "Самоа", capital: "Апиа", iso: "ws", special: true },
+        { name: "Соломоновы Острова", capital: "Хониара", iso: "sb", special: true },
+        { name: "Тонга", capital: "Нукуалофа", iso: "to", special: true },
+        { name: "Тувалу", capital: "Фунафути", iso: "tv", special: true },
+        { name: "Фиджи", capital: "Сува", iso: "fj", special: true }
+    ]
+};
+
+let allCountriesList = [];
+for (const [continent, list] of Object.entries(countriesData)) {
+    list.forEach(c => {
+        allCountriesList.push({ ...c, continent: continent });
+    });
+}
+
+function getFlagUrl(country) {
+    /* Насильно приводим iso к нижнему регистру при поиске в specialFlags */
+    if (country.special && specialFlags[country.iso.toLowerCase()]) {
+        return specialFlags[country.iso.toLowerCase()];
+    }
+    /* Запасной ресурс удален, теперь на экране будут только оригиналы из Википедии */
+}
+
+let globalCounter = 1;
+const tablesContainer = document.getElementById('tablesContainer');
+
+// Сначала создаем блок Европы, чтобы он железно находился на первом месте сверху
+if (countriesData["Европа"]) {
+    createContinentBlock("Европа", countriesData["Европа"]);
+}
+for (const [continent, countries] of Object.entries(countriesData)) {
+    if (continent !== "Европа") {
+        createContinentBlock(continent, countries);
+    }
+}
+function createContinentBlock(continent, countries) {
+    const block = document.createElement('div');
+
+    block.className = 'continent-block collapsed';
+    block.id = `block-${continent.replace(/\s+/g, '-')}`;
+    
+    let rowsHtml = '';
+    let localCounter = 1;
+    
+   countries.forEach(c => {
+    let flagSrc = getFlagUrl(c);
+    const subText = c.note ? ` <span style="font-size:12px; color:#6c757d; font-weight:normal;">${c.note}</span>` : '';
+    rowsHtml += `
+            <tr data-name="${c.name.toLowerCase()}" data-capital="${c.capital.toLowerCase()}">
+                <td class="col-flag">
+                   <div class="flag-wrapper">
+                       <img class="flag-img" src="${flagSrc}" alt="${c.name}" loading="lazy" onclick="openFlagModal(this.src)">
+                   </div>
+                </td>
+                <td>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name)}" 
+                       target="_blank" 
+                       style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <strong>${c.name}</strong>
+                    </a>
+                    ${subText}
+                </td>
+                <td>
+           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.capital)}" 
+                       target="_blank" 
+                       style="color: inherit; text-decoration: none; cursor: pointer;">
+                    ${c.capital}
+                 </a> 
+                </td>
+            </tr>`;
+        globalCounter++;
+        localCounter++;
+    });
+
+    
+    block.innerHTML = `
+        <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
+            <span>${continent}</span>
+            <span class="count-badge" id="badge-${block.id}">${countries.length}</span>
+        </h2>
+        <div class="continent-content">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-num">№</th>
+                        <th class="col-flag">Флаг</th>
+                        <th>Страна</th>
+                        <th>Столица</th>
+                    </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+            </table>
+        </div>
+    `;
+    tablesContainer.appendChild(block);
+}
+
+function switchView(viewId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById('dbControls').style.display = 'none';
+    
+    /* 🌟 НАША БЕЗОПАСНАЯ СИНХРОННАЯ ЗАЩИТА: */
+    /* При каждом нажатии на меню сбрасываем очки и возвращаем раунды на 1 */
+    flagScore = 0; flagRound = 1;
+    capScore = 0; capRound = 1;
+    countryScore = 0; countryRound = 1;
+    
+    if (viewId === 'db') {
+        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+        document.getElementById('dbView').classList.add('active');
+        document.getElementById('dbControls').style.display = 'flex';
+    } else if (viewId === 'quiz-flags') {
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('quizFlagsView').classList.add('active');
+        loadQuizFlagRound();
+    } else if (viewId === 'quiz-capitals') {
+        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+        document.getElementById('quizCapitalsView').classList.add('active');
+        loadQuizCapitalRound();
+    } else if (viewId === 'quiz-countries') {
+        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
+        document.getElementById('quizCountriesView').classList.add('active');
+        loadQuizCountryRound();
+    }
+}
+
+
+function toggleBlock(id) {
+    const block = document.getElementById(id);
+    block.classList.toggle('collapsed');
+    
+    const content = block.querySelector('.continent-content');
+    if (content) {
+        if (block.classList.contains('collapsed')) {
+            content.style.display = 'none';
+        } else {
+            content.style.display = 'block';
+        }
+
+    const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
+    allCollapsed = hasExpanded ? false : true; /* Работаем скрыто в памяти, не трогая элементы DOM */
+
+         /* НАШ ТОЧНЫЙ АВТОСКРОЛЛ С ЗАЩИТОЙ: Теперь он железно внутри if (content) */
+        if (content && content.style.display === 'block') {
+            setTimeout(() => {
+                const header = block.querySelector('.continent-header');
+                const offset = 120; // Высота фиксированного меню в пикселях
+                
+                const elementPosition = header.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }, 120); 
+        }
+    } // ЭТА СКОБКА ТЕПЕРЬ ПРАВИЛЬНО ЗАКРЫВАЕТ БЛОК if (content)
+} // ЭТА СКОБКА ОКОНЧАТЕЛЬНО ЗАКРЫВАЕТ ФУНКЦИЮ toggleBlock
+
+let allCollapsed = true; // Сделали true на старте, так как всё свернуто
+        
+function toggleAllContinents() {
+    allCollapsed = !allCollapsed;
+    
+    document.querySelectorAll('.continent-block').forEach(b => {
+        const content = b.querySelector('.continent-content');
+        if (allCollapsed) {
+            b.classList.add('collapsed');
+            if (content) content.style.display = 'none';
+        } else {
+            b.classList.remove('collapsed');
+            if (content) content.style.display = 'block';
+        }
+    });
+    
+    document.getElementById('toggleAllBtn').textContent = allCollapsed ? "Развернуть всё" : "Свернуть всё";
+
+      if (allCollapsed) {
+          setTimeout(() => {
+              window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth' /* Плавная и мягкая прокрутка наверх */
+            });
+        }, 50); // Микро-задержка, чтобы браузер успел скрыть таблицы до начала движения
+    }
+}
+
+
+function runSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    const q = searchInput.value.toLowerCase().trim();
+    
+    if (searchInput.value.length > 0) {
+        clearBtn.style.display = 'block';
+    } else {
+        clearBtn.style.display = 'none';
+    }
+
+    document.querySelectorAll('.continent-block').forEach(block => {
+        const rows = block.querySelectorAll('tbody tr');
+        const content = block.querySelector('.continent-content'); // Нашли скрытый контент таблицы
+        let visibleCount = 0;
+        
+        rows.forEach(r => {
+            const name = r.getAttribute('data-name');
+            const cap = r.getAttribute('data-capital');
+            if (name.includes(q) || cap.includes(q)) {
+                r.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                r.classList.add('hidden');
+            }
+        });
+        
+        const badge = document.getElementById(`badge-${block.id}`);
+        badge.textContent = visibleCount;
+        
+        if (visibleCount === 0 && q !== '') {
+            block.style.display = 'none';
+        } else {
+            block.style.display = 'block';
+            
+            /* 🌟 НАШЕ ЖЕЛЕЗНОЕ ИСПРАВЛЕНИЕ: */
+            if (q !== '') {
+                // Если пользователь что-то ищет, принудительно РАСПАХИВАЕМ блок и контент на экране
+                block.classList.remove('collapsed');
+                if (content) content.style.display = 'block';
+            } else {
+                // Если поиск пустой, возвращаем базу в исходное свернутое состояние
+                block.classList.add('collapsed');
+                if (content) content.style.display = 'none';
+            }
+        }
+    });
+}
+
+
+function clearSearch() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.value = '';
+    runSearch();
+    searchInput.focus();
+}
+
+document.getElementById('searchInput').addEventListener('input', runSearch);
+
+window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scrollTopBtn');
+    if (window.scrollY > 300) btn.style.display = 'flex';
+    else btn.style.display = 'none';
+});
+
+function shuffle(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+}
+
+let flagScore = 0, flagRound = 1, currentFlagTarget;
+function loadQuizFlagRound() {
+    /* 🌟 ОБНУЛЯЕМ СЧЁТ СТРОГО ПРИ НАЖАТИИ «НАЧАТЬ ЗАНОВО» */
+    if (flagRound === 1) {
+        flagScore = 0;
+    }
+    
+    document.getElementById('nextFlagBtn').style.display = 'none';
+    currentFlagTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
+    
+    let highResUrl = getFlagUrl(currentFlagTarget);
+    const flagImgEl = document.getElementById('quizFlagImg');
+    const flagContainerEl = document.querySelector('.quiz-flag-container');
+    
+    /* 🌟 НАША ИСПРАВЛЕННАЯ СВЕРХТОЧНАЯ ЗАЩИТА НЕПАЛА: */
+    if (currentFlagTarget.iso.toLowerCase() === 'np') {
+        flagContainerEl.style.backgroundColor = 'transparent';
+        flagImgEl.className = 'quiz-flag-img'; /* МАСШТАБ ВОЗВРАЩАЕМ: Теперь он не взорвет экран! */
+        flagImgEl.style.mixBlendMode = 'multiply'; /* Стирает белую коробку Википедии */
+        
+        /* ЮВЕЛИРНО УДАЛЯЕМ ЖЕСТКИЕ СЕРЫЕ КОНТУРЫ И ТЕНИ: */
+        flagImgEl.style.border = 'none';
+        flagImgEl.style.borderWidth = '0px';
+        flagImgEl.style.boxShadow = 'none';
+    } else {
+        flagContainerEl.style.backgroundColor = '#ffffff';
+        flagImgEl.className = 'quiz-flag-img';
+        flagImgEl.style.mixBlendMode = 'normal';
+        
+        /* СБРАСЫВАЕМ СТИЛИ В ДЕФОЛТ ДЛЯ ОСТАЛЬНЫХ СТРАН МИРА (ЯПОНИЯ, ВАТИКАН): */
+        flagImgEl.style.border = '';
+        flagImgEl.style.borderWidth = '';
+        flagImgEl.style.boxShadow = '';
+    }
+    
+    flagImgEl.src = highResUrl;
+
+
+
+
+    
+    let choices = [currentFlagTarget];
+    while(choices.length < 4) {
+        let rand = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
+        if(!choices.some(c => c.name === rand.name)) choices.push(rand);
+    }
+    shuffle(choices);
+    
+    const container = document.getElementById('quizFlagOptions');
+    container.innerHTML = '';
+    choices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `${c.name} <span style="font-weight:normal; font-size:13px; opacity:0.85;">(${c.capital})</span>`;
+        btn.onclick = () => checkFlagAnswer(btn, c.name);
+        container.appendChild(btn);
+    });
+    const bestFlag = localStorage.getItem('highScore_flags') || 0;
+    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
+}
+function checkFlagAnswer(selectedBtn, chosenName) {
+    document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => b.disabled = true);
+    
+    let isCorrect = (chosenName === currentFlagTarget.name);
+    
+    if (isCorrect) {
+        selectedBtn.classList.add('correct');
+        flagScore++;
+        // ЛИШНЕЕ УДВОЕНИЕ flagRound++ ОТСЮДА УБРАНО!
+    } else {
+        selectedBtn.classList.add('wrong');
+        document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
+            if(b.innerHTML.startsWith(currentFlagTarget.name)) b.classList.add('correct');
+        });
+    }
+    
+    // Проверяем и обновляем High Score в памяти телефона на лету
+    let bestFlag = localStorage.getItem('highScore_flags') || 0;
+    if (flagScore > parseInt(bestFlag)) {
+        localStorage.setItem('highScore_flags', flagScore);
+        bestFlag = flagScore;
+    }
+    
+    // Выводим статистику: Очки и Раунд остаются ТЕКУЩИМИ (не обнуляются раньше времени!)
+    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
+
+    // Переименовываем кнопку и взводим триггер сброса на единицу для следующего раунда
+    const nextBtn = document.getElementById('nextFlagBtn');
+    if (!isCorrect) {
+        nextBtn.textContent = 'Начать заново';
+        flagRound = 1; // В памяти ставим 1. При клике на кнопку сработает сброс очков
+    } else {
+        nextBtn.textContent = 'Следующий флаг';
+        flagRound++; // При успехе раунд мягко увеличивается строго на +1
+    }
+    
+    nextBtn.style.display = 'inline-block';
+}
+
+
+let capScore = 0, capRound = 1, currentCapTarget;
+function loadQuizCapitalRound() {
+    /* 🌟 ОБНУЛЯЕМ СЧЁТ СТРОГО ПРИ НАЖАТИИ «НАЧАТЬ ЗАНОВО» */
+    if (capRound === 1) {
+        capScore = 0;
+    }
+    
+    document.getElementById('nextCapitalBtn').style.display = 'none';
+    currentCapTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
+    document.getElementById('quizCapitalQuestionTarget').textContent = currentCapTarget.name;
+    
+    let choices = [currentCapTarget.capital];
+    while(choices.length < 4) {
+        let rand = allCountriesList[Math.floor(Math.random() * allCountriesList.length)].capital;
+        if(!choices.includes(rand)) choices.push(rand);
+    }
+    shuffle(choices);
+    
+    const container = document.getElementById('quizCapitalOptions');
+    container.innerHTML = '';
+    choices.forEach(capital => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = capital;
+        btn.onclick = () => checkCapitalAnswer(btn, capital);
+        container.appendChild(btn);
+    });
+    let bestCap = localStorage.getItem('highScore_capitals') || 0;
+    document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
+}
+function checkCapitalAnswer(selectedBtn, chosenCapital) {
+    document.querySelectorAll('#quizCapitalOptions .option-btn').forEach(b => b.disabled = true);
+    
+    let isCorrect = (chosenCapital === currentCapTarget.capital);
+    
+    if (isCorrect) {
+        selectedBtn.classList.add('correct');
+        capScore++;
+    } else {
+        selectedBtn.classList.add('wrong');
+        document.querySelectorAll('#quizCapitalOptions .option-btn').forEach(b => {
+            if(b.textContent === currentCapTarget.capital) b.classList.add('correct');
+        });
+    }
+    
+    let bestCap = localStorage.getItem('highScore_capitals') || 0;
+    if (capScore > parseInt(bestCap)) {
+        localStorage.setItem('highScore_capitals', capScore);
+        bestCap = capScore;
+    }
+    
+    // Показываем финальный счёт, на котором споткнулись
+    document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
+    
+    const nextBtn = document.getElementById('nextCapitalBtn');
+    if (!isCorrect) {
+        nextBtn.textContent = 'Начать заново';
+        capRound = 1; // Готовим сброс в 1 на следующий раунд
+    } else {
+        nextBtn.textContent = 'Следующий вопрос';
+        capRound++;
+    }
+    nextBtn.style.display = 'inline-block';
+}
+
+let countryScore = 0, countryRound = 1, currentCountryTarget;
+function loadQuizCountryRound() {
+    /* 🌟 ОБНУЛЯЕМ СЧЁТ СТРОГО ПРИ НАЖАТИИ «НАЧАТЬ ЗАНОВО» */
+    if (countryRound === 1) {
+        countryScore = 0;
+    }
+    
+    document.getElementById('nextCountryBtn').style.display = 'none';
+    currentCountryTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
+    document.getElementById('quizCountryQuestionTarget').textContent = currentCountryTarget.capital;
+    
+    let choices = [currentCountryTarget.name];
+    while(choices.length < 4) {
+        let rand = allCountriesList[Math.floor(Math.random() * allCountriesList.length)].name;
+        if(!choices.includes(rand)) choices.push(rand);
+    }
+    shuffle(choices);
+    
+    const container = document.getElementById('quizCountryOptions');
+    container.innerHTML = '';
+    choices.forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = name;
+        btn.onclick = () => checkCountryAnswer(btn, name);
+        container.appendChild(btn);
+    });
+    let bestCountry = localStorage.getItem('highScore_countries') || 0;
+    document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
+}
+function checkCountryAnswer(selectedBtn, chosenName) {
+    document.querySelectorAll('#quizCountryOptions .option-btn').forEach(b => b.disabled = true);
+    
+    let isCorrect = (chosenName === currentCountryTarget.name);
+    
+    if (isCorrect) {
+        selectedBtn.classList.add('correct');
+        countryScore++;
+    } else {
+        selectedBtn.classList.add('wrong');
+        document.querySelectorAll('#quizCountryOptions .option-btn').forEach(b => {
+            if(b.textContent === currentCountryTarget.name) b.classList.add('correct');
+        });
+    }
+    
+    let bestCountry = localStorage.getItem('highScore_countries') || 0;
+    if (countryScore > parseInt(bestCountry)) {
+        localStorage.setItem('highScore_countries', countryScore);
+        bestCountry = countryScore;
+    }
+    
+    // Показываем финальный счёт, на котором споткнулись
+    document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
+    
+    const nextBtn = document.getElementById('nextCountryBtn');
+    if (!isCorrect) {
+        nextBtn.textContent = 'Начать заново';
+        countryRound = 1; // Готовим сброс в 1 на следующий раунд
+    } else {
+        nextBtn.textContent = 'Следующий вопрос';
+        countryRound++;
+    }
+    nextBtn.style.display = 'inline-block';
+}
+
+
+function openFlagModal(imgSrc) {
+    const modal = document.getElementById('flagModal');
+    const modalImg = document.getElementById('flagModalImg');
+    modalImg.src = imgSrc;
+    
+    /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ НЕПАЛА */
+    if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg')) {
+        modalImg.style.setProperty('mix-blend-mode', 'multiply', 'important');
+    } else {
+        modalImg.style.setProperty('mix-blend-mode', 'normal', 'important');
+    }
+    
+    // Страхуемся в памяти и принудительно обнуляем все параметры подложек при каждом клике
+    modalImg.style.setProperty('background-color', 'transparent', 'important');
+    modalImg.style.setProperty('border', 'none', 'important');
+    modalImg.style.setProperty('box-shadow', 'none', 'important');
+    modalImg.style.setProperty('clip-path', 'none', 'important');
+    
+    // Замораживаем страницу от любых боковых сдвигов жестами в Safari
+    document.body.style.overflow = 'hidden';
+    
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('open'), 10);
+}
+
+
+
+function closeFlagModal() {
+    const modal = document.getElementById('flagModal');
+    modal.classList.remove('open');
+    
+    // Возвращаем мягкое листание обратно после закрытия окна
+    document.body.style.overflow = '';
+    
+    setTimeout(() => modal.style.display = 'none', 200);
+}
+</script>
+</body>
+</html>
