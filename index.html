@@ -484,7 +484,10 @@
             border-top: none !important;    /* Убираем верхние обводки */
             border-bottom: 1px solid var(--border-color) !important; /* ОСТАВЛЯЕМ ТОЛЬКО ЛИНИИ МЕЖДУ СТРАНАМИ */
      }
-
+     /* 🌟 НАМЕРТВО УБИРАЕМ ЛИНИЮ ПОД САМОЙ ПОСЛЕДНЕЙ СТРАНОЙ В ТАБЛИЦЕ: */
+     table tbody tr:last-child td {
+            border-bottom: none !important;
+     }
      
      .col-num, th.col-num {
             display: none !important;
