@@ -1124,7 +1124,16 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
 
-                <td><strong>${c.name}</strong>${subText}</td>
+                                /* 🌟 ДЕЛАЕМ НАЗВАНИЕ СТРАНЫ ИНТЕРАКТИВНОЙ КАРТОЙ: */
+                <td>
+                    <a href="https://google.com{encodeURIComponent(c.name)}" 
+                       target="_blank" 
+                       style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <strong>${c.name}</strong>
+                    </a>
+                    ${subText}
+                </td>
+
               <td>${c.capital}</td>
             </tr>`
         globalCounter++;
