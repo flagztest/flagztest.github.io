@@ -21,8 +21,10 @@
             color: var(--text-color);
             margin: 0;
             padding: 20px;
-            padding-top: 165px;
+            /* 🌟 МЫ УМЕНЬШИЛИ ЗАЗОР, ПРИЖАВ АФРИКУ ВПЛОТНУЮ К ПОИСКУ */
+            padding-top: 145px; 
         }
+
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -1233,7 +1235,7 @@ function toggleBlock(id) {
         if (content && content.style.display === 'block') {
             setTimeout(() => {
                 const header = block.querySelector('.continent-header');
-                const offset = 120; // Высота фиксированного меню в пикселях
+                const offset = 110; // Высота фиксированного меню в пикселях
                 
                 const elementPosition = header.getBoundingClientRect().top + window.scrollY;
                 const offsetPosition = elementPosition - offset;
