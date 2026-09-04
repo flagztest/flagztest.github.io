@@ -138,10 +138,14 @@
         .continent-block {
             background: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             margin-bottom: 15px;
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            /* 🌟 СТИРАЕМ СЕРЫЕ БОКОВЫЕ РАМКИ КОНТИНЕНТОВ ПО КРАЯМ ЭКРАНА: */
+            border-left: none !important;
+            border-right: none !important;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: none !important; /* Убрали лишние тени */
         }
         .continent-header {
             background-color: #f1f3f5;
@@ -423,7 +427,8 @@
      /* 1. Возвращаем монолитную жесткую сетку таблиц */
      /* 🌟 ОТОДВИГАЕМ ТЕКСТ ОТ КРАЕВ ЭКРАНА И СТИРАЕМ БОКОВЫЕ РАМКИ КАРТОЧКИ: */
      .continent-content {
-           padding: 0px 12px 8px 12px !important; /* Дали красивый воздух по бокам и снизу */
+           /* 🌟 ПРИЖАЛИ СЕТКУ ВЛЕВО: убрали боковые отступы (0px вместо 12px) */
+           padding: 0px 0px 8px 0px !important; 
            background-color: #ffffff !important;
      }
 
