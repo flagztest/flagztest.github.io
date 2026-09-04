@@ -1235,7 +1235,7 @@ function toggleBlock(id) {
         if (content && content.style.display === 'block') {
             setTimeout(() => {
                 const header = block.querySelector('.continent-header');
-                const offset = 125; // Высота фиксированного меню в пикселях
+                const offset = 115; // Высота фиксированного меню в пикселях
                 
                 const elementPosition = header.getBoundingClientRect().top + window.scrollY;
                 const offsetPosition = elementPosition - offset;
