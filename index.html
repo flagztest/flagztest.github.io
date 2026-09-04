@@ -421,14 +421,24 @@
 
 
      /* 1. Возвращаем монолитную жесткую сетку таблиц */
+     /* 🌟 ОТОДВИГАЕМ ТЕКСТ ОТ КРАЕВ ЭКРАНА И СТИРАЕМ БОКОВЫЕ РАМКИ КАРТОЧКИ: */
+     .continent-content {
+           padding: 0px 12px 8px 12px !important; /* Дали красивый воздух по бокам и снизу */
+           background-color: #ffffff !important;
+     }
+
+     /* 1. Возвращаем монолитную жесткую сетку таблиц */
      table {
            width: 100% !important;
            table-layout: fixed !important; 
            border-collapse: collapse !important;
+           border: none !important; /* 🌟 Полное удаление внешней рамки таблицы */
      }
      th {
            text-align: left !important;
+           border-bottom: 2px solid var(--border-color) !important;
      }
+
 
      /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
      .col-flag {
