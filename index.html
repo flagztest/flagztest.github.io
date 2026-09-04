@@ -35,17 +35,18 @@
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            /* 🌟 МЫ УЖАЛИ ВЕРТИКАЛЬНЫЕ ОТСТУПЫ ШАПКИ ДО 8 ПИКСЕЛЕЙ */
-            padding: 8px 16px; 
+            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
+            padding: 8px 16px 4px 16px; 
         }
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            /* 🌟 МЫ УПЛОТНИЛИ ЗАЗОР МЕЖДУ КНОПКАМИ И ПОИСКОМ ДО 6 ПИКСЕЛЕЙ */
-            gap: 6px; 
+            /* 🌟 Прижали инпут ближе к кнопкам меню для идеального баланса */
+            gap: 4px; 
         }
+
 
         .nav-tabs {
             display: flex;
