@@ -6,122 +6,63 @@
     <title>Страны, столицы и флаги мира</title>
     <style>
         :root {
-            --bg-color: #121212;         /* Глубокий матовый черный фон */
-            --panel-bg: #1c1c1e;         /* Матовый угольный цвет для карточек и шапки */
-            --border-color: rgba(255, 255, 255, 0.06); /* Едва заметные плоские разделители */
-            --text-color: #ffffff;       /* Кристально белый текст */
-            --text-muted: #8e8e93;       /* Спокойный серый цвет для подписей */
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --primary-color: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --panel-bg: #ffffff;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 16px;
-            padding-top: 155px; /* Идеальный отступ, чтобы Европа не залезала под шапку */
-            box-sizing: border-box;
+            padding: 20px;
+            padding-top: 165px;
         }
         .container {
-            max-width: 600px; /* Сужаем контейнер под мобильный формат приложения */
+            max-width: 1000px;
             margin: 0 auto;
         }
-        
-        /* 🌟 5. ШАПКА КАК В ЗАКРУГЛЕННОЙ РАМКЕ ПО КРАЯМ ПОИСКА */
         .fixed-header {
             position: fixed;
-            top: 10px;  /* Отступ сверху создает эффект парящей карточки */
-            left: 12px; /* Совпадает с боковыми границами контента */
-            right: 12px;
+            top: 0;
+            left: 0;
+            right: 0;
             background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px; /* Красивая закругленная общая рамка шапки */
-            padding: 12px 14px;
-            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             z-index: 1000;
+            padding: 15px 20px;
         }
         .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            width: 100%;
+            gap: 12px;
         }
-        
-        /* МЕНЮ: Плоская аккуратная флекс-лента */
         .nav-tabs {
             display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-            width: 100%;
-            gap: 6px;
-            box-sizing: border-box;
+            gap: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
         }
         .tab-btn {
-            flex: 1;
-            width: 0;
-            padding: 8px 0px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
-            background: transparent;
+            padding: 8px 16px;
+            background: none;
             border: none;
-            text-align: center;
-            white-space: nowrap;
-            border-radius: 8px;
-            transition: all 0.15s ease;
+            font-size: 15px;
+            font-weight: 600;
+            color: #6c757d;
             cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px;
         }
-        /* Активная вкладка просто горит белым прямоугольником с темным текстом */
         .tab-btn.active {
-            color: #1c1c1e !important;
-            background-color: #ffffff !important;
+            color: var(--primary-color);
+            background-color: #e7f1ff;
         }
-        /* 🌟 ЧЕТКИЙ ОТСТУП: НАМЕРТВО ОПУСКАЕТ ЕВРОПУ ИЗ-ПОД ПАРЯЩЕЙ ШАПКИ ДИСПЛЕЯ */
-        body {
-            padding-top: 160px !important; 
-        }
-
-        .controls-row { width: 100%; }
-        .search-box { width: 100%; position: relative; display: flex; }
-        
-        /* СТРОКА ПОИСКА: Абсолютно плоская матовая плашка без грубых рамок */
-        input[type="text"] {
-            width: 100%;
-            padding: 10px 14px;
-            padding-right: 35px;
-            background-color: rgba(255, 255, 255, 0.05); /* Легкий матовый прозрачный слой */
-            border: none !important;                      /* Стираем любые рамки обводки */
-            border-radius: 10px;
-            font-size: 16px; /* Железная защита от автозума в Safari на iPhone */
-            color: #ffffff;
-            box-sizing: border-box;
-        }
-        input[type="text"]:focus {
-            background-color: rgba(255, 255, 255, 0.08);
-            outline: none;
-        }
-        
-        /* 🌟 2. КАРТОЧКИ КОНТИНЕНТОВ В СТРОГОМ МАТОВОМ СТИЛЕ */
-        .continent-block {
-            background: var(--panel-bg);
-            border-radius: 16px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-        .continent-header {
-            padding: 14px 18px;
-            margin: 0;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 10px;
-            user-select: none;
-        }
-
         .controls-row {
             display: flex;
             gap: 15px;
@@ -407,103 +348,70 @@
             background-color: #000000;
         }
 @media (max-width: 600px) {
-     /* 🌟 МИНИМАЛИСТИЧНЫЙ КАРКАС ИДЕАЛЬНОЙ ШАПКИ ДИСПЛЕЯ */
-     .fixed-header {
-         position: fixed;
-         top: 0;
-         left: 0;
-         right: 0;
-         background-color: #1c1c1e !important; /* Строгий матовый угольный фон шапки */
-         box-shadow: none !important;          /* Намертво стираем любые громоздкие тени */
-         border-bottom: 1px solid rgba(255,255,255,0.06) !important; /* Едва заметный плоский разделитель */
-         padding: 12px 16px !important;        /* Жесткий боковой отступ 16px для всех элементов шапки */
-         box-sizing: border-box !important;
-         z-index: 1000;
-     }
-     
-     .header-content {
-         gap: 12px !important; /* Красивое фиксированное расстояние между кнопками и поиском */
-         width: 100% !important;
-         max-width: 100% !important;
-     }
-
-     /* МЕНЮ: Абсолютно плоская и ровная флекс-лента во всю ширину поиска */
+     /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок пиксель в пиксель по ширине поиска */
      .nav-tabs {
          border-bottom: none !important; 
          padding-bottom: 0px !important;
-         display: flex !important;
-         flex-direction: row !important;
-         flex-wrap: nowrap !important;
-         justify-content: space-between !important;
-         width: 100% !important;
-         gap: 6px !important; /* Минималистичный зазор между карточками кнопок */
+         display: grid !important;
+         grid-template-columns: repeat(4, 1fr) !important; /* Делим меню на 4 абсолютно равные доли */
+         width: 100% !important; /* Растягиваем ровно по ширине поисковой строки */
+         gap: 4px !important;    /* Компактные аккуратные зазоры между синими кнопками */
          box-sizing: border-box !important;
      }
      
-     /* КНОПКИ: Крупный шрифт, без рамок, без теней, текст строго в одну линию */
+     /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
      .tab-btn {
-         flex: 1 !important;          /* Флекс-магия: распределяет ширину кнопок идеально поровну */
-         width: 0 !important;
-         padding: 8px 0px !important; /* Обнулили боковые поля, чтобы убрать раздувание и вылеты за экран */
-         font-size: 15px !important;  /* ВАШ КРУПНЫЙ ШРИФТ ОСТАЕТСЯ В ОДНУ СТРОКУ */
+         width: 100% !important;
+         padding: 6px 0px !important; /* Намертво зануляем боковые поля, убирая раздувание Safari! */
+         font-size: 15px !important;  /* ВАШ КРУПНЫЙ ШРИФТ ОСТАЁТСЯ НЕИЗМЕННЫМ */
          font-weight: 600 !important;
-         color: #8e8e93 !important;   /* Спокойный серый цвет для неактивных вкладок */
-         background: transparent !important; /* Полная прозрачность базовых кнопок */
-         border: none !important;
          text-align: center !important;
-         white-space: nowrap !important; /* ЖЕСТКИЙ ЗАПРЕТ НА ПЕРЕНОС ТЕКСТА КНОПОК */
-         border-radius: 8px !important;  /* Аккуратное плоское скругление углов */
-         box-shadow: none !important;
-         transition: all 0.15s ease;
-     }
-     
-     /* АКТИВНАЯ КНОПКА: Выделяется только строгим матовым белым фоном и темными буквами */
-     .tab-btn.active {
-         color: #1c1c1e !important;
-         background-color: #ffffff !important; /* Белая плоская заливка активной вкладки */
-         box-shadow: none !important;
+         white-space: nowrap !important; /* СТРОГИЙ ЗАПРЕТ НА ПЕРЕНОС СЛОВ */
+         overflow: visible !important;
+         box-sizing: border-box !important;
      }
 
-     .controls-row {
-          gap: 0px !important;
-          width: 100% !important;
-     }
-     .search-box {
-          width: 100% !important;
-          max-width: 100% !important;
-     }
-
-     /* СТРОКА ПОИСКА: Плоская матовая плашка без грубых контуров */
-     input[type="text"] {
-          width: 100% !important;
-          padding: 10px 14px !important; 
-          padding-right: 35px !important;
-          background-color: rgba(255,255,255,0.06) !important; /* Легкая прозрачная подложка инпута */
-          border: none !important;       /* Полное отсутствие обводящих рамок */
-          border-radius: 10px !important; /* Скругление идеально сочетается с кнопками меню */
-          font-size: 16px !important;    /* Защита от автозума Safari */
-          color: #ffffff !important;
-          box-shadow: none !important;
-          box-sizing: border-box !important;
-     }
-     input[type="text"]:focus {
-          background-color: rgba(255,255,255,0.1) !important; /* Микро-подсветка при вводе букв */
-     }
      .clear-search-btn {
-          right: 12px !important;
-          color: #8e8e93 !important;
-     }
-
-     /* 📋 ТАБЛИЦЫ БАЗЫ СТРАН: Выравнивание и адаптация под матовый стиль */
-     body {
-          background-color: #121212 !important; 
-          color: #ffffff !important;
-          padding: 10px 8px !important;
-          /* 🌟 ЖЕЛЕЗНЫЙ ОТСТУП НА СТАРТЕ САЙТА: СВОБОДНО ОПУСКАЕТ ЕВРОПУ ИЗ-ПОД ШАПКИ */
-          padding-top: 185px !important; 
-     }
-
+         right: 15px !important;
+     } 
      
+     /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
+     .fixed-header {
+         padding: 6px 12px !important; 
+         box-sizing: border-box !important;
+     }
+
+     .header-content {
+         gap: 2px !important; /* Прижали поиск к вкладкам */
+     }
+     body {
+         padding: 10px 4px !important;
+         padding-top: 135px !important; /* Идеальный отступ под новую тонкую шапку */
+     }
+     .controls-row {
+          gap: 8px !important;
+     }
+     input[type="text"] {
+          padding: 6px 10px !important; 
+          font-size: 16px !important; /* ЖЕЛЕЗНЫЙ БЛОК АВТОЗУМА: Safari больше не сдвинет экран! */
+     }
+
+            .flag-wrapper {
+           height: 44px !important;
+           width: auto !important;
+           display: inline-flex !important;
+           align-items: center !important;
+           justify-content: center !important; /* Центрирует флаг внутри его ячейки */
+     }
+
+     .flag-img {
+           height: 100% !important;
+           width: auto !important;
+           object-fit: contain !important;
+     }
+
+
+     /* 1. Возвращаем монолитную жесткую сетку таблиц */
      table {
            width: 100% !important;
            table-layout: fixed !important; 
@@ -511,94 +419,104 @@
      }
      th {
            text-align: left !important;
-           background-color: transparent !important;
-           color: #8e8e93 !important;
-           font-size: 13px !important;
-           text-transform: uppercase !important;
-           letter-spacing: 0.5px !important;
-           border-bottom: 1px solid rgba(255,255,255,0.08) !important;
      }
 
+     /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
      .col-flag {
             width: 85px !important;        
             padding: 10px 0px !important;   
      }
+     /* Отдельно центрируем заголовок «Флаг» в шапке таблицы */
      th.col-flag {
             text-align: center !important;
      }
+     
      td:nth-child(2) {
             width: 48% !important;         
-            padding-left: 15px !important; /* Четкий отступ текста страны от флага */
+            padding-left: 15px !important; /* Родной отступ ткани флага от букв страны */
             padding-right: 5px !important;
      }
+     /* Выравниваем заголовок «Страна» строго по первой букве названий стран */
      th:nth-child(3) {
             text-align: left !important;
-            padding-left: 15px !important; /* Заголовок страны стоит строго на оси букв */
+            padding-left: 15px !important; /* Жестко повторяем отступ 15px, чтобы буквы встали по линеечке! */
      }
+
      td:nth-child(3) {
-            width: 32% !important;         
+            width: 32% !important;         /* Столица заперта в границах и не вылетает */
             padding-left: 5px !important;
      }
      th, td {
-            padding: 12px 2px !important;
+            padding: 10px 2px !important;
             vertical-align: middle !important;
+            /* Наш щит автопереноса длинных слов */
             white-space: normal !important;
             word-wrap: break-word !important;
-            border-bottom: 1px solid rgba(255,255,255,0.04) !important; /* Тончайшие нити разделения строк */
+            overflow-wrap: break-word !important;
      }
      
      .col-num, th.col-num {
             display: none !important;
      }
      td {
-            color: #ffffff !important;
-            font-size: 14.5px !important;
+            text-align: left !important;
+            font-size: 14px !important;
      }
 
-     /* КОНТЕЙНЕРЫ ФЛАГОВ ДЛЯ ЧЕСТНЫХ ПРОПОРЦИЙ */
+     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Честные пропорции, одинаковая высота */
      .flag-wrapper {
-           width: 85px !important;         
-           height: 44px !important;        
+           width: 85px !important;         /* Стандартный контейнер */
+           height: 44px !important;        /* Фиксированная высота для идеального масштаба всего ряда */
            display: inline-flex !important;
            align-items: center !important;
            justify-content: center !important; 
      }
      .flag-img {
-           height: 100% !important;        
-           width: auto !important;         
-           object-fit: contain !important; 
-           border-radius: 4px !important;  /* Легкое аккуратное скругление ткани флага */
-           box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important; /* Мягкое отделение от черного фона */
-           border: 1px solid rgba(255,255,255,0.08) !important;
+           height: 100% !important;        /* Картинка заполняет рамку строго по высоте */
+           width: auto !important;         /* Ширина пропорционально растягивается сама */
+           object-fit: contain !important; /* Сохраняет истинные пропорции без белых полей */
+           border-radius: 2px !important;
      }
+
+     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
+     /* Освобождаем Катар от ограничений и разрешаем ему вытянуться вправо поверх отступа страны */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
-           max-width: none !important;     
-           width: 115px !important;        
+           max-width: none !important;     /* Снимаем блокировку Википедии */
+           width: 115px !important;        /* Вытягиваем его во всю законную супер-длину */
            object-fit: fill !important;
      }
 
-     /* НЕПАЛ: Чистый треугольник без каких-либо мультипликаций, рамка стёрта в CSS */
+     /* КВИЗЫ: Положение на мобильном */
+     .view-section:not(#dbView) {
+         padding-top: 0px !important;
+         margin-top: -40px !important; 
+     }
+     .quiz-panel {
+         padding: 10px !important;
+         margin: 0px auto !important;
+     }
+
+           /* 🌟 ИЗОЛИРОВАННЫЙ МОБИЛЬНЫЙ ЩИТ ДЛЯ НЕПАЛА (В базе и в квизе): */
      tr[data-name*="непал"] .flag-wrapper, 
-     tr[data-name*="непал"] .flag-img {
-           mix-blend-mode: normal !important; 
+     tr[data-name*="непал"] .flag-img,
+     .quiz-flag-img[alt*="Непал"], .quiz-flag-img[src*="NP.svg"], .quiz-flag-img[src*="np.svg"] {
+           mix-blend-mode: multiply !important; 
            border: none !important;
            border-width: 0px !important;
+           border-style: none !important;
            box-shadow: none !important;
      }
 
-     /* КВИЗЫ ДЛЯ МОБИЛЬНОГО ЭКРАНА */
+     /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
          padding-top: 0px !important;
-         margin-top: -30px !important; 
+         margin-top: -40px !important; 
      }
      .quiz-panel {
-         background-color: #1c1c1e !important; /* Игровые карточки такого же матового цвета, как шапка */
-         border: 1px solid rgba(255,255,255,0.06) !important;
-         border-radius: 16px !important;
-         padding: 20px 16px !important;
+         padding: 10px !important;
          margin: 0px auto !important;
-         box-shadow: none !important;
      }
+
      .quiz-flag-container {
          height: 100px !important;       
          width: auto !important;          
@@ -609,42 +527,70 @@
      .quiz-flag-img {
          height: 100px !important;        
          width: auto !important;          
-         border-radius: 8px !important;
-         border: 1px solid rgba(255,255,255,0.1) !important;
-         box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
      }
-     .quiz-flag-img[src*="NP.svg"], .quiz-flag-img[src*="np.svg"] {
-         border: none !important;
-         box-shadow: none !important;
-     }
+
      .option-btn {
-         padding: 12px 16px !important;
-         font-size: 15.5px !important;
-         background-color: rgba(255,255,255,0.04) !important;
-         border: 1px solid rgba(255,255,255,0.08) !important;
-         color: #ffffff !important;
-         border-radius: 12px !important;
-         box-shadow: none !important;
+         padding: 10px 15px !important;
+         font-size: 15px !important;
      }
-     .option-btn.correct {
-         background-color: #34c759 !important; /* Чистый плоский зеленый iOS-цвет */
-         border-color: #34c759 !important;
-         box-shadow: none !important;
-     }
-     .option-btn.wrong {
-         background-color: #ff3b30 !important; /* Чистый плоский красный iOS-цвет */
-         border-color: #ff3b30 !important;
-         box-shadow: none !important;
-     }
+
+/* 🌟 ГРАФИТОВЫЙ МОБИЛЬНЫЙ ЩИТ С ЗАЩИТОЙ ТЕМНЫХ ПОЛОС */
+.flag-modal {
+    position: fixed;
+    top: -5px !important;    
+    left: -5px !important;
+    right: -5px !important;
+    bottom: -5px !important;
+    background-color: #1a1a1a !important; /* Насыщенный темно-серый цвет разделяет темные полосы флагов */
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    z-index: 9999 !important; 
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    cursor: pointer;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+.flag-modal.open {
+    display: flex !important;
+    opacity: 1 !important;
+}
+/* 🌟 МОБИЛЬНАЯ КАРТИНКА: ТОТАЛЬНОЕ ОБНУЛЕНИЕ ВСЕХ КОНТУРОВ И ТЕНЕЙ SAFARI */
+.flag-modal-img {
+    max-width: 95% !important;
+    max-height: 75% !important;
+    object-fit: contain !important;
+    outline: none !important;
+    transform: scale(0.95);
+    transition: transform 0.2s ease-in-out;
+    background-color: transparent !important;
+    
+    /* НАМЕРТВО СТИРАЕМ ЛЮБЫЕ ГРАНИЦЫ, РАМКИ, ТЕНИ И СВЕЧЕНИЯ: */
+    border: none !important;
+    border-width: 0px !important;
+    border-style: none !important;
+    box-shadow: none !important;
+}
+
+.flag-modal.open .flag-modal-img {
+    transform: scale(1) !important;
+}
+
+     /* ВСТАВЛЯЕМ СЮДА: Делаем шрифт рекордов компактным на экранах Айфонов */
      .quiz-stats {
-         font-size: 13.5px !important;
+         font-size: 14px !important;
          font-weight: 600 !important;
-         color: #8e8e93 !important;
-         border-top: 1px solid rgba(255,255,255,0.06) !important;
-         padding-top: 14px !important;
+         color: #495057 !important;
+         letter-spacing: 0.3px !important;
      }
-}     /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
-  
+
+} /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
+
+
+    
+     
     </style>
 </head>
 <body>
@@ -1270,8 +1216,7 @@ function toggleBlock(id) {
         if (content && content.style.display === 'block') {
             setTimeout(() => {
                 const header = block.querySelector('.continent-header');
-                const offset = 175; // 🌟 ЗАЩИТНЫЙ ОТСТУП: Оставляет развернутый континент строго видимым под шапкой
-
+                const offset = 120; // Высота фиксированного меню в пикселях
                 
                 const elementPosition = header.getBoundingClientRect().top + window.scrollY;
                 const offsetPosition = elementPosition - offset;
