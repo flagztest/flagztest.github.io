@@ -37,21 +37,19 @@
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            /* 🌟 МАКСИМАЛЬНЫЙ МИНИМАЛИЗМ: сверху 8px, снизу под поиском ровно 0px */
-            padding: 8px 16px 0px 16px; 
-            box-sizing: border-box;
+            /* 🌟 ПРИЖАЛИ ГРАНИЦУ: Снизу поставили 0, чтобы шапка кончалась сразу по рамке поиска */
+            padding: 8px 16px 0px 16px !important; 
+            box-sizing: border-box !important;
         }
-
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            /* 🌟 Прижали инпут ближе к кнопкам меню для идеального баланса */
             gap: 4px; 
+            padding: 0 !important;
+            margin-bottom: 0 !important;
         }
-
-
         .nav-tabs {
             display: flex;
             gap: 10px;
