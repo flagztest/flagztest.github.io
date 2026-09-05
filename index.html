@@ -437,14 +437,12 @@
            background-color: #ffffff !important;
      }
 
-     /* 1. Возвращаем монолитную жесткую сетку таблиц во весь экран */
+     /* 1. Возвращаем монолитную жесткую сетку таблиц от края до края экрана */
      table {
            width: 100% !important; 
            table-layout: fixed !important; 
            border-collapse: collapse !important;
            border: none !important; 
-           /* 🌟 ЗАЗОР ДЛЯ КАТАРА: мягко отодвинули ряды на 12px вправо, проявив его левую рамку */
-           padding-left: 12px !important;
            box-sizing: border-box !important;
      }
 
@@ -453,11 +451,12 @@
            border-bottom: 2px solid var(--border-color) !important;
      }
 
-     /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
+     /* 2. ЮВЕЛИРНЫЙ МОБИЛЬНЫЙ БАЛАНС: Колонки и отступы безопасности */
      .col-flag {
-            /* 🌟 ВЕРНУЛИ ПРЕЖНИЙ КРУПНЫЙ РАЗМЕР: ячейка снова широкая и просторная */
-            width: 85px !important;        
-            padding: 10px 0px !important;   
+            /* 🌟 РАМКА ВОЗВРАЩАЕТСЯ: Расширили ячейку до 94px и дали padding-left 12px. */
+            /* Это создаст зазор от закругленного стекла телефона строго для флагов! */
+            width: 94px !important;        
+            padding: 10px 0px 10px 12px !important;   
             box-sizing: border-box !important;
      }
 
@@ -466,9 +465,9 @@
      }
      
      td:nth-child(2) {
-            /* 🌟 СПАСАЕМ ВЕЛИКОБРИТАНИЮ: даём текстовому полю 48%, буква "я" встанет ровно в строку */
+            /* 🌟 СПАСАЕМ ВЕЛИКОБРИТАНИЮ: вернули широкие доли, буква "я" встанет ровно в строку! */
             width: 48% !important;         
-            padding-left: 15px !important; /* Красивый отпуск ткани флага от букв страны */
+            padding-left: 15px !important; /* Отступ названий стран от флагов */
             padding-right: 5px !important;
      }
 
@@ -507,10 +506,10 @@
             font-size: 14px !important;
      }
 
-     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Сочный крупный вид без белых полос */
+     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Крупный вид без белых полей */
      .flag-wrapper {
            width: 85px !important;         
-           height: 44px !important; /* Вернули крупную высоту флагов */
+           height: 44px !important; 
            display: inline-flex !important;
            align-items: center !important;
            justify-content: center !important; 
@@ -520,7 +519,6 @@
      .flag-img {
            height: 100% !important;        
            width: auto !important;         
-           /* 🌟 СТИРАЕМ БЕЛИЗНУ НАМЕРТВО: contain возвращает флагам их чистые природные пропорции */
            object-fit: contain !important; 
            border-radius: 2px !important;
            box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
@@ -528,17 +526,15 @@
            box-sizing: border-box !important;
      }
 
-     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: ВЫРАВНИВАНИЕ И ЗАЩИТА ТЕКСТА */
+     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: СТАТУС САМОГО ДЛИННОГО ФЛАГА БЕЗ НАЕЗДОВ */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           /* 🌟 ВСТАЛ ПО ЛИНЕЕЧКЕ КАЗАХСТАНА: вернули нулевые маргины слева и справа */
-           margin-left: 0px !important;    
-           margin-right: 0px !important;   
-           /* 🌟 САМЫЙ ДЛИННЫЙ И БЕЗОПАСНЫЙ: 114px — максимум длины без наезда на имя страны */
-           width: 114px !important;        
+           /* 🌟 ОПТИМАЛЬНАЯ ДЛИНА: 108px — на 23 пикселя длиннее остальных, рамка горит, текст чист! */
+           width: 108px !important;        
            height: 42px !important; 
            object-fit: fill !important; 
      }
+
 
 
      /* КВИЗЫ: Положение на мобильном */
