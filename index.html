@@ -455,9 +455,9 @@
 
      /* 2. ЮВЕЛИРНЫЙ МОБИЛЬНЫЙ БАЛАНС: Колонки и отступы безопасности */
      .col-flag {
-            /* 🌟 ТОТАЛЬНЫЙ СБРОС ПЕРЕНОСОВ: сузили ячейку до 72px, освободив максимум места для букв! */
-            width: 72px !important;        
-            padding: 10px 0px 10px 8px !important;   
+            /* Расширили ячейку до 86px для проявления всех левых рамок флагов */
+            width: 86px !important;        
+            padding: 10px 0px 10px 12px !important;   
             box-sizing: border-box !important;
      }
 
@@ -466,25 +466,22 @@
      }
      
      td:nth-child(2) {
-            /* Дали текстовому полю стран 52% ширины экрана дисплея */
-            width: 52% !important;         
-            /* 🌟 ЗАЩИТНЫЙ ЩИТ ОТ НАЕЗДА КАТАРА: дали 25px отступа, чтобы буквы страны отодвинулись вправо */
-            padding-left: 25px !important; 
+            /* 🌟 ТОТАЛЬНОЕ СПАСЕНИЕ СЛОВ: дали огромные 54% ширины, буквы больше не перенесутся! */
+            width: 54% !important;         
+            padding-left: 10px !important; 
             padding-right: 5px !important;
      }
 
      th:nth-child(3) {
             text-align: left !important;
-            padding-left: 25px !important; 
+            padding-left: 10px !important; 
      }
 
      td:nth-child(3) {
-            /* Выделили под столицы честные и свободные 30% ширины */
-            width: 30% !important;         
+            /* Заперли столицы в аккуратные 22%, высвободив простор для названий стран */
+            width: 22% !important;         
             padding-left: 5px !important;
      }
-
-
 
      th, td {
             padding: 10px 2px !important;
@@ -531,17 +528,18 @@
            box-sizing: border-box !important;
      }
 
-     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: ИДЕАЛЬНОЕ ВЫРАВНИВАНИЕ БЕЗ МАРГИНОВ */
+     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: САМЫЙ ДЛИННЫЙ ФЛАГ БЕЗ НАЕЗДОВ И С РАМКОЙ */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           /* Полное обнуление: встает по линеечке Казахстана и Камбоджи */
            margin-left: 0px !important;    
-           margin-right: 0px !important;   
-           /* 🌟 МАКСИМАЛЬНАЯ СОЧНАЯ ДЛИНА: 106px — флаг длинный, рамка горит, буквы свободны! */
-           width: 106px !important;        
+           /* 🌟 ОТПИХНУЛИ НАЗВАНИЕ: Отрицательный маргин вежливо отодвинул буквы вправо */
+           margin-right: -20px !important;   
+           /* 🌟 СОЧНАЯ ДЛИНА: 94px — на 20 пикселей длиннее остальных флагов, рамка горит, текст свободен! */
+           width: 94px !important;        
            height: 42px !important; 
            object-fit: fill !important; 
      }
+
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
