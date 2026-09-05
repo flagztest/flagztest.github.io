@@ -426,16 +426,14 @@
 
 
      .continent-content {
-           /* 🌟 ЗАЩИТНЫЙ ОТСТУП: Проявляет левый контур Катара, не сдвигая шапку */
-           padding: 0px 0px 8px 6px !important; 
+           /* 🌟 ЛИНИИ И ШАПКА СПАСЕНЫ: убрали отступы контента, вернув линии от края до края */
+           padding: 0px 0px 8px 0px !important; 
            background-color: #ffffff !important;
      }
 
-
-
      /* 1. Возвращаем монолитную жесткую сетку таблиц */
      table {
-           width: 100% !important; /* Вернули растяжение во всю ширину экрана */
+           width: 100% !important; 
            table-layout: fixed !important; 
            border-collapse: collapse !important;
            border: none !important; 
@@ -446,16 +444,14 @@
            border-bottom: 2px solid var(--border-color) !important;
      }
 
-
      /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
      .col-flag {
-            /* 🌟 ТЕКСТ СПАСЕН: вернули компактную ширину, буква "я" встанет на место */
-            width: 80px !important;        
-            padding: 10px 0px !important;   
+            /* 🌟 ЮВЕЛИРНЫЙ БАЛАНС: Растянули ячейку до 94px и дали padding-left 12px. */
+            /* Это отодвинет только флаги от стекла телефона, проявив рамку Катара! */
+            width: 94px !important;        
+            padding: 10px 0px 10px 12px !important;   
             box-sizing: border-box !important;
      }
-
-
 
      /* Отдельно центрируем заголовок «Флаг» в шапке таблицы */
      th.col-flag {
@@ -528,11 +524,10 @@
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           /* 🌟 СБАЛАНСИРОВАЛИ ДЛИНУ: 105px — рамка на экране, и на текст больше не наезжает! */
            width: 105px !important;        
-           object-fit: fill !important;
+           /* 🌟 СТЕРЛИ БЕЛЫЕ ПОЛОСЫ: вернули contain, чтобы флаги отображались чисто */
+           object-fit: contain !important; 
      }
-
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
