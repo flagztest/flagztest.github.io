@@ -531,11 +531,14 @@
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           width: 105px !important; /* Вытягиваем его во всю законную супер-длину */
-           height: 44px !important;
-           /* 🌟 УБРАЛИ FILL: ставим contain, чтобы стереть белые полосы сверху и снизу ткани флага */
-           object-fit: contain !important; 
+           /* 🌟 ПОЛНЫЙ ВЫХОД РАМКИ: сделали 100px, чтобы левый контур Катара вышел на экран дисплея */
+           width: 100% !important;
+           max-width: 100px !important;
+           /* 🌟 УНИЧТОЖАЕМ БЕЛЫЕ ПОЛЯ: подогнали высоту под 42px и натянули ткань без зазоров */
+           height: 42px !important; 
+           object-fit: fill !important; 
      }
+
 
 
      /* КВИЗЫ: Положение на мобильном */
