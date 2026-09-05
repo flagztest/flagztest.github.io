@@ -530,14 +530,18 @@
            box-sizing: border-box !important;
      }
 
-     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: СТАТУС САМОГО ДЛИННОГО ФЛАГА БЕЗ НАЕЗДОВ */
+     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: ВЫРАВНИВАНИЕ И ЗАЩИТА ТЕКСТА */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           /* 🌟 ОПТИМАЛЬНАЯ ДЛИНА: 108px — на 23 пикселя длиннее остальных, рамка горит, текст чист! */
-           width: 108px !important;        
+           /* 🌟 ВСТАЛ ПО ЛИНЕЕЧКЕ КАЗАХСТАНА: вернули нулевые маргины слева и справа */
+           margin-left: 0px !important;    
+           margin-right: 0px !important;   
+           /* 🌟 САМЫЙ ДЛИННЫЙ И БЕЗОПАСНЫЙ: 114px — максимум длины без наезда на имя страны */
+           width: 114px !important;        
            height: 42px !important; 
            object-fit: fill !important; 
      }
+
 
 
 
