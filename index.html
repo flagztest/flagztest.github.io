@@ -505,11 +505,16 @@
            justify-content: center !important; 
      }
      .flag-img {
-           height: 100% !important;        /* Картинка заполняет рамку строго по высоте */
-           width: auto !important;         /* Ширина пропорционально растягивается сама */
-           object-fit: contain !important; /* Сохраняет истинные пропорции без белых полей */
+           height: 100% !important;        
+           width: auto !important;         
+           object-fit: contain !important; 
            border-radius: 2px !important;
+           
+           /* 🌟 ВЕРНУЛИ ЛЕВУЮ РАМКУ КАТАРУ БЕЗ СДВИГА ТАБЛИЦЫ И БУКВ: */
+           margin-left: 1px !important;
+           border-left: 1px solid rgba(0,0,0,0.08) !important; /* Проявили левый контур */
      }
+
 
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
      /* Освобождаем Катар от ограничений и разрешаем ему вытянуться вправо поверх отступа страны */
