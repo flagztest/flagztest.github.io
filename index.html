@@ -670,7 +670,7 @@
     </style>
 </head>
 <body>
-<!-- 🦖 СТИЛЬНАЯ МИНИМАЛИСТИЧНАЯ ЗАСТАВКА (SPLASH SCREEN) С ГОДЗИЛЛОЙ -->
+<!-- 🦖 КИНЕМАТОГРАФИЧНАЯ ЗАСТАВКА (SPLASH SCREEN): УВЕЛИЧЕННАЯ И СВЕРХПЛАВНАЯ -->
 <div id="splashScreen" style="
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -680,15 +680,16 @@
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    transition: opacity 0.5s ease-in-out, visibility 0.5s;
+    /* 🌟 СВЕРХПЛАВНОЕ ЗАТУХАНИЕ: растянули время до 1.2 секунды с мягким графиком кубического Безье */
+    transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
 ">
     <img src="favicon.png" alt="Loading..." style="
-        width: 140px;
-        height: 140px;
+        /* 🌟 МАСШТАБ КРУПНЕЕ: увеличили динозавра со 140px до сочных 220px */
+        width: 220px;
+        height: 220px;
         object-fit: contain;
     ">
 </div>
-
 
 <div class="fixed-header">
     <div class="header-content">
@@ -751,17 +752,19 @@
 
 
 <script>
-// 🌟 АВТОМАТИЧЕСКОЕ ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ ЗАСТАВКИ
+// 🌟 АВТОМАТИЧЕСКОЕ ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ ЗАСТАВКИ (КИНЕМАТОГРАФИЧНЫЙ ТАЙМЕР)
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const splash = document.getElementById('splashScreen');
         if (splash) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
-            setTimeout(() => splash.remove(), 500); // Полностью удаляем из памяти телефона
+            /* 🌟 Увеличили задержку до 1200ms, чтобы деструкция из DOM совпала с новой длинной анимацией CSS */
+            setTimeout(() => splash.remove(), 1200); 
         }
-    }, 1200); // 1.2 секунды Годзилла гордо красуется на экране дисплея
+    }, 1600); // 🌟 УВЕЛИЧИЛИ ВРЕМЯ ПОКАЗА: теперь Годзилла гордо стоит на экране 1.6 секунды
 });
+
 const specialFlags = {
     "prid": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Transnistria_%28state%29.svg",
     "abh": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Flag_of_the_Republic_of_Abkhazia.svg",
