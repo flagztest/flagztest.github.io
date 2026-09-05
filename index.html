@@ -455,9 +455,8 @@
 
      /* 2. ЮВЕЛИРНЫЙ МОБИЛЬНЫЙ БАЛАНС: Колонки и отступы безопасности */
      .col-flag {
-            /* 🌟 РАМКА ВОЗВРАЩАЕТСЯ: Расширили ячейку до 94px и дали padding-left 12px. */
-            /* Это создаст зазор от закругленного стекла телефона строго для флагов! */
-            width: 94px !important;        
+            /* 🌟 ФИЗИЧЕСКАЯ ЗАЩИТА: Расширили ячейку до 116px, дав Катару максимум простора без наездов! */
+            width: 116px !important;        
             padding: 10px 0px 10px 12px !important;   
             box-sizing: border-box !important;
      }
@@ -467,24 +466,22 @@
      }
      
      td:nth-child(2) {
-            /* 🌟 УЛЬТИМАТИВНОЕ РАСШИРЕНИЕ: дали 56% ширины и уплотнили отступ до 6px, */
-            /* чтобы Великобритания и Экваториальная Гвинея НАВСЕГДА встали в одну строку! */
+            /* 🌟 СТРОКА ТЕКСТА ОСТАЁТСЯ ШИРОКОЙ: 56% по-прежнему оберегают Великобританию */
             width: 56% !important;         
-            padding-left: 6px !important; 
+            padding-left: 15px !important; 
             padding-right: 5px !important;
      }
 
      th:nth-child(3) {
             text-align: left !important;
-            padding-left: 6px !important; 
+            padding-left: 15px !important; 
      }
 
      td:nth-child(3) {
-            /* Оптимизировали ширину столиц, отдав свободную площадь названиям стран */
-            width: 24% !important;         
+            /* Чуть уплотнили столицы, отдав свободное место под ширину ячейки флага Катара */
+            width: 20% !important;         
             padding-left: 5px !important;
      }
-
 
 
      th, td {
@@ -532,16 +529,18 @@
            box-sizing: border-box !important;
      }
 
-     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: ИДЕАЛЬНЫЙ ВЫХОД ИЗ НАЕЗДА НА ТЕКСТ */
+     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: ИДЕАЛЬНОЕ ВЫРАВНИВАНИЕ БЕЗ МАРГИНОВ */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
+           /* Полное обнуление: встает по линеечке Казахстана и Камбоджи */
            margin-left: 0px !important;    
-           /* 🌟 ТОТАЛЬНОЕ ОТОДВИГАНИЕ БУКВ: увеличили margin-right до -38px, чтобы полностью убрать наезд флага! */
-           margin-right: -38px !important;   
-           width: 102px !important;        
+           margin-right: 0px !important;   
+           /* 🌟 МАКСИМАЛЬНАЯ СОЧНАЯ ДЛИНА: 106px — флаг длинный, рамка горит, буквы свободны! */
+           width: 106px !important;        
            height: 42px !important; 
            object-fit: fill !important; 
      }
+
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
          padding-top: 0px !important;
