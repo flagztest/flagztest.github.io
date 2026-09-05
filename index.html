@@ -1645,30 +1645,39 @@ function openFlagModal(imgSrc) {
         modalImg.style.setProperty('mix-blend-mode', 'normal', 'important');
     }
     
-    // Страхуемся в памяти и принудительно обнуляем все параметры подложек при каждом клике
     modalImg.style.setProperty('background-color', 'transparent', 'important');
     modalImg.style.setProperty('border', 'none', 'important');
     modalImg.style.setProperty('box-shadow', 'none', 'important');
     modalImg.style.setProperty('clip-path', 'none', 'important');
     
-    // Замораживаем страницу от любых боковых сдвигов жестами в Safari
     document.body.style.overflow = 'hidden';
     
     modal.style.display = 'flex';
-    setTimeout(() => modal.classList.add('open'), 10);
+    setTimeout(() => {
+        modal.classList.add('open');
+        /* 🌟 СКРЫВАЕМ ОСНОВНОЙ КОНТЕНТ: прячем шапку и списки, чтобы они не просвечивали в панели Safari */
+        const header = document.querySelector('.fixed-header');
+        const container = document.querySelector('.container');
+        if (header) header.style.setProperty('display', 'none', 'important');
+        if (container) container.style.setProperty('display', 'none', 'important');
+    }, 10);
 }
-
-
 
 function closeFlagModal() {
     const modal = document.getElementById('flagModal');
     modal.classList.remove('open');
     
-    // Возвращаем мягкое листание обратно после закрытия окна
     document.body.style.overflow = '';
+    
+    /* 🌟 ВОЗВРАЩАЕМ КОНТЕНТ НА МЕСТО: мгновенно проявляем шапку и списки обратно */
+    const header = document.querySelector('.fixed-header');
+    const container = document.querySelector('.container');
+    if (header) header.style.setProperty('display', 'block', 'important');
+    if (container) container.style.setProperty('display', 'block', 'important');
     
     setTimeout(() => modal.style.display = 'none', 200);
 }
+
 </script>
 </body>
 </html>
