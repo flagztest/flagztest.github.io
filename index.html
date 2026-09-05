@@ -431,12 +431,15 @@
            background-color: #ffffff !important;
      }
 
-     /* 1. Возвращаем монолитную жесткую сетку таблиц */
+     /* 1. Возвращаем монолитную жесткую сетку таблиц с зазором для рамок флагов */
      table {
            width: 100% !important; 
            table-layout: fixed !important; 
            border-collapse: collapse !important;
-           border: none !important; 
+           border: none !important;
+           /* 🌟 ЮВЕЛИРНЫЙ СДВИГ: открывает левые рамки Катара и Казахстана на закругленных экранах */
+           padding-left: 8px !important; 
+           box-sizing: border-box !important;
      }
 
      th {
@@ -444,35 +447,33 @@
            border-bottom: 2px solid var(--border-color) !important;
      }
 
-     /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
+     /* 2. Задаем строгие mobile доли колонок */
      .col-flag {
-            /* 🌟 ЮВЕЛИРНЫЙ БАЛАНС: Растянули ячейку до 94px и дали padding-left 12px. */
-            /* Это отодвинет только флаги от стекла телефона, проявив рамку Катара! */
-            width: 94px !important;        
-            padding: 10px 0px 10px 12px !important;   
+            width: 85px !important; /* 🌟 ЖЕСТКАЯ ШИРИНА: спасает Великобританию от переноса букв */
+            padding: 10px 0px !important;   
             box-sizing: border-box !important;
      }
 
-     /* Отдельно центрируем заголовок «Флаг» в шапке таблицы */
      th.col-flag {
             text-align: center !important;
      }
      
      td:nth-child(2) {
             width: 48% !important;         
-            padding-left: 15px !important; /* Родной отступ ткани флага от букв страны */
+            padding-left: 8px !important; 
             padding-right: 5px !important;
      }
-     /* Выравниваем заголовок «Страна» строго по первой букве названий стран */
+
      th:nth-child(3) {
             text-align: left !important;
-            padding-left: 15px !important; /* Жестко повторяем отступ 15px, чтобы буквы встали по линеечке! */
+            padding-left: 8px !important; 
      }
 
      td:nth-child(3) {
-            width: 32% !important;         /* Столица заперта в границах и не вылетает */
+            width: 32% !important;         
             padding-left: 5px !important;
      }
+
      th, td {
             padding: 10px 2px !important;
             vertical-align: middle !important;
@@ -480,13 +481,12 @@
             word-wrap: break-word !important;
             overflow-wrap: break-word !important;
             
-            /* 🌟 УЛЬТИМАТИВНАЯ ЗАЧИСТКА БОКОВЫХ РАМОК: */
-            border-left: none !important;   /* Намертво стираем границу таблицы слева */
-            border-right: none !important;  /* Намертво стираем границу таблицы справа */
-            border-top: none !important;    /* Убираем верхние обводки */
-            border-bottom: 1px solid var(--border-color) !important; /* ОСТАВЛЯЕМ ТОЛЬКО ЛИНИИ МЕЖДУ СТРАНАМИ */
+            border-left: none !important;   
+            border-right: none !important;  
+            border-top: none !important;    
+            border-bottom: 1px solid var(--border-color) !important; 
      }
-     /* 🌟 НАМЕРТВО УБИРАЕМ ЛИНИЮ ПОД САМОЙ ПОСЛЕДНЕЙ СТРАНОЙ В ТАБЛИЦЕ: */
+
      table tbody tr:last-child td {
             border-bottom: none !important;
      }
@@ -499,35 +499,34 @@
             font-size: 14px !important;
      }
 
-     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Честные пропорции, одинаковая высота */
+     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Полное удаление белых полос */
      .flag-wrapper {
-           /* 🌟 ЗАПЕРЛИ РАЗМЕР Контейнера, чтобы Катар больше не раздувал ячейку вширь */
-           width: 76px !important;         
-           height: 44px !important;        
+           width: 72px !important;         
+           height: 40px !important; /* Уплотнили высоту, убрав любые белые зазоры */
            display: inline-flex !important;
            align-items: center !important;
            justify-content: center !important; 
+           overflow: visible !important; /* Разрешаем Катару безопасно плыть вправо */
      }
 
      .flag-img {
-           height: 100% !important;        
+           max-height: 100% !important;        
            width: auto !important;         
-           object-fit: contain !important; 
+           object-fit: contain !important; /* 🌟 НАМЕРТВО СТИРАЕТ БЕЛЫЕ ГОРИЗОНТАЛЬНЫЕ ПОЛОСЫ */
            border-radius: 2px !important;
-           
-           /* 🌟 ВЕРНУЛИ ЛЕВУЮ РАМКУ КАТАРУ БЕЗ СДВИГА ТАБЛИЦЫ И БУКВ: */
-           margin-left: 1px !important;
-           border-left: 1px solid rgba(0,0,0,0.08) !important; /* Проявили левый контур */
+           box-shadow: 0 1px 3px rgba(0,0,0,0.12) !important;
+           border: 1px solid rgba(0,0,0,0.08) !important; 
+           box-sizing: border-box !important;
      }
-
 
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           width: 105px !important;        
-           /* 🌟 СТЕРЛИ БЕЛЫЕ ПОЛОСЫ: вернули contain, чтобы флаги отображались чисто */
-           object-fit: contain !important; 
+           width: 90px !important; /* Компактные 90px — идеальная длина без наезда на текст */
+           height: 40px !important;
+           object-fit: fill !important; /* Насильно растягиваем ткань флага по рамке без белизны */
      }
+
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
