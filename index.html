@@ -532,20 +532,16 @@
            box-sizing: border-box !important;
      }
 
-     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: БЕЗУПРЕЧНЫЙ ВЫХОД ИЗ НАЕЗДА НА ТЕКСТ */
+     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: ИДЕАЛЬНЫЙ ВЫХОД ИЗ НАЕЗДА НА ТЕКСТ */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           /* Встал идеально по одной вертикальной оси с Казахстаном и Йеменом */
            margin-left: 0px !important;    
-           /* 🌟 ОТПИХНУЛИ БУКВЫ ВПРАВО: вежливо отодвинули текст страны, убрав перекрытие */
-           margin-right: -25px !important;   
-           /* 🌟 САМЫЙ ДЛИННЫЙ И ЧИСТЫЙ: 102px — максимальный простор, рамка горит, текст свободен! */
+           /* 🌟 ТОТАЛЬНОЕ ОТОДВИГАНИЕ БУКВ: увеличили margin-right до -38px, чтобы полностью убрать наезд флага! */
+           margin-right: -38px !important;   
            width: 102px !important;        
            height: 42px !important; 
            object-fit: fill !important; 
      }
-
-
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
          padding-top: 0px !important;
