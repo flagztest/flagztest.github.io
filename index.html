@@ -528,18 +528,17 @@
            box-sizing: border-box !important;
      }
 
-     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
+     /* 🌟 УЛЬТИМАТИВНЫЙ ХАК: ВОЗВРАЩАЕМ КАТАРУ СТАТУС САМОГО ДЛИННОГО ФЛАГА */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           /* 🌟 ПОЛНЫЙ ВЫХОД РАМКИ: сделали 100px, чтобы левый контур Катара вышел на экран дисплея */
-           width: 100% !important;
-           max-width: 100px !important;
-           /* 🌟 УНИЧТОЖАЕМ БЕЛЫЕ ПОЛЯ: подогнали высоту под 42px и натянули ткань без зазоров */
+           /* 🌟 СУПЕР-ДЛИНА: растянули до 120px, но спрятали правый хвост в margin, чтобы не ломать верстку */
+           width: 120px !important;        
+           margin-right: -40px !important; 
+           /* 🌟 СПАСЕНИЕ РАМКИ: дали 2px слева, чтобы контур полностью вышел на экран */
+           margin-left: 2px !important;    
            height: 42px !important; 
            object-fit: fill !important; 
      }
-
-
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
