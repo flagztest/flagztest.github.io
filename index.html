@@ -444,7 +444,10 @@
            border-collapse: collapse !important;
            border: none !important; 
            box-sizing: border-box !important;
+           /* 🌟 СТЕРЛИ СДВИГ ТАБЛИЦЫ, ЧТОБЫ ВЕРНУТЬ ЛИНЕЙКАМ СИММЕТРИЮ */
+           padding-left: 0px !important; 
      }
+
 
      th {
            text-align: left !important;
@@ -533,13 +536,15 @@
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: БЕЗУПРЕЧНЫЙ ВЫХОД ИЗ НАЕЗДА НА ТЕКСТ */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           margin-left: 0px !important;    
-           /* 🌟 ОТПИХНУЛИ БУКВЫ ВПРАВО: дали отрицательный margin, отодвинувший текст страны */
-           margin-right: -30px !important;   
+           /* 🌟 ПРОЯВИЛИ ЛЕВУЮ РАМКУ: дали 4px слева, чтобы контур вышел из слепой зоны круглого стекла */
+           margin-left: 4px !important;    
+           /* 🌟 ОТПИХНУЛИ БУКВЫ ВПРАВО: увеличили отрицательный маргин до -35px для полной чистоты текста */
+           margin-right: -35px !important;   
            width: 114px !important;        
            height: 42px !important; 
            object-fit: fill !important; 
      }
+
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
