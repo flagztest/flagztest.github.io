@@ -426,10 +426,11 @@
 
 
      .continent-content {
-           /* 🌟 ИДЕАЛЬНЫЙ БАЛАНС: дали 4px слева, проявив рамку Катара и сохранив строку Великобритании */
-           padding: 0px 0px 8px 4px !important; 
+           /* 🌟 ЗАЩИТНЫЙ ОТСТУП: Проявляет левый контур Катара, не сдвигая шапку */
+           padding: 0px 0px 8px 6px !important; 
            background-color: #ffffff !important;
      }
+
 
 
      /* 1. Возвращаем монолитную жесткую сетку таблиц */
@@ -448,12 +449,12 @@
 
      /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
      .col-flag {
-            /* 🌟 СПАСАЕМ ВЕЛИКОБРИТАНИЮ: вернули ширину 85px, чтобы буква "я" не переносилась */
-            width: 85px !important;        
+            /* 🌟 ТЕКСТ СПАСЕН: вернули компактную ширину, буква "я" встанет на место */
+            width: 80px !important;        
             padding: 10px 0px !important;   
-            padding-left: 2px !important; 
             box-sizing: border-box !important;
      }
+
 
 
      /* Отдельно центрируем заголовок «Флаг» в шапке таблицы */
@@ -504,12 +505,14 @@
 
      /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Честные пропорции, одинаковая высота */
      .flag-wrapper {
-           width: 85px !important;         /* Стандартный контейнер */
-           height: 44px !important;        /* Фиксированная высота для идеального масштаба всего ряда */
+           /* 🌟 ЗАПЕРЛИ РАЗМЕР Контейнера, чтобы Катар больше не раздувал ячейку вширь */
+           width: 76px !important;         
+           height: 44px !important;        
            display: inline-flex !important;
            align-items: center !important;
            justify-content: center !important; 
      }
+
      .flag-img {
            height: 100% !important;        
            width: auto !important;         
