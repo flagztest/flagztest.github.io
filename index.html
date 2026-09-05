@@ -437,14 +437,14 @@
            background-color: #ffffff !important;
      }
 
-     /* 1. Настраиваем общие параметры таблицы с отступом безопасности слева */
+     /* 1. Возвращаем монолитную жесткую сетку таблиц во весь экран */
      table {
            width: 100% !important; 
            table-layout: fixed !important; 
            border-collapse: collapse !important;
            border: none !important; 
-           /* 🌟 ЗАЗОР ДЛЯ КУГЛЫХ ЭКРАНОВ: мягко отодвинули всю сетку на 6px вправо для проявления рамок */
-           padding-left: 6px !important;
+           /* 🌟 ЗАЗОР ДЛЯ КАТАРА: мягко отодвинули ряды на 12px вправо, проявив его левую рамку */
+           padding-left: 12px !important;
            box-sizing: border-box !important;
      }
 
@@ -455,9 +455,9 @@
 
      /* 2. Задаем строгие мобильные доли колонок и выравнивание заголовков */
      .col-flag {
-            /* 🌟 ЖЕСТКИЙ ЩИТ ВЕЛИКОБРИТАНИИ: сузили колонку до 70px, вернув текстовому полю максимум ширины! */
-            width: 70px !important;        
-            padding: 8px 0px !important;   
+            /* 🌟 ВЕРНУЛИ ПРЕЖНИЙ КРУПНЫЙ РАЗМЕР: ячейка снова широкая и просторная */
+            width: 85px !important;        
+            padding: 10px 0px !important;   
             box-sizing: border-box !important;
      }
 
@@ -466,14 +466,15 @@
      }
      
      td:nth-child(2) {
-            width: 50% !important;         
-            padding-left: 10px !important; /* Умеренный зазор букв страны от флага */
+            /* 🌟 СПАСАЕМ ВЕЛИКОБРИТАНИЮ: даём текстовому полю 48%, буква "я" встанет ровно в строку */
+            width: 48% !important;         
+            padding-left: 15px !important; /* Красивый отпуск ткани флага от букв страны */
             padding-right: 5px !important;
      }
 
      th:nth-child(3) {
             text-align: left !important;
-            padding-left: 10px !important; 
+            padding-left: 15px !important; 
      }
 
      td:nth-child(3) {
@@ -482,7 +483,7 @@
      }
 
      th, td {
-            padding: 8px 2px !important;
+            padding: 10px 2px !important;
             vertical-align: middle !important;
             white-space: normal !important;
             word-wrap: break-word !important;
@@ -506,35 +507,36 @@
             font-size: 14px !important;
      }
 
-     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Полное и ультимативное удаление белых полос */
+     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Сочный крупный вид без белых полос */
      .flag-wrapper {
-           width: 64px !important;         
-           height: 38px !important; /* Компактная высота убирает раздувание Safari */
+           width: 85px !important;         
+           height: 44px !important; /* Вернули крупную высоту флагов */
            display: inline-flex !important;
            align-items: center !important;
            justify-content: center !important; 
-           overflow: visible !important; /* Разрешаем Катару безопасно «плыть» поверх отступа */
+           overflow: visible !important;
      }
 
      .flag-img {
-           max-height: 100% !important;        
-           max-width: 100% !important;         
+           height: 100% !important;        
+           width: auto !important;         
            /* 🌟 СТИРАЕМ БЕЛИЗНУ НАМЕРТВО: contain возвращает флагам их чистые природные пропорции */
            object-fit: contain !important; 
            border-radius: 2px !important;
-           box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-           border: 1px solid rgba(0,0,0,0.06) !important;
+           box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
+           border: 1px solid rgba(0,0,0,0.08) !important;
            box-sizing: border-box !important;
      }
 
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           /* 🌟 ИДЕАЛЬНЫЙ РАЗМЕР КАТАРА: 95px — рамка на экране, ткань флага чистая, на буквы не наезжает */
-           width: 95px !important;        
-           height: 38px !important;
-           object-fit: fill !important; 
+           width: 105px !important; /* Вытягиваем его во всю законную супер-длину */
+           height: 44px !important;
+           /* 🌟 УБРАЛИ FILL: ставим contain, чтобы стереть белые полосы сверху и снизу ткани флага */
+           object-fit: contain !important; 
      }
+
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
