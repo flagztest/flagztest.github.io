@@ -455,9 +455,9 @@
 
      /* 2. ЮВЕЛИРНЫЙ МОБИЛЬНЫЙ БАЛАНС: Колонки и отступы безопасности */
      .col-flag {
-            /* Оптимальные 82px для безупречного проявления всех левых рамок флагов */
-            width: 82px !important;        
-            padding: 10px 0px 10px 12px !important;   
+            /* 🌟 ПРИЖИМАЕМ К КРАЮ: Уменьшили отступ слева с 12px до 4px, чтобы Катар встал впритирку к стеклу */
+            width: 108px !important;        
+            padding: 10px 0px 10px 4px !important;   
             box-sizing: border-box !important;
      }
 
@@ -466,8 +466,8 @@
      }
      
      td:nth-child(2) {
-            /* 🌟 ЖЕЛЕЗНЫЙ ЗАПАС ШИРИНЫ: выделили 54% под страны, буквы гарантированно встанут в ряд! */
-            width: 54% !important;         
+            /* Выделили под страны комфортные 52%, чтобы названия букв дышали */
+            width: 52% !important;         
             padding-left: 10px !important; 
             padding-right: 5px !important;
      }
@@ -478,8 +478,8 @@
      }
 
      td:nth-child(3) {
-            /* Уплотнили столицы до 22%, сбалансировав общую ширину таблицы ровно в 100% */
-            width: 22% !important;         
+            /* Оставили столицам 24%, зафиксировав общую ширину таблицы ровно в 100% */
+            width: 24% !important;         
             padding-left: 5px !important;
      }
 
@@ -508,12 +508,14 @@
             font-size: 14px !important;
      }
 
-     /* 3. НАСТРОЙКА ФЛАГОВ ПО УМОЛЧАНИЮ: Крупный вид без белых полей */
+     /* 3. НАСТРОЙКА ФЛАГОВ: Выравнивание всех флагов по центру относительно Катара */
      .flag-wrapper {
-           width: 85px !important;         
-           height: 44px !important; 
+           /* 🌟 ЦЕНТРИРОВАНИЕ ПО КАТАРУ: Заперли контейнер в 100px (максимальная длина Катара) */
+           width: 100px !important;         
+           height: 42px !important; 
            display: inline-flex !important;
            align-items: center !important;
+           /* 🌟 Намертво выравниваем все короткие флаги строго по центру контейнера Катара */
            justify-content: center !important; 
            overflow: visible !important;
      }
@@ -521,24 +523,27 @@
      .flag-img {
            height: 100% !important;        
            width: auto !important;         
+           /* 🌟 РОДНЫЕ ПРОПОРЦИИ НАМЕРТВО: Родная ткань флагов без искажений и белых краев */
            object-fit: contain !important; 
            border-radius: 2px !important;
            box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
            border: 1px solid rgba(0,0,0,0.08) !important;
            box-sizing: border-box !important;
+           margin-left: 0px !important;
+           margin-right: 0px !important;
      }
 
-     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: САМЫЙ ДЛИННЫЙ ФЛАГ, РАМКА ГОРИТ, БУКВЫ СВОБОДНЫ */
+     /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
            margin-left: 0px !important;    
-           /* 🌟 ОТПИХНУЛИ НАЗВАНИЕ: Отрицательный маргин вежливо отодвинул буквы вправо */
-           margin-right: -25px !important;   
-           /* 🌟 СОЧНАЯ СУПЕР-ДЛИНА: 98px — на 13 пикселей длиннее остальных, текст чист! */
-           width: 98px !important;        
+           margin-right: 0px !important;   
+           /* 🌟 Занимает ровно весь 100px контейнер ячейки, рамка горит, наезд исключен! */
+           width: 100px !important;        
            height: 42px !important; 
            object-fit: fill !important; 
      }
+
 
 
 
