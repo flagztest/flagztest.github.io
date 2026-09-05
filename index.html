@@ -437,17 +437,16 @@
            background-color: #ffffff !important;
      }
 
-     /* 1. Возвращаем монолитную жесткую сетку таблиц от края до края экрана */
+     /* 1. Возвращаем монолитную жесткую сетку таблиц с красивыми ровными линиями */
      table {
            width: 100% !important; 
            table-layout: fixed !important; 
            border-collapse: collapse !important;
            border: none !important; 
            box-sizing: border-box !important;
-           /* 🌟 СТЕРЛИ СДВИГ ТАБЛИЦЫ, ЧТОБЫ ВЕРНУТЬ ЛИНЕЙКАМ СИММЕТРИЮ */
-           padding-left: 0px !important; 
+           /* 🌟 СИММЕТРИЯ ЛИНИЙ: вернули ровное поле 12px для идеального баланса краев */
+           padding-left: 12px !important; 
      }
-
 
      th {
            text-align: left !important;
@@ -536,11 +535,12 @@
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: БЕЗУПРЕЧНЫЙ ВЫХОД ИЗ НАЕЗДА НА ТЕКСТ */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           /* 🌟 ПРОЯВИЛИ ЛЕВУЮ РАМКУ: дали 4px слева, чтобы контур вышел из слепой зоны круглого стекла */
-           margin-left: 4px !important;    
-           /* 🌟 ОТПИХНУЛИ БУКВЫ ВПРАВО: увеличили отрицательный маргин до -35px для полной чистоты текста */
-           margin-right: -35px !important;   
-           width: 114px !important;        
+           /* Встал идеально по одной вертикальной оси с Казахстаном и Йеменом */
+           margin-left: 0px !important;    
+           /* 🌟 ОТПИХНУЛИ БУКВЫ ВПРАВО: вежливо отодвинули текст страны, убрав перекрытие */
+           margin-right: -25px !important;   
+           /* 🌟 САМЫЙ ДЛИННЫЙ И ЧИСТЫЙ: 102px — максимальный простор, рамка горит, текст свободен! */
+           width: 102px !important;        
            height: 42px !important; 
            object-fit: fill !important; 
      }
