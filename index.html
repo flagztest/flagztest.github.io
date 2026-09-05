@@ -434,11 +434,14 @@
 
      /* 1. Возвращаем монолитную жесткую сетку таблиц */
      table {
-           width: 100% !important;
+           /* 🌟 СОЗДАЕМ ЗАЗОР БЕЗОПАСНОСТИ ДЛЯ РАМКИ: отодвинули всю таблицу на 10px вправо */
+           width: calc(100% - 10px) !important;
+           margin-left: 10px !important;
            table-layout: fixed !important; 
            border-collapse: collapse !important;
-           border: none !important; /* 🌟 Полное удаление внешней рамки таблицы */
+           border: none !important; 
      }
+
      th {
            text-align: left !important;
            border-bottom: 2px solid var(--border-color) !important;
