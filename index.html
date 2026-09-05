@@ -339,25 +339,27 @@
         }
         .scroll-top-btn {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #212529;
-            color: white;
-            border: none;
+            bottom: 25px;
+            right: 25px;
+            width: 40px;
+            height: 40px;
+            background: none !important;      /* Намертво стираем черный круглый фон */
+            /* 🌟 ТОНКАЯ СЕРАЯ СТРЕЛКА: благородный цвет с легкой прозрачностью */
+            color: rgba(0, 0, 0, 0.3) !important; 
+            border: none !important;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 24px !important;       /* Сделали саму стрелочку чуть крупнее и аккуратнее */
+            font-weight: 300 !important;
             display: none;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: opacity 0.2s;
+            box-shadow: none !important;      /* Полностью убрали громоздкую тень */
+            transition: color 0.2s;
             z-index: 999;
+            -webkit-tap-highlight-color: transparent; /* Убираем серый квадрат при тапе на Айфоне */
         }
         .scroll-top-btn:hover {
-            background-color: #000000;
+            color: rgba(0, 0, 0, 0.6) !important; /* При наведении становится чуть отчетливее */
         }
 @media (max-width: 600px) {
      /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок пиксель в пиксель по ширине поиска */
