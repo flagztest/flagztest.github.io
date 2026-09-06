@@ -189,19 +189,7 @@
         .continent-header:hover {
             background-color: #e9ecef;
         }
-        /* 1. По умолчанию для ОТКРЫТОГО блока стрелка смотрит вниз */
-.continent-header::after {
-    content: '▼';
-    font-size: 12px;
-    transition: transform 0.2s;
-    margin-left: auto;
-    transform: rotate(0deg); /* Стрелка вниз */
-}
 
-/* 2. Когда блок СВЕРНУТ (collapsed), принудительно разворачиваем стрелку ВПРАВО */
-.continent-block.collapsed .continent-header::after {
-    transform: rotate(-90deg) !important; /* Поворот влево на 90 градусов превратит ▼ в ▶ */
-}
         .continent-content {
             padding: 0;
             overflow: hidden;
