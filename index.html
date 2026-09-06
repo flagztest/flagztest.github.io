@@ -64,15 +64,19 @@
             border: none;
             font-size: 15px;
             font-weight: 600;
-            color: #6c757d;
+            /* 🌟 ОБЫЧНОЕ СОСТОЯНИЕ: цвет букв в точности как варианты ответов */
+            color: #495057 !important; 
             cursor: pointer;
             transition: all 0.2s;
             border-radius: 4px;
         }
-         .tab-btn.active {
-            color: inherit !important;          /* Текст и эмодзи сохраняют свой оригинальный цвет */
-            background-color: #e9ecef !important; /* Новый благородный плоский светло-серый фон подсветки */
-}
+        .tab-btn.active {
+            /* 🌟 НАЖАТОЕ СОСТОЯНИЕ: сверхжирный графит, копейка в копейку как вопросы в квизах */
+            color: #495057 !important;          
+            font-weight: 800 !important;
+            background-color: #e9ecef !important; 
+        }
+
 
         .controls-row {
             display: flex;
@@ -390,6 +394,11 @@
          white-space: nowrap !important; /* СТРОГИЙ ЗАПРЕТ НА ПЕРЕНОС СЛОВ */
          overflow: visible !important;
          box-sizing: border-box !important;
+     }
+     /* 🌟 ЖЕЛЕЗНАЯ МОБИЛЬНАЯ ПОДСВЕТКА: сверхжирность 800 при нажатии на телефоне */
+     .tab-btn.active {
+         font-weight: 800 !important;
+         color: #495057 !important;
      }
 
      .clear-search-btn {
