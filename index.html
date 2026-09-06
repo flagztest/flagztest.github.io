@@ -1670,6 +1670,9 @@ function checkCountryAnswer(selectedBtn, chosenName) {
 }
 
 
+// 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ СКРОЛЛА SAFARI
+let lastScrollPosition = 0;
+
 function openFlagModal(imgSrc) {
     const modal = document.getElementById('flagModal');
     const modalImg = document.getElementById('flagModalImg');
@@ -1687,12 +1690,14 @@ function openFlagModal(imgSrc) {
     modalImg.style.setProperty('box-shadow', 'none', 'important');
     modalImg.style.setProperty('clip-path', 'none', 'important');
     
+    /* 🌟 ЗАПОМИНАЕМ ТОЧНУЮ ПОЗИЦИЮ СКРОЛЛА ПЕРЕД ЗАКРЫТИЕМ КОНТЕНЕРА */
+    lastScrollPosition = window.scrollY;
+    
     document.body.style.overflow = 'hidden';
     
     modal.style.display = 'flex';
     setTimeout(() => {
         modal.classList.add('open');
-        /* 🌟 СКРЫВАЕМ ОСНОВНОЙ КОНТЕНТ: прячем шапку и списки, чтобы они не просвечивали в панели Safari */
         const header = document.querySelector('.fixed-header');
         const container = document.querySelector('.container');
         if (header) header.style.setProperty('display', 'none', 'important');
@@ -1706,14 +1711,17 @@ function closeFlagModal() {
     
     document.body.style.overflow = '';
     
-    /* 🌟 ВОЗВРАЩАЕМ КОНТЕНТ НА МЕСТО: мгновенно проявляем шапку и списки обратно */
     const header = document.querySelector('.fixed-header');
     const container = document.querySelector('.container');
     if (header) header.style.setProperty('display', 'block', 'important');
     if (container) container.style.setProperty('display', 'block', 'important');
     
+    /* 🌟 СВЕРХТОЧНЫЙ ВОЗВРАТ: Мгновенно возвращаем скролл Айфона ровно на то место, где был нажат флаг */
+    window.scrollTo(0, lastScrollPosition);
+    
     setTimeout(() => modal.style.display = 'none', 200);
 }
+
 
 </script>
 </body>
