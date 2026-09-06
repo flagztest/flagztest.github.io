@@ -705,19 +705,16 @@
     z-index: 10000;
     transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
     overflow: hidden !important;
-    padding: 0 !important;
-    margin: 0 !important;
 ">
     <video autoplay loop muted playsinline style="
         width: 220px;
         height: 220px;
         object-fit: contain !important;
-        background: transparent !important;
     ">
-        <!-- 🍏 Новое имя для Apple iPhone (Safari) — обходит старый зеленый кэш -->
-        <source src="godzilla_load.mov" type="video/quicktime">
-        <!-- 🤖 Новое имя для Google Chrome, ПК и Android -->
-        <source src="godzilla_load.webm" type="video/webm">
+        <!-- 🍏 ДОБАВИЛИ ?v=3 ДЛЯ ТОТАЛЬНОГО УНИЧТОЖЕНИЯ КЭША APPLE IPHONE -->
+        <source src="godzilla_load.mov?v=3" type="video/quicktime">
+        <!-- 🤖 ДОБАВИЛИ ?v=3 ДЛЯ ПК И АНДРОИД -->
+        <source src="godzilla_load.webm?v=3" type="video/webm">
     </video>
 </div>
 
