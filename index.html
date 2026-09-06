@@ -693,7 +693,7 @@
     </style>
 </head>
 <body>
-<!-- 🦖 КИНЕМАТОГРАФИЧНАЯ ЗАСТАВКА (SPLASH SCREEN): УВЕЛИЧЕННАЯ И СВЕРХПЛАВНАЯ -->
+<!-- 🦖 СВЕРХТЕХНОЛОГИЧНАЯ ПРОЗРАЧНАЯ ЗАСТАВКА (SPLASH SCREEN) С АВТОПОДБОРОМ ПОД IPHONE И ПК -->
 <div id="splashScreen" style="
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -703,16 +703,21 @@
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    /* 🌟 СВЕРХПЛАВНОЕ ЗАТУХАНИЕ: растянули время до 1.2 секунды с мягким графиком кубического Безье */
     transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
+    overflow: hidden !important;
 ">
-    <img src="favicon.png" alt="Loading..." style="
-        /* 🌟 МАСШТАБ КРУПНЕЕ: увеличили динозавра со 140px до сочных 220px */
+    <video autoplay loop muted playsinline style="
         width: 220px;
         height: 220px;
-        object-fit: contain;
+        object-fit: contain !important;
     ">
+        <!-- 🍏 Прозрачный специальный кодек Apple HEVC строго для iPhone (Safari) -->
+        <source src="favicon.mov" type="video/quicktime">
+        <!-- 🤖 Основной прозрачный вариант для Google Chrome, ПК и Android -->
+        <source src="favicon.webm" type="video/webm">
+    </video>
 </div>
+
 
 <div class="fixed-header">
     <div class="header-content">
