@@ -705,19 +705,21 @@
     z-index: 10000;
     transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
     overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
 ">
     <video autoplay loop muted playsinline style="
         width: 220px;
         height: 220px;
         object-fit: contain !important;
+        background: transparent !important;
     ">
-        <!-- 🍏 Прозрачный специальный кодек Apple HEVC строго для iPhone (Safari) -->
-        <source src="favicon.mov" type="video/quicktime">
-        <!-- 🤖 Основной прозрачный вариант для Google Chrome, ПК и Android -->
-        <source src="favicon.webm" type="video/webm">
+        <!-- 🍏 Новое имя для Apple iPhone (Safari) — обходит старый зеленый кэш -->
+        <source src="godzilla_load.mov" type="video/quicktime">
+        <!-- 🤖 Новое имя для Google Chrome, ПК и Android -->
+        <source src="godzilla_load.webm" type="video/webm">
     </video>
 </div>
-
 
 <div class="fixed-header">
     <div class="header-content">
