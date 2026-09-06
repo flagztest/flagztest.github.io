@@ -259,9 +259,12 @@
         }
         .quiz-question {
             font-size: 22px;
-            font-weight: bold;
+            /* 🌟 ГРАФИТОВЫЙ ЦВЕТ И СВЕРХЖИРНОСТЬ НА ПК: */
+            font-weight: 800 !important;
+            color: #495057 !important; 
             margin-bottom: 25px;
         }
+
          .quiz-flag-container {
             display: inline-flex;
             align-items: center;
@@ -567,7 +570,12 @@
          border: none !important;
          box-shadow: none !important;
      }
-
+     /* 🌟 МОБИЛЬНЫЙ ГРАФИТОВЫЙ ЩИТ ВОПРОСОВ: цвет ответов + жирность 800 */
+     .quiz-question {
+         font-size: 24px !important;   
+         font-weight: 800 !important;  
+         color: #495057 !important;    /* Тот самый красивый темный графит, как у кнопок */
+     }
 
            /* 🌟 ИЗОЛИРОВАННЫЙ МОБИЛЬНЫЙ ЩИТ ДЛЯ НЕПАЛА (В базе и в квизе): */
      tr[data-name*="непал"] .flag-wrapper, 
