@@ -1728,20 +1728,25 @@ function openFlagModal(imgSrc) {
 
 function closeFlagModal() {
     const modal = document.getElementById('flagModal');
+    /* 1. Сначала запускаем плавное растворение черного окна флага */
     modal.classList.remove('open');
     
     document.body.style.overflow = '';
     
-    const header = document.querySelector('.fixed-header');
-    const container = document.querySelector('.container');
-    if (header) header.style.setProperty('display', 'block', 'important');
-    if (container) container.style.setProperty('display', 'block', 'important');
-    
-    /* 🌟 СВЕРХТОЧНЫЙ ВОЗВРАТ: Мгновенно возвращаем скролл Айфона ровно на то место, где был нажат флаг */
-    window.scrollTo(0, lastScrollPosition);
-    
-    setTimeout(() => modal.style.display = 'none', 200);
+    /* 2. Даём окну полностью раствориться (220мс) и только ПОСЛЕ этого безопасно включаем контент */
+    setTimeout(() => {
+        modal.style.display = 'none';
+        
+        const header = document.querySelector('.fixed-header');
+        const container = document.querySelector('.container');
+        if (header) header.style.setProperty('display', 'block', 'important');
+        if (container) container.style.setProperty('display', 'block', 'important');
+        
+        /* Возвращаем скролл ровно на место клика, когда всё уже отрендерилось */
+        window.scrollTo(0, lastScrollPosition);
+    }, 220); 
 }
+
 
 
 </script>
