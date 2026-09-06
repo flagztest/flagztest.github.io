@@ -647,8 +647,8 @@
     justify-content: center;
     z-index: 9999 !important; 
     opacity: 0;
-    /* 🌟 СИНХРОННАЯ ПЛАВНОСТЬ: сделали 0.25 секунды для идеального кинематографичного перехода */
-    transition: opacity 0.25s ease-in-out !important;
+    /* 🌟 СВЕРХСКОРОСТЬ: окно исчезает за рекордные 0.05 секунды */
+    transition: opacity 0.05s ease-in-out !important;
     cursor: pointer;
     border: none !important;
     outline: none !important;
@@ -659,12 +659,17 @@
     opacity: 1 !important;
 }
 
-/* 🌟 КЛАСС ДЛЯ БЕЗУПРЕЧНОЙ ПРОЗРАЧНОСТИ САЙТА БЕЗ БЕЛЫХ ЭКРАНОВ */
+/* 🌟 КЛАСС ДЛЯ МГНОВЕННОЙ И ЧИСТОЙ ПОДСВЕ ТКИ КОНТЕНТА */
 .site-fade {
     opacity: 0 !important;
-    pointer-events: none !important; /* Отключаем клики сквозь прозрачный слой */
-    transition: opacity 0.25s ease-in-out !important;
+    pointer-events: none !important; 
+    transition: opacity 0.05s ease-in-out !important;
 }
+.fixed-header, .container {
+    /* 🌟 СКОРОСТЬ САЙТА: списки возвращаются на экран мгновенно */
+    transition: opacity 0.05s ease-in-out !important;
+}
+
 .fixed-header, .container {
     transition: opacity 0.25s ease-in-out !important;
 }
@@ -1740,24 +1745,21 @@ function openFlagModal(imgSrc) {
 
 function closeFlagModal() {
     const modal = document.getElementById('flagModal');
-    /* 1. Сначала запускаем плавное растворение черного окна флага */
     modal.classList.remove('open');
+    
+    const header = document.querySelector('.fixed-header');
+    const container = document.querySelector('.container');
+    if (header) header.classList.remove('site-fade');
+    if (container) container.classList.remove('site-fade');
     
     document.body.style.overflow = '';
     
-    /* 2. Даём окну полностью раствориться (220мс) и только ПОСЛЕ этого безопасно включаем контент */
+    /* 🌟 МГНОВЕННОЕ ВЫКЛЮЧЕНИЕ: убираем подложку всего через 50 миллисекунд */
     setTimeout(() => {
         modal.style.display = 'none';
-        
-        const header = document.querySelector('.fixed-header');
-        const container = document.querySelector('.container');
-        if (header) header.style.setProperty('display', 'block', 'important');
-        if (container) container.style.setProperty('display', 'block', 'important');
-        
-        /* Возвращаем скролл ровно на место клика, когда всё уже отрендерилось */
-        window.scrollTo(0, lastScrollPosition);
-    }, 220); 
+    }, 50); 
 }
+
 
 
 
