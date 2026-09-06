@@ -641,13 +641,14 @@
     left: -5px !important;
     right: -5px !important;
     bottom: -5px !important;
-    background-color: #1a1a1a !important; /* Насыщенный темно-серый цвет разделяет темные полосы флагов */
+    background-color: #1a1a1a !important; 
     display: none; 
     align-items: center;
     justify-content: center;
     z-index: 9999 !important; 
     opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+    /* 🌟 СИНХРОННАЯ ПЛАВНОСТЬ: сделали 0.25 секунды для идеального кинематографичного перехода */
+    transition: opacity 0.25s ease-in-out !important;
     cursor: pointer;
     border: none !important;
     outline: none !important;
@@ -657,6 +658,17 @@
     display: flex !important;
     opacity: 1 !important;
 }
+
+/* 🌟 КЛАСС ДЛЯ БЕЗУПРЕЧНОЙ ПРОЗРАЧНОСТИ САЙТА БЕЗ БЕЛЫХ ЭКРАНОВ */
+.site-fade {
+    opacity: 0 !important;
+    pointer-events: none !important; /* Отключаем клики сквозь прозрачный слой */
+    transition: opacity 0.25s ease-in-out !important;
+}
+.fixed-header, .container {
+    transition: opacity 0.25s ease-in-out !important;
+}
+
 /* 🌟 МОБИЛЬНАЯ КАРТИНКА: ТОТАЛЬНОЕ ОБНУЛЕНИЕ ВСЕХ КОНТУРОВ И ТЕНЕЙ SAFARI */
 .flag-modal-img {
     max-width: 95% !important;
