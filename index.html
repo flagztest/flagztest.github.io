@@ -659,20 +659,17 @@
     opacity: 1 !important;
 }
 
-/* 🌟 КЛАСС ДЛЯ МГНОВЕННОЙ И ЧИСТОЙ ПОДСВЕ ТКИ КОНТЕНТА */
+/* 🌟 КЛАСС ДЛЯ МГНОВЕННОЙ И ЧИСТОЙ ПОДВЕТКИ КОНТЕНТА */
 .site-fade {
     opacity: 0 !important;
     pointer-events: none !important; 
     transition: opacity 0.05s ease-in-out !important;
 }
 .fixed-header, .container {
-    /* 🌟 СКОРОСТЬ САЙТА: списки возвращаются на экран мгновенно */
+    /* 🌟 СКОРОСТЬ САЙТА: списки возвращаются на экран мгновенно и без зависаний */
     transition: opacity 0.05s ease-in-out !important;
 }
 
-.fixed-header, .container {
-    transition: opacity 0.25s ease-in-out !important;
-}
 
 /* 🌟 МОБИЛЬНАЯ КАРТИНКА: ТОТАЛЬНОЕ ОБНУЛЕНИЕ ВСЕХ КОНТУРОВ И ТЕНЕЙ SAFARI */
 .flag-modal-img {
@@ -1728,25 +1725,25 @@ function openFlagModal(imgSrc) {
     modalImg.style.setProperty('box-shadow', 'none', 'important');
     modalImg.style.setProperty('clip-path', 'none', 'important');
     
-    /* 🌟 ЗАПОМИНАЕМ ТОЧНУЮ ПОЗИЦИЮ СКРОЛЛА ПЕРЕД ЗАКРЫТИЕМ КОНТЕНЕРА */
-    lastScrollPosition = window.scrollY;
-    
     document.body.style.overflow = 'hidden';
     
     modal.style.display = 'flex';
     setTimeout(() => {
         modal.classList.add('open');
+        /* 🌟 ПРАВИЛЬНОЕ СКРЫТИЕ: Мягко гасим прозрачность сайта, чтобы он не просвечивал под панелью Safari */
         const header = document.querySelector('.fixed-header');
         const container = document.querySelector('.container');
-        if (header) header.style.setProperty('display', 'none', 'important');
-        if (container) container.style.setProperty('display', 'none', 'important');
+        if (header) header.classList.add('site-fade');
+        if (container) container.classList.add('site-fade');
     }, 10);
 }
 
 function closeFlagModal() {
     const modal = document.getElementById('flagModal');
+    /* 🌟 МОЛНИЕНОСНЫЙ КЛИК: Мгновенно убираем класс открытия флага */
     modal.classList.remove('open');
     
+    /* 🌟 МОЛНИЕНОСНЫЙ ВОЗВРАТ: Сразу возвращаем списки стран и шапку на экран без пауз */
     const header = document.querySelector('.fixed-header');
     const container = document.querySelector('.container');
     if (header) header.classList.remove('site-fade');
@@ -1754,11 +1751,12 @@ function closeFlagModal() {
     
     document.body.style.overflow = '';
     
-    /* 🌟 МГНОВЕННОЕ ВЫКЛЮЧЕНИЕ: убираем подложку всего через 50 миллисекунд */
+    /* Спустя 50мс чисто гасим саму флекс-подложку */
     setTimeout(() => {
         modal.style.display = 'none';
     }, 50); 
 }
+
 
 
 
