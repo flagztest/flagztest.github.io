@@ -745,20 +745,13 @@
             <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()">✖</button>
             </div>
         </div>
-        
-        <!-- 🌟 ПЕРСОНАЛЬНЫЙ ПОИСК И ДВА РЕЖИМА ДЕЛЕНИЯ ДЛЯ РОССИИ -->
-        <div class="controls-row" id="regionsControls" style="display: none; flex-direction: column; gap: 8px;">
-            <div class="search-box" style="width: 100%;">
+        <!-- 🌟 ПЕРСОНАЛЬНЫЙ ПОИСК ДЛЯ РОССИИ: БЕЗ ДВОЯЩИХСЯ КНОПОК -->
+        <div class="controls-row" id="regionsControls" style="display: none;">
+            <div class="search-box">
                 <input type="text" id="regionsSearchInput" placeholder="Поиск по регионам...">
                 <button id="clearRegionsSearchBtn" class="clear-search-btn" onclick="clearRegionsSearch()">✖</button>
             </div>
-            <!-- 🇷🇺 ПОДМЕНЮ РОССИИ: ДВЕ ПЕРЕКЛЮЧАЕМЫЕ КНОПКИ -->
-            <div style="display: flex; gap: 6px; width: 100%;">
-                <button class="action-btn" id="btnModeSub" style="flex: 1; padding: 8px; font-size: 13px; font-weight: 700; background-color: #0d6efd;">Субъекты Российской Федерации</button>
-                <button class="action-btn btn-secondary" id="btnModeFed" style="flex: 1; padding: 8px; font-size: 13px; font-weight: 700; background-color: #ced4da; color: #495057;">Федеральные округа</button>
-            </div>
         </div>
-
     </div>
 </div>
 
