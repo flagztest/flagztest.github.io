@@ -825,12 +825,11 @@
                     </h2>
                 </div>
 
-                 <div class="sub-continent-block collapsed" id="sub-goroda" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                                 <div class="sub-continent-block collapsed" id="sub-goroda" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
                     <h2 class="continent-header" onclick="toggleBlock('sub-goroda')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
                         <span>Города федерального значения</span>
                         <span class="count-badge">3</span>
                     </h2>
-                    <!-- 🌟 ТАБЛИЦА ГОРОДОВ: выстроена в нашем эталонном безрамочном стиле флагов мира -->
                     <div class="continent-content" style="display: none;">
                         <table>
                             <thead>
@@ -840,55 +839,12 @@
                                     <th>Статус</th>
                                 </tr>
                             </thead>
-                                             <tbody>
-                                <tr>
-                                    <td class="col-flag">
-                                       <div class="flag-wrapper">
-                                           <img class="flag-img" src="https://wikimedia.org" alt="Москва" loading="lazy" onclick="openFlagModal(this.src)">
-                                       </div>
-                                    </td>
-                                    <td>
-                                        <!-- 🧭 ЭТАЛОННАЯ АВТО-ССЫЛКА: Один в один как в базе стран! Гарантирует запуск Google Maps на iOS -->
-                                        <a href="https://google.com" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                                            <strong>Москва</strong>
-                                        </a>
-                                    </td>
-                                    <td style="color: #6c757d;">Столица / Город фед. значения</td>
-                                </tr>
-                                <tr>
-                                    <td class="col-flag">
-                                       <div class="flag-wrapper">
-                                           <img class="flag-img" src="https://wikimedia.org" alt="Санкт-Петербург" loading="lazy" onclick="openFlagModal(this.src)">
-                                       </div>
-                                    </td>
-                                    <td>
-                                        <a href="https://google.com" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                                            <strong>Санкт-Петербург</strong>
-                                        </a>
-                                    </td>
-                                    <td style="color: #6c757d;">Город фед. значения</td>
-                                </tr>
-                                <tr>
-                                    <td class="col-flag">
-                                       <div class="flag-wrapper">
-                                           <img class="flag-img" src="https://wikimedia.org" alt="Севастополь" loading="lazy" onclick="openFlagModal(this.src)">
-                                       </div>
-                                    </td>
-                                    <td>
-                                        <a href="https://google.com" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                                            <strong>Севастополь</strong>
-                                        </a>
-                                    </td>
-                                    <td style="color: #6c757d;">Город фед. значения</td>
-                                </tr>
+                            <tbody id="russiaGorodaTableBody">
+                                <!-- Скрипт JavaScript сам сгенерирует сюда строки по вашей технологии -->
                             </tbody>
-
-
                         </table>
                     </div>
-
                 </div>
-
 
                 <div class="sub-continent-block collapsed" id="sub-okruga" style="background: #fff; border-radius: 8px; margin-bottom: 4px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
                     <h2 class="continent-header" onclick="toggleBlock('sub-okruga')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
@@ -1904,8 +1860,42 @@ function closeFlagModal() {
     }, 50); 
 }
 
+// 🌟 МАССИВ ДАННЫХ ДЛЯ АВТОМАТИЧЕСКОЙ СБОРКИ ГОРОДОВ РФ
+const russiaGorodaData = [
+    { name: "Москва", status: "Столица / Город фед. значения", flag: "https://wikimedia.org" },
+    { name: "Санкт-Петербург", status: "Город фед. значения", flag: "https://wikimedia.org" },
+    { name: "Севастополь", status: "Город фед. значения", flag: "https://wikimedia.org" }
+];
 
-
+// 🌟 ДВИЖОК АВТО-СБОРКИ: Генерирует строки один в один по вашей технологии базы стран мира
+function initRussiaGorodaTable() {
+    const tbody = document.getElementById('russiaGorodaTableBody');
+    if (!tbody) return;
+    
+    let rowsHtml = '';
+    russiaGorodaData.forEach(g => {
+        rowsHtml += `
+            <tr>
+                <td class="col-flag">
+                   <div class="flag-wrapper">
+                       <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy" onclick="openFlagModal(this.src)">
+                   </div>
+                </td>
+                <td>
+                    <!-- 🧭 ОРИГИНАЛЬНАЯ ЛОГИКА ШИФРОВАНИЯ: Ссылка один в один как у стран мира -->
+                    <a href="https://google.com{encodeURIComponent(g.name)}" 
+                       target="_blank" 
+                       style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <strong>${g.name}</strong>
+                    </a>
+                </td>
+                <td style="color: #6c757d;">${g.status}</td>
+            </tr>`;
+    });
+    tbody.innerHTML = rowsHtml;
+}
+// Запускаем автоматику сборки городов при старте сайта
+initRussiaGorodaTable();
 
 
 </script>
