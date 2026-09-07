@@ -794,6 +794,27 @@
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
     </div>
+     <!-- 🇷🇺 ГЛАВНЫЙ ЭКРАН ВКЛАДКИ РОССИЯ В СТИЛЕ КОНТИНЕНТОВ -->
+    <div id="quizRegionsView" class="view-section">
+        
+        <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РФ (Общее официальное число регионов — 89) -->
+        <div class="continent-block collapsed" id="block-russia-types" style="margin-top: 15px;">
+            <h2 class="continent-header" onclick="toggleBlock('block-russia-types')">
+                <span>Субъекты Российской Федерации</span>
+                <span class="count-badge">89</span>
+            </h2>
+        </div>
+
+        <!-- 🌟 ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА (Общее число регионов России — 89) -->
+        <div class="continent-block collapsed" id="block-russia-districts">
+            <h2 class="continent-header" onclick="toggleBlock('block-russia-districts')">
+                <span>Федеральные округа</span>
+                <span class="count-badge">89</span>
+            </h2>
+        </div>
+        
+    </div>
+     
 </div>
 
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
@@ -1362,9 +1383,11 @@ function switchView(viewId) {
         loadQuizCountryRound();
     } else if (viewId === 'quiz-regions') {
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
-        /* 🌟 ВКЛЮЧАЕМ ПОИСК ДЛЯ РОССИИ: теперь строка гордо выедет на экран! */
+        /* 🌟 ОТКРЫВАЕМ ЭКРАН РОССИИ: */
+        document.getElementById('quizRegionsView').classList.add('active');
         if (regControls) regControls.style.display = 'flex';
     }
+
 }
 
 function toggleBlock(id) {
