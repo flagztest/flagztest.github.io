@@ -801,39 +801,39 @@
                 <span>Субъекты Российской Федерации</span>
                 <span class="count-badge">89</span>
             </h2>
-            <!-- 🌟 ВНУТРЕННЕЕ ПОДМЕНЮ: Вложенные плашки типов субъектов -->
-            <div class="continent-content" style="padding: 8px 0px 0px 0px !important; background-color: #ffffff !important; display: none;">
+            <!-- 🌟 ВНУТРЕННЕЕ ПОДМЕНЮ: Изолированные плашки под-типов без конфликта высоты -->
+            <div class="continent-content" style="padding: 12px 0px 0px 0px !important; background-color: #ffffff !important; display: none;">
                 
-                <div class="continent-block collapsed" id="sub-respubliki" style="margin-bottom: 8px !important;">
-                    <h2 class="continent-header" onclick="toggleBlock('sub-respubliki')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                <div class="sub-continent-block collapsed" id="sub-respubliki" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-respubliki')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
                         <span>Республики</span>
                         <span class="count-badge">24</span>
                     </h2>
                 </div>
 
-                <div class="continent-block collapsed" id="sub-kraya" style="margin-bottom: 8px !important;">
-                    <h2 class="continent-header" onclick="toggleBlock('sub-kraya')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                <div class="sub-continent-block collapsed" id="sub-kraya" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-kraya')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
                         <span>Края</span>
                         <span class="count-badge">9</span>
                     </h2>
                 </div>
 
-                <div class="continent-block collapsed" id="sub-oblasti" style="margin-bottom: 8px !important;">
-                    <h2 class="continent-header" onclick="toggleBlock('sub-oblasti')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                <div class="sub-continent-block collapsed" id="sub-oblasti" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-oblasti')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
                         <span>Области</span>
                         <span class="count-badge">48</span>
                     </h2>
                 </div>
 
-                <div class="continent-block collapsed" id="sub-goroda" style="margin-bottom: 8px !important;">
-                    <h2 class="continent-header" onclick="toggleBlock('sub-goroda')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                <div class="sub-continent-block collapsed" id="sub-goroda" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-goroda')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
                         <span>Города федерального значения</span>
                         <span class="count-badge">3</span>
                     </h2>
                 </div>
 
-                <div class="continent-block collapsed" id="sub-okruga" style="margin-bottom: 6px !important;">
-                    <h2 class="continent-header" onclick="toggleBlock('sub-okruga')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                <div class="sub-continent-block collapsed" id="sub-okruga" style="background: #fff; border-radius: 8px; margin-bottom: 4px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-okruga')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
                         <span>Автономные округа и область</span>
                         <span class="count-badge">5</span>
                     </h2>
@@ -852,8 +852,6 @@
         
     </div>
 
-     
-</div>
 
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
@@ -1436,6 +1434,8 @@ function switchView(viewId) {
 
 function toggleBlock(id) {
     const block = document.getElementById(id);
+    if (!block) return;
+    
     block.classList.toggle('collapsed');
     
     const content = block.querySelector('.continent-content');
@@ -1446,14 +1446,13 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-    const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
-    allCollapsed = hasExpanded ? false : true; /* Работаем скрыто в памяти, не трогая элементы DOM */
+        const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
+        allCollapsed = hasExpanded ? false : true;
 
-         /* НАШ ТОЧНЫЙ АВТОСКРОЛЛ С ЗАЩИТОЙ: Теперь он железно внутри if (content) */
         if (content && content.style.display === 'block') {
             setTimeout(() => {
                 const header = block.querySelector('.continent-header');
-                const offset = 120; // Высота фиксированного меню в пикселях
+                const offset = 120;
                 
                 const elementPosition = header.getBoundingClientRect().top + window.scrollY;
                 const offsetPosition = elementPosition - offset;
@@ -1464,8 +1463,8 @@ function toggleBlock(id) {
                 });
             }, 120); 
         }
-    } // ЭТА СКОБКА ТЕПЕРЬ ПРАВИЛЬНО ЗАКРЫВАЕТ БЛОК if (content)
-} // ЭТА СКОБКА ОКОНЧАТЕЛЬНО ЗАКРЫВАЕТ ФУНКЦИЮ toggleBlock
+    }
+}
 
 let allCollapsed = true; // Сделали true на старте, так как всё свернуто
         
