@@ -654,66 +654,58 @@
 
     
      
+      /* 🌟 ГРАФИТОВЫЙ МОБИЛЬНЫЙ ЩИТ С ЗАЩИТОЙ ТЕМНЫХ ПОЛОС (ОТКРЫВАЕТСЯ НА ВСЕХ УСТРОЙСТВАХ) */
+     .flag-modal {
+         position: fixed;
+         top: -5px !important;    
+         left: -5px !important;
+         right: -5px !important;
+         bottom: -5px !important;
+         background-color: #1a1a1a !important; 
+         display: none; 
+         align-items: center;
+         justify-content: center;
+         z-index: 9999 !important; 
+         opacity: 0;
+         transition: opacity 0.05s ease-in-out !important;
+         cursor: pointer;
+         border: none !important;
+         outline: none !important;
+         box-shadow: none !important;
+     }
+     .flag-modal.open {
+         display: flex !important;
+         opacity: 1 !important;
+     }
+
+     .site-fade {
+         opacity: 0 !important;
+         pointer-events: none !important; 
+         transition: opacity 0.05s ease-in-out !important;
+     }
+     .fixed-header, .container {
+         transition: opacity 0.05s ease-in-out !important;
+     }
+
+     .flag-modal-img {
+         max-width: 95% !important;
+         max-height: 75% !important;
+         object-fit: contain !important;
+         outline: none !important;
+         transform: scale(0.95);
+         transition: transform 0.2s ease-in-out;
+         background-color: transparent !important;
+         border: none !important;
+         border-width: 0px !important;
+         border-style: none !important;
+         box-shadow: none !important;
+     }
+     .flag-modal.open .flag-modal-img {
+         transform: scale(1) !important;
+     }
     </style>
-/* 🌟 ГРАФИТОВЫЙ МОБИЛЬНЫЙ ЩИТ С ЗАЩИТОЙ ТЕМНЫХ ПОЛОС */
-.flag-modal {
-    position: fixed;
-    top: -5px !important;    
-    left: -5px !important;
-    right: -5px !important;
-    bottom: -5px !important;
-    background-color: #1a1a1a !important; 
-    display: none; 
-    align-items: center;
-    justify-content: center;
-    z-index: 9999 !important; 
-    opacity: 0;
-    /* 🌟 СВЕРХСКОРОСТЬ: окно исчезает за рекордные 0.05 секунды */
-    transition: opacity 0.05s ease-in-out !important;
-    cursor: pointer;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-.flag-modal.open {
-    display: flex !important;
-    opacity: 1 !important;
-}
-
-/* 🌟 КЛАСС ДЛЯ МГНОВЕННОЙ И ЧИСТОЙ ПОДВЕТКИ КОНТЕНТА */
-.site-fade {
-    opacity: 0 !important;
-    pointer-events: none !important; 
-    transition: opacity 0.05s ease-in-out !important;
-}
-.fixed-header, .container {
-    /* 🌟 СКОРОСТЬ САЙТА: списки возвращаются на экран мгновенно и без зависаний */
-    transition: opacity 0.05s ease-in-out !important;
-}
-
-
-/* 🌟 МОБИЛЬНАЯ КАРТИНКА: ТОТАЛЬНОЕ ОБНУЛЕНИЕ ВСЕХ КОНТУРОВ И ТЕНЕЙ SAFARI */
-.flag-modal-img {
-    max-width: 95% !important;
-    max-height: 75% !important;
-    object-fit: contain !important;
-    outline: none !important;
-    transform: scale(0.95);
-    transition: transform 0.2s ease-in-out;
-    background-color: transparent !important;
-    
-    /* НАМЕРТВО СТИРАЕМ ЛЮБЫЕ ГРАНИЦЫ, РАМКИ, ТЕНИ И СВЕЧЕНИЯ: */
-    border: none !important;
-    border-width: 0px !important;
-    border-style: none !important;
-    box-shadow: none !important;
-}
-
-.flag-modal.open .flag-modal-img {
-    transform: scale(1) !important;
-}
-
 </head>
+
 <body>
 <!-- 🦖 КИНЕМАТОГРАФИЧНАЯ ЗАСТАВКА (SPLASH SCREEN) С ЧИСТОЙ КАРТИНКОЙ ГОДЗИЛЛЫ -->
 <div id="splashScreen" style="
@@ -1880,7 +1872,8 @@ function initRussiaGorodaTable() {
                    </div>
                 </td>
                 <td>
-                    <a href="https://google.com{encodeURIComponent(g.name)}" 
+                    <!-- 🧭 ЭТАЛОННАЯ АВТО-ССЫЛКА ИЗ БАЗЫ СТРАН: Теперь карты железно откроются! -->
+                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(g.name)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${g.name}</strong>
@@ -1891,6 +1884,7 @@ function initRussiaGorodaTable() {
     });
     tbody.innerHTML = rowsHtml;
 }
+
 // Запускаем автоматику сборки городов при старте сайта
 initRussiaGorodaTable();
 
