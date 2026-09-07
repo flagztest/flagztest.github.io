@@ -739,11 +739,18 @@
         <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
         <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
         <button class="tab-btn" onclick="switchView('quiz-regions')">🇷🇺<br>РОССИЯ</button>
-        </div>
-          <div class="controls-row" id="dbControls">
+        </div>          <div class="controls-row" id="dbControls">
             <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Поиск...">
+            <input type="text" id="searchInput" placeholder="Поиск по странам...">
             <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()">✖</button>
+            </div>
+        </div>
+        
+        <!-- 🌟 ПЕРСОНАЛЬНЫЙ ПОИСК ДЛЯ РОССИИ: появляется только на вкладке "Россия" -->
+        <div class="controls-row" id="regionsControls" style="display: none;">
+            <div class="search-box">
+            <input type="text" id="regionsSearchInput" placeholder="Поиск по регионам...">
+            <button id="clearRegionsSearchBtn" class="clear-search-btn" onclick="clearRegionsSearch()">✖</button>
             </div>
         </div>
     </div>
