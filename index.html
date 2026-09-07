@@ -359,6 +359,10 @@
             border-top: 1px solid var(--border-color);
             padding-top: 15px;
         }
+     /* 🌟 ИДЕАЛЬНЫЙ СДВИГ ДЛЯ РОССИИ: отодвигает первую плашку из-под шапки на Айфоне */
+     #quizRegionsView {
+         padding-top: 15px !important;
+     }
         .scroll-top-btn {
             position: fixed;
             bottom: 25px;
@@ -791,7 +795,7 @@
     <div id="quizRegionsView" class="view-section">
         
         <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РФ (Общее официальное число регионов — 89) -->
-        <div class="continent-block collapsed" id="block-russia-types" style="margin-top: 15px;">
+        <div class="continent-block collapsed" id="block-russia-types">
             <h2 class="continent-header" onclick="toggleBlock('block-russia-types')">
                 <span>Субъекты Российской Федерации</span>
                 <span class="count-badge">89</span>
