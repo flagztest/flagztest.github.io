@@ -383,29 +383,29 @@
         .scroll-top-btn:hover {
             color: rgba(0, 0, 0, 0.6) !important; /* При наведении становится чуть отчетливее */
         }
-@media (max-width: 600px) {
-     /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок пиксель в пиксель по ширине поиска */
+     /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок на 5 абсолютно равных долей */
      .nav-tabs {
          border-bottom: none !important; 
          padding-bottom: 0px !important;
          display: grid !important;
-         grid-template-columns: repeat(4, 1fr) !important; /* Делим меню на 4 абсолютно равные доли */
-         width: 100% !important; /* Растягиваем ровно по ширине поисковой строки */
-         gap: 4px !important;    /* Компактные аккуратные зазоры между синими кнопками */
+         grid-template-columns: repeat(5, 1fr) !important; 
+         width: 100% !important; 
+         gap: 3px !important;    /* Сделали зазоры чуть плотнее ради экономии места */
          box-sizing: border-box !important;
      }
      
-     /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
+     /* КНОПКИ: Идеальный баланс 5 элементов на экранах Айфонов */
      .tab-btn {
          width: 100% !important;
-         padding: 6px 0px !important; /* Намертво зануляем боковые поля, убирая раздувание Safari! */
-         font-size: 15px !important;  /* ВАШ КРУПНЫЙ ШРИФТ ОСТАЁТСЯ НЕИЗМЕННЫМ */
+         padding: 6px 0px !important; 
+         font-size: 13px !important;  /* 🌟 УПЛОТНИЛИ ШРИФТ ДО 13px: всё влезет без переносов слов */
          font-weight: 600 !important;
          text-align: center !important;
-         white-space: nowrap !important; /* СТРОГИЙ ЗАПРЕТ НА ПЕРЕНОС СЛОВ */
+         white-space: nowrap !important; 
          overflow: visible !important;
          box-sizing: border-box !important;
      }
+
      /* 🌟 ЖЕЛЕЗНАЯ МОБИЛЬНАЯ ПОДСВЕТКА: сверхжирность 800 при нажатии на телефоне */
      .tab-btn.active {
          font-weight: 800 !important;
@@ -738,7 +738,9 @@
         <button class="tab-btn" onclick="switchView('quiz-flags')">🇷🇺<br>Квиз:<br>Флаги</button>
         <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
         <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
+        <button class="tab-btn" onclick="switchView('quiz-regions')">🇷🇺<br>Квиз:<br>Регионы</button>
         </div>
+
           <div class="controls-row" id="dbControls">
             <div class="search-box">
             <input type="text" id="searchInput" placeholder="Поиск...">
@@ -1322,8 +1324,6 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('dbControls').style.display = 'none';
     
-    /* 🌟 НАША БЕЗОПАСНАЯ СИНХРОННАЯ ЗАЩИТА: */
-    /* При каждом нажатии на меню сбрасываем очки и возвращаем раунды на 1 */
     flagScore = 0; flagRound = 1;
     capScore = 0; capRound = 1;
     countryScore = 0; countryRound = 1;
@@ -1344,9 +1344,12 @@ function switchView(viewId) {
         document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
+    } else if (viewId === 'quiz-regions') {
+        /* 🌟 ПОДСВЕТКА ДЛЯ 5-Й КНОПКИ: активируем жирный шрифт при нажатии */
+        document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
+        //основной экран пока не переключаем, так как мы его еще не создали
     }
 }
-
 
 function toggleBlock(id) {
     const block = document.getElementById(id);
