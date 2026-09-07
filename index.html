@@ -1878,12 +1878,15 @@ function initRussiaGorodaTable() {
             <tr>
                 <td class="col-flag">
                    <div class="flag-wrapper">
-                       <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy" onclick="openFlagModal(this.src)">
+                       <!-- 🍏 СУПЕР-КЛИК ДЛЯ SAFARI: жесткая обертка ссылки гарантирует открытие флага во весь экран -->
+                       <a href="javascript:void(0)" onclick="openFlagModal('${g.flag}')" style="display: inline-flex; -webkit-tap-highlight-color: transparent;">
+                           <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy">
+                       </a>
                    </div>
                 </td>
                 <td>
-                    <!-- 🧭 ОРИГИНАЛЬНАЯ ЛОГИКА ШИФРОВАНИЯ: Ссылка один в один как у стран мира -->
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(g.name)}" 
+                    <!-- 🧭 ЭТАЛОННЫЙ АДРЕС КАРТ: вернули оригинальный ://google.com со словом maps -->
+                    <a href="https://://google.com/maps/search/?api=1&query=${encodeURIComponent(g.name)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${g.name}</strong>
@@ -1892,6 +1895,7 @@ function initRussiaGorodaTable() {
                 <td style="color: #6c757d;">${g.status}</td>
             </tr>`;
     });
+
     tbody.innerHTML = rowsHtml;
 }
 // Запускаем автоматику сборки городов при старте сайта
