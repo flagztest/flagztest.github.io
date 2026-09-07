@@ -642,7 +642,19 @@
          color: #495057 !important;            /* 🌟 БУКВЫ СТАЛИ ЧУТОЧКУ ТЕМНЕЕ И НА СТУПЕНЬ КОНТРАСТНЕЕ */
      }
 
+     /* ВСТАВЛЯЕМ СЮДА: Делаем шрифт рекордов компактным на экранах Айфонов */
+     .quiz-stats {
+         font-size: 14px !important;
+         font-weight: 600 !important;
+         color: #495057 !important;
+         letter-spacing: 0.3px !important;
 
+} /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
+
+
+    
+     
+    </style>
 /* 🌟 ГРАФИТОВЫЙ МОБИЛЬНЫЙ ЩИТ С ЗАЩИТОЙ ТЕМНЫХ ПОЛОС */
 .flag-modal {
     position: fixed;
@@ -679,6 +691,7 @@
     transition: opacity 0.05s ease-in-out !important;
 }
 
+
 /* 🌟 МОБИЛЬНАЯ КАРТИНКА: ТОТАЛЬНОЕ ОБНУЛЕНИЕ ВСЕХ КОНТУРОВ И ТЕНЕЙ SAFARI */
 .flag-modal-img {
     max-width: 95% !important;
@@ -700,20 +713,6 @@
     transform: scale(1) !important;
 }
 
-
-     /* ВСТАВЛЯЕМ СЮДА: Делаем шрифт рекордов компактным на экранах Айфонов */
-     .quiz-stats {
-         font-size: 14px !important;
-         font-weight: 600 !important;
-         color: #495057 !important;
-         letter-spacing: 0.3px !important;
-
-} /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
-
-
-    
-     
-    </style>
 </head>
 <body>
 <!-- 🦖 КИНЕМАТОГРАФИЧНАЯ ЗАСТАВКА (SPLASH SCREEN) С ЧИСТОЙ КАРТИНКОЙ ГОДЗИЛЛЫ -->
@@ -1867,7 +1866,6 @@ const russiaGorodaData = [
     { name: "Севастополь", status: "Город фед. значения", flag: "https://upload.wikimedia.org/wikipedia/commons/1/14/Flag_of_Sevastopol.svg" }
 ];
 
-// 🌟 ДВИЖОК АВТО-СБОРКИ: Генерирует строки один в один по вашей технологии базы стран мира
 function initRussiaGorodaTable() {
     const tbody = document.getElementById('russiaGorodaTableBody');
     if (!tbody) return;
@@ -1876,17 +1874,13 @@ function initRussiaGorodaTable() {
     russiaGorodaData.forEach(g => {
         rowsHtml += `
             <tr>
-                <td class="col-flag">
+                <td class="col-flag" onclick="openFlagModal('${g.flag}')" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
                    <div class="flag-wrapper">
-                       <!-- 🍏 СУПЕР-КЛИК ДЛЯ SAFARI: жесткая обертка ссылки гарантирует открытие флага во весь экран -->
-                       <a href="javascript:void(0)" onclick="openFlagModal('${g.flag}')" style="display: inline-flex; -webkit-tap-highlight-color: transparent;">
-                           <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy">
-                       </a>
+                       <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy">
                    </div>
                 </td>
                 <td>
-                    <!-- 🧭 ЭТАЛОННЫЙ АДРЕС КАРТ: вернули оригинальный ://google.com со словом maps -->
-                    <a href="https://://google.com/maps/search/?api=1&query=${encodeURIComponent(g.name)}" 
+                    <a href="https://google.com{encodeURIComponent(g.name)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${g.name}</strong>
@@ -1895,7 +1889,6 @@ function initRussiaGorodaTable() {
                 <td style="color: #6c757d;">${g.status}</td>
             </tr>`;
     });
-
     tbody.innerHTML = rowsHtml;
 }
 // Запускаем автоматику сборки городов при старте сайта
