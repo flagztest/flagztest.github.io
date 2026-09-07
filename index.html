@@ -1423,12 +1423,13 @@ function switchView(viewId) {
     } else if (viewId === 'quiz-regions') {
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
         
-        /* 🌟 ИДЕАЛЬНАЯ ВЫСОТА: приподняли закрытый блок выше к поисковой строке */
-        document.body.style.setProperty('padding-top', '140px', 'important');
+        /* 🌟 АБСОЛЮТНАЯ СИММЕТРИЯ: приподняли плашку России ровно на уровень Европы */
+        document.body.style.setProperty('padding-top', '120px', 'important');
         
         document.getElementById('quizRegionsView').classList.add('active');
         if (regControls) regControls.style.display = 'flex';
     }
+
 
 }
 
