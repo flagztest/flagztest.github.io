@@ -794,15 +794,54 @@
      <!-- 🇷🇺 ГЛАВНЫЙ ЭКРАН ВКЛАДКИ РОССИЯ В СТИЛЕ КОНТИНЕНТОВ -->
     <div id="quizRegionsView" class="view-section">
         
-        <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РФ (Общее официальное число регионов — 89) -->
+        <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РФ (Раскрывает внутренние типы) -->
         <div class="continent-block collapsed" id="block-russia-types">
             <h2 class="continent-header" onclick="toggleBlock('block-russia-types')">
                 <span>Субъекты Российской Федерации</span>
                 <span class="count-badge">89</span>
             </h2>
+            <!-- 🌟 ВНУТРЕННЕЕ ПОДМЕНЮ: Вложенные плашки типов субъектов -->
+            <div class="continent-content" style="padding: 10px 12px 2px 12px !important; background-color: #f8f9fa !important; display: none;">
+                
+                <div class="continent-block collapsed" id="sub-respubliki" style="margin-bottom: 8px !important;">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-respubliki')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                        <span>Республики</span>
+                        <span class="count-badge">24</span>
+                    </h2>
+                </div>
+
+                <div class="continent-block collapsed" id="sub-kraya" style="margin-bottom: 8px !important;">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-kraya')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                        <span>Края</span>
+                        <span class="count-badge">9</span>
+                    </h2>
+                </div>
+
+                <div class="continent-block collapsed" id="sub-oblasti" style="margin-bottom: 8px !important;">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-oblasti')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                        <span>Области</span>
+                        <span class="count-badge">48</span>
+                    </h2>
+                </div>
+
+                <div class="continent-block collapsed" id="sub-goroda" style="margin-bottom: 8px !important;">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-goroda')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                        <span>Города федерального значения</span>
+                        <span class="count-badge">3</span>
+                    </h2>
+                </div>
+
+                <div class="continent-block collapsed" id="sub-okruga" style="margin-bottom: 6px !important;">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-okruga')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
+                        <span>Автономные округа и область</span>
+                        <span class="count-badge">5</span>
+                    </h2>
+                </div>
+
+            </div>
         </div>
 
-        <!-- 🌟 ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА (Общее число регионов России — 89) -->
+        <!-- 🌟 ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
         <div class="continent-block collapsed" id="block-russia-districts">
             <h2 class="continent-header" onclick="toggleBlock('block-russia-districts')">
                 <span>Федеральные округа</span>
@@ -811,6 +850,7 @@
         </div>
         
     </div>
+
      
 </div>
 
