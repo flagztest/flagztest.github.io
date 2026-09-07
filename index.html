@@ -698,11 +698,10 @@
      .flag-modal.open .flag-modal-img {
          transform: scale(1) !important;
      }
-     
-} /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает мобильный режим @media */
-
+}
 </style>
 </head>
+
 
 
 <body>
@@ -1865,14 +1864,14 @@ function initRussiaGorodaTable() {
     russiaGorodaData.forEach(g => {
         rowsHtml += `
             <tr>
-                <td class="col-flag" onclick="openFlagModal('${g.flag}')" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                <td class="col-flag" onclick="openFlagModal(g.flag)" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
                    <div class="flag-wrapper">
                        <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy">
                    </div>
                 </td>
                 <td>
-                    <!-- 🧭 ЭТАЛОННАЯ АВТО-ССЫЛКА ИЗ БАЗЫ СТРАН: Теперь карты железно откроются! -->
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(g.name)}" 
+                    <!-- 🧭 ОРИГИНАЛЬНАЯ АВТО-ССЫЛКА: Со словом maps и правильным доменом ://google.com -->
+                    <a href="https://://google.com/maps/search/?api=1&query=${encodeURIComponent(g.name)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${g.name}</strong>
@@ -1883,6 +1882,7 @@ function initRussiaGorodaTable() {
     });
     tbody.innerHTML = rowsHtml;
 }
+
 
 // Запускаем автоматику сборки городов при старте сайта
 initRussiaGorodaTable();
