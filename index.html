@@ -825,12 +825,65 @@
                     </h2>
                 </div>
 
-                <div class="sub-continent-block collapsed" id="sub-goroda" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                 <div class="sub-continent-block collapsed" id="sub-goroda" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
                     <h2 class="continent-header" onclick="toggleBlock('sub-goroda')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
                         <span>Города федерального значения</span>
                         <span class="count-badge">3</span>
                     </h2>
+                    <!-- 🌟 ТАБЛИЦА ГОРОДОВ: выстроена в нашем эталонном безрамочном стиле флагов мира -->
+                    <div class="continent-content" style="display: none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="col-flag">Флаг</th>
+                                    <th>Город</th>
+                                    <th>Статус</th>
+                                endthead>
+                            <tbody>
+                                <tr>
+                                    <td class="col-flag">
+                                       <div class="flag-wrapper">
+                                           <img class="flag-img" src="https://wikimedia.org" alt="Москва" loading="lazy" onclick="openFlagModal(this.src)">
+                                       </div>
+                                    </td>
+                                    <td>
+                                        <a href="https://google.com" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                                            <strong>Москва</strong>
+                                        </a>
+                                    </td>
+                                    <td style="color: #6c757d;">Столица / Город фед. значения</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-flag">
+                                       <div class="flag-wrapper">
+                                           <img class="flag-img" src="https://wikimedia.org" alt="Санкт-Петербург" loading="lazy" onclick="openFlagModal(this.src)">
+                                       </div>
+                                    </td>
+                                    <td>
+                                        <a href="https://google.com" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                                            <strong>Санкт-Петербург</strong>
+                                        </a>
+                                    </td>
+                                    <td style="color: #6c757d;">Город фед. значения</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-flag">
+                                       <div class="flag-wrapper">
+                                           <img class="flag-img" src="https://wikimedia.org" alt="Севастополь" loading="lazy" onclick="openFlagModal(this.src)">
+                                       </div>
+                                    </td>
+                                    <td>
+                                        <a href="https://google.com" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                                            <strong>Севастополь</strong>
+                                        </a>
+                                    </td>
+                                    <td style="color: #6c757d;">Город фед. значения</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
 
                 <div class="sub-continent-block collapsed" id="sub-okruga" style="background: #fff; border-radius: 8px; margin-bottom: 4px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
                     <h2 class="continent-header" onclick="toggleBlock('sub-okruga')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
