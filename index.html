@@ -742,8 +742,9 @@
         <button class="tab-btn" onclick="switchView('quiz-flags')">🇷🇺<br>Квиз:<br>Флаги</button>
         <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
         <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
-        <button class="tab-btn" onclick="switchView('quiz-regions')">🇷🇺<br>РОССИЯ</button>
-        </div>          <div class="controls-row" id="dbControls">
+        <button class="tab-btn" onclick="switchView('quiz-regions')">🇷🇺<br>База<br>России</button>
+        </div>          
+            <div class="controls-row" id="dbControls">
             <div class="search-box">
             <input type="text" id="searchInput" placeholder="Поиск по странам...">
             <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()">✖</button>
@@ -1423,10 +1424,6 @@ function switchView(viewId) {
         loadQuizCountryRound();
     } else if (viewId === 'quiz-regions') {
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
-        
-        /* 🌟 УВЕЛИЧИВАЕМ ОТСТУП ДЛЯ РОССИИ: раздвигаем поле до 175px из-за новой высоты шапки */
-        document.body.style.setProperty('padding-top', '175px', 'important');
-        
         document.getElementById('quizRegionsView').classList.add('active');
         if (regControls) regControls.style.display = 'flex';
     }
