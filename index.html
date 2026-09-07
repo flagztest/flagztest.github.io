@@ -802,7 +802,7 @@
                 <span class="count-badge">89</span>
             </h2>
             <!-- 🌟 ВНУТРЕННЕЕ ПОДМЕНЮ: Вложенные плашки типов субъектов -->
-            <div class="continent-content" style="padding: 10px 12px 2px 12px !important; background-color: #f8f9fa !important; display: none;">
+            <div class="continent-content" style="padding: 8px 0px 0px 0px !important; background-color: #ffffff !important; display: none;">
                 
                 <div class="continent-block collapsed" id="sub-respubliki" style="margin-bottom: 8px !important;">
                     <h2 class="continent-header" onclick="toggleBlock('sub-respubliki')" style="background-color: #ffffff !important; padding: 12px 15px !important; font-size: 16px !important;">
@@ -1424,9 +1424,14 @@ function switchView(viewId) {
         loadQuizCountryRound();
     } else if (viewId === 'quiz-regions') {
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
+        
+        /* 🌟 ТОТАЛЬНОЕ ВЫТАЛКИВАНИЕ: пробиваем !important в коде, опуская плашку вниз */
+        document.body.style.setProperty('padding-top', '175px', 'important');
+        
         document.getElementById('quizRegionsView').classList.add('active');
         if (regControls) regControls.style.display = 'flex';
     }
+
 }
 
 function toggleBlock(id) {
