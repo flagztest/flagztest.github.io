@@ -359,10 +359,10 @@
             border-top: 1px solid var(--border-color);
             padding-top: 15px;
         }
-     /* 🌟 ИДЕАЛЬНЫЙ СДВИГ ДЛЯ РОССИИ: выравнивает плашки ровно под краем поиска регионов */
      #quizRegionsView {
-         padding-top: 90px !important;
+         padding-top: 0px !important;
      }
+
         .scroll-top-btn {
             position: fixed;
             bottom: 25px;
@@ -1358,6 +1358,9 @@ function switchView(viewId) {
     const regControls = document.getElementById('regionsControls');
     if (regControls) regControls.style.display = 'none';
     
+    /* 🌟 СБРОС ОТСТУПА: возвращаем стандартные 120px для всех обычных вкладок */
+    document.body.style.setProperty('padding-top', '120px', 'important');
+    
     flagScore = 0; flagRound = 1;
     capScore = 0; capRound = 1;
     countryScore = 0; countryRound = 1;
@@ -1380,11 +1383,13 @@ function switchView(viewId) {
         loadQuizCountryRound();
     } else if (viewId === 'quiz-regions') {
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
-        /* 🌟 ОТКРЫВАЕМ ЭКРАН РОССИИ: */
+        
+        /* 🌟 УВЕЛИЧИВАЕМ ОТСТУП ДЛЯ РОССИИ: раздвигаем поле до 175px из-за новой высоты шапки */
+        document.body.style.setProperty('padding-top', '175px', 'important');
+        
         document.getElementById('quizRegionsView').classList.add('active');
         if (regControls) regControls.style.display = 'flex';
     }
-
 }
 
 function toggleBlock(id) {
