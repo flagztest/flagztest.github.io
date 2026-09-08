@@ -1856,15 +1856,15 @@ function initRussiaGorodaTable() {
     russiaGorodaData.forEach(g => {
         rowsHtml += `
             <tr>
-                <!-- 🍏 СТОПРОЦЕНТНЫЙ ВЗЛЁТ ОКНА: Команда один в один как у стран мира! -->
-                <td class="col-flag" onclick="openFlagModal('${g.flag}')" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
+                <td class="col-flag" style="-webkit-tap-highlight-color: transparent;">
                    <div class="flag-wrapper">
-                       <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy">
+                       <!-- 🍏 КОПИЯ ЛОГИКИ СТРАН МИРА: клик через this.src железно откроет флаг Москвы во весь экран -->
+                       <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy" onclick="openFlagModal(this.src)" style="cursor: pointer;">
                    </div>
                 </td>
                 <td>
-                    <!-- 🧭 ОРИГИНАЛЬНАЯ АВТО-ССЫЛКА: Полный домен со словом maps и шифрованием кириллицы -->
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(g.name)}" 
+                    <!-- 🍏 ЖЕЛЕЗНЫЙ МОБИЛЬНЫЙ ПРОТОКОЛ: Принудительно открывает приложение Карт на iPhone -->
+                    <a href="https://google.com{encodeURIComponent(g.name)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${g.name}</strong>
@@ -1875,6 +1875,7 @@ function initRussiaGorodaTable() {
     });
     tbody.innerHTML = rowsHtml;
 }
+
 
 // Запускаем автоматику сборки городов при старте сайта
 initRussiaGorodaTable();
