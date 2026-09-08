@@ -1846,15 +1846,21 @@ function openFlagModal(imgSrc) {
     const modalImg = document.getElementById('flagModalImg');
     modalImg.src = imgSrc;
     
+    // 🌟 Намертво возвращаем окну его родной глубокий темный цвет
+    modal.style.setProperty('background-color', '#1a1a1a', 'important');
+    
     /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ НЕПАЛА */
     if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg')) {
         modalImg.style.setProperty('mix-blend-mode', 'multiply', 'important');
+        modalImg.style.setProperty('opacity', '1', 'important');
     } else {
-        modalImg.style.setProperty('mix-blend-mode', 'normal', 'important');
+        // 🌟 ИСПРАВЛЕНО ДЛЯ МИРОВЫХ ФЛАГОВ: сбрасываем смешивание и принудительно включаем видимость
+        modalImg.style.setProperty('mix-blend-mode', 'unset', 'important');
+        modalImg.style.setProperty('display', 'block', 'important');
+        modalImg.style.setProperty('opacity', '1', 'important');
     }
-    // 🌟 Возвращаем окну его родной темный графитовый цвет
-    modal.style.setProperty('background-color', '#1a1a1a', 'important');
-    modalImg.style.setProperty('background-color', 'transparent', 'important');
+    
+    // Убираем рамки и тени, чтобы картинка была чистой
     modalImg.style.setProperty('border', 'none', 'important');
     modalImg.style.setProperty('box-shadow', 'none', 'important');
     modalImg.style.setProperty('clip-path', 'none', 'important');
