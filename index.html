@@ -776,7 +776,7 @@
     <div id="dbView" class="view-section active">
         <div id="tablesContainer"></div>
     </div>
-    <div id="ruDbView" class="view-section" style="padding-top: 15px;">
+        <div id="ruDbView" class="view-section">
         <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
         <button class="continent-header ru-main-tab active" id="btnSub" onclick="switchRuSubView('subjects')" style="
             width: 100%;
@@ -787,9 +787,7 @@
             box-sizing: border-box;
             background-color: #e9ecef !important;
             font-weight: 800 !important;
-            margin-top: 40px !important; 
         ">
-
             <span>Субъекты России</span>
         </button>
         
@@ -810,9 +808,10 @@
             <span>Федеральные округа</span>
         </button>
         
-        <!-- Контейнер для 2-го раздела (Округа) -->
+        <!-- subdivision container (Округа) -->
         <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
-   </div>
+    </div>
+
     <div id="quizFlagsView" class="view-section">
         <div class="quiz-panel">
             <div class="quiz-flag-container">
@@ -1441,7 +1440,8 @@ function switchRuSubView(subViewId) {
         subContainer.classList.add('active');
         
         setTimeout(() => {
-            const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 130;
+            // Подтягиваем кнопку аккуратно под нижний край поиска (минус 120 пикселей)
+            const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 120;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
         
@@ -1454,7 +1454,8 @@ function switchRuSubView(subViewId) {
         okrContainer.classList.add('active');
         
         setTimeout(() => {
-            const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 130;
+            // Подтягиваем кнопку аккуратно под нижний край поиска (минус 120 пикселей)
+            const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
     }
@@ -1463,11 +1464,6 @@ function switchRuSubView(subViewId) {
         clearSearch();
     }
 }
-
-
-
-
-
 
 function toggleBlock(id) {
     const block = document.getElementById(id);
