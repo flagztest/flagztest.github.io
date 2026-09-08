@@ -706,8 +706,6 @@
 
 } /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
 
-
-     /* Стиль для подразделов России */
      /* Стиль для подразделов России */
      .ru-sub-section {
          display: none;
@@ -715,13 +713,19 @@
      .ru-sub-section.active {
          display: block;
      }
+    #ruDbView {
+    margin-top: 20px; 
+}
      @media (max-width: 600px) {
          /* Корректируем высоту прилипания кнопок базы РФ на смартфонах */
          #ruDbView > div:first-child {
              top: 112px !important; 
              padding-bottom: 8px !important;
              gap: 6px !important;
-         }
+          }
+    #ruDbView {
+        margin-top: 10px !important; 
+    }
          #ruDbView .tab-btn {
              font-size: 14px !important; 
              padding: 10px 5px !important;
@@ -781,7 +785,7 @@
     <div id="dbView" class="view-section active">
         <div id="tablesContainer"></div>
     </div>
-    <div id="ruDbView" class="view-section" style="margin-top: 5px;">
+    <div id="ruDbView" class="view-section">
         <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
         <button class="continent-header ru-main-tab active" id="btnSub" onclick="switchRuSubView('subjects')" style="
             width: 100%;
