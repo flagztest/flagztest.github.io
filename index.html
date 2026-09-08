@@ -707,6 +707,23 @@
 } /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
 
 
+     /* Стиль для подразделов России */
+     .ru-sub-section {
+         display: none;
+     }
+     .ru-sub-section.active {
+         display: block;
+     }
+     @media (max-width: 600px) {
+         #ruDbView .nav-tabs {
+             grid-template-columns: 1fr 1fr !important; /* На смартфонах строго делим 50/50 */
+             gap: 6px !important;
+         }
+         #ruDbView .tab-btn {
+             font-size: 14px !important; /* Чуть компактнее шрифт для длинных названий */
+             padding: 8px 0px !important;
+         }
+     }
     
      
     </style>
@@ -754,8 +771,19 @@
         <div id="tablesContainer"></div>
     </div>
     <div id="ruDbView" class="view-section">
-        <div id="ruTablesContainer"></div>
+        <!-- 🌟 Мини-переключатель внутри Базы России -->
+        <div class="nav-tabs" style="grid-template-columns: 1fr 1fr; margin-bottom: 15px; border-bottom: 1px solid var(--border-color);">
+            <button class="tab-btn active" id="btnSub" onclick="switchRuSubView('subjects')">🏛️<br>Субъекты России</button>
+            <button class="tab-btn" id="btnOkr" onclick="switchRuSubView('okrugs')">🗺️<br>Федеральные округа</button>
+        </div>
+        
+        <!-- Контейнер для 1-го раздела (Субъекты) -->
+        <div id="ruSubjectsContainer" class="ru-sub-section active"></div>
+        
+        <!-- Контейнер для 2-го раздела (Округа) -->
+        <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none;"></div>
     </div>
+
     <div id="quizFlagsView" class="view-section">
         <div class="quiz-panel">
             <div class="quiz-flag-container">
@@ -1356,6 +1384,33 @@ function switchView(viewId) {
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
+    }
+}
+function switchRuSubView(subViewId) {
+    // Скрываем оба контейнера и гасим активность кнопок
+    document.getElementById('ruSubjectsContainer').style.display = 'none';
+    document.getElementById('ruOkrugsContainer').style.display = 'none';
+    document.getElementById('ruSubjectsContainer').classList.remove('active');
+    document.getElementById('ruOkrugsContainer').classList.remove('active');
+    document.getElementById('btnSub').classList.remove('active');
+    document.getElementById('btnOkr').classList.remove('active');
+    
+    // Включаем нужный подраздел
+    if (subViewId === 'subjects') {
+        document.getElementById('btnSub').classList.add('active');
+        const container = document.getElementById('ruSubjectsContainer');
+        container.style.display = 'block';
+        container.classList.add('active');
+    } else if (subViewId === 'okrugs') {
+        document.getElementById('btnOkr').classList.add('active');
+        const container = document.getElementById('ruOkrugsContainer');
+        container.style.display = 'block';
+        container.classList.add('active');
+    }
+    
+    // Сбрасываем поиск при переключении разделов для порядка
+    if(document.getElementById('searchInput').value !== "") {
+        clearSearch();
     }
 }
 
