@@ -720,17 +720,11 @@
      #ruDbView {
          margin-top: 15px; 
      }
-     @media (max-width: 600px) {
-         /* Заставляем новые главные кнопки прижиматься к краям телефона БЕЗ отступов, как континенты */
-         .ru-main-tab {
-             padding: 15px 20px !important;
-             font-size: 18px !important;
-             border-radius: 0px !important;
-             margin-left: -4px !important;  /* Сбрасываем боковой отступ body */
-             margin-right: -4px !important; /* Сбрасываем боковой отступ body */
-             width: calc(100% + 8px) !important; /* Компенсируем сброс по ширине */
-         }
-     }
+@media (max-width: 600px) {
+    #ruDbView {
+        margin-top: 5px !important; /* 🌟 Защищает первую кнопку от залезания под шапку на телефонах */
+    }
+}
 
     </style>
 </head>
@@ -776,7 +770,7 @@
     <div id="dbView" class="view-section active">
         <div id="tablesContainer"></div>
     </div>
-        <div id="ruDbView" class="view-section">
+        <div id="ruDbView" class="view-section" style="margin-top: 15px;">
         <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
         <button class="continent-header ru-main-tab active" id="btnSub" onclick="switchRuSubView('subjects')" style="
             width: 100%;
