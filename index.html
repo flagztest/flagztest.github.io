@@ -710,25 +710,19 @@
      .ru-sub-section {
          display: none;
      }
+     /* Стиль для подразделов России */
+     .ru-sub-section {
+         display: none;
+     }
      .ru-sub-section.active {
          display: block;
      }
-    #ruDbView {
-    margin-top: 20px; 
-}
+     #ruDbView {
+         margin-top: 15px; 
+     }
      @media (max-width: 600px) {
-         /* Корректируем высоту прилипания кнопок базы РФ на смартфонах */
-         #ruDbView > div:first-child {
-             top: 112px !important; 
-             padding-bottom: 8px !important;
-             gap: 6px !important;
-          }
-    #ruDbView {
-        margin-top: 45px !important; 
-    }
-         #ruDbView .tab-btn {
-             font-size: 14px !important; 
-             padding: 10px 5px !important;
+         #ruDbView {
+             margin-top: 5px !important; 
          }
          /* Заставляем новые главные кнопки прижиматься к краям телефона БЕЗ отступов, как континенты */
          .ru-main-tab {
@@ -785,7 +779,7 @@
     <div id="dbView" class="view-section active">
         <div id="tablesContainer"></div>
     </div>
-    <div id="ruDbView" class="view-section">
+    <div id="ruDbView" class="view-section" style="padding-top: 15px;">
         <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
         <button class="continent-header ru-main-tab active" id="btnSub" onclick="switchRuSubView('subjects')" style="
             width: 100%;
@@ -820,6 +814,8 @@
         <!-- Контейнер для 2-го раздела (Округа) -->
         <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
     </div>
+
+
 
         
         <!-- Контейнер для 1-го раздела (Субъекты) -->
