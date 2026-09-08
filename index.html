@@ -1484,28 +1484,21 @@ function toggleBlock(id) {
     const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
     allCollapsed = hasExpanded ? false : true; /* Работаем скрыто в памяти, не трогая элементы DOM */
 
-/* НАШ ТОЧНЫЙ АВТОСКРОЛЛ С ЗАЩИТОЙ: Теперь он железно внутри if (content) */
-if (content && content.style.display === 'block') {
-    setTimeout(() => {
-        const header = block.querySelector('.continent-header');
-        const offset = 120; // Высота фиксированного меню в пикселях
-        
-        const elementPosition = header.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - offset;
+         /* НАШ ТОЧНЫЙ АВТОСКРОЛЛ С ЗАЩИТОЙ: Теперь он железно внутри if (content) */
+        if (content && content.style.display === 'block') {
+            setTimeout(() => {
+                const header = block.querySelector('.continent-header');
+                const offset = 120; // Высота фиксированного меню в пикселях
+                
+                const elementPosition = header.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition - offset;
 
-        // 🌟 ПРЕДОХРАНИТЕЛЬ: Вычисляем разницу между текущим скроллом и целевым
-        const diff = Math.abs(window.scrollY - offsetPosition);
-
-        // Скроллим только в том случае, если разница больше 4 пикселей (защита от микро-дёрганий)
-        if (diff > 4) {
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }, 120); 
         }
-    }, 120); 
-}
-
     } // ЭТА СКОБКА ТЕПЕРЬ ПРАВИЛЬНО ЗАКРЫВАЕТ БЛОК if (content)
 } // ЭТА СКОБКА ОКОНЧАТЕЛЬНО ЗАКРЫВАЕТ ФУНКЦИЮ toggleBlock
 
