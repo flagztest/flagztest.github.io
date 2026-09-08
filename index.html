@@ -1534,13 +1534,18 @@ function runSearch() {
 
     document.querySelectorAll('.continent-block').forEach(block => {
         const rows = block.querySelectorAll('tbody tr');
-        const content = block.querySelector('.continent-content'); // Нашли скрытый контент таблицы
+        const content = block.querySelector('.continent-content'); 
+        
+        // 🌟 ЗАЩИТА: Если внутри блока нет строк таблицы (например, это кнопка-плашка РФ),
+        // мы просто пропускаем этот блок, чтобы поиск не ломался и не зависал
+        if (rows.length === 0) return;
+
         let visibleCount = 0;
         
         rows.forEach(r => {
             const name = r.getAttribute('data-name');
             const cap = r.getAttribute('data-capital');
-            if (name.includes(q) || cap.includes(q)) {
+            if (name && (name.includes(q) || cap.includes(q))) {
                 r.classList.remove('hidden');
                 visibleCount++;
             } else {
@@ -1549,20 +1554,17 @@ function runSearch() {
         });
         
         const badge = document.getElementById(`badge-${block.id}`);
-        badge.textContent = visibleCount;
+        if (badge) badge.textContent = visibleCount;
         
         if (visibleCount === 0 && q !== '') {
             block.style.display = 'none';
         } else {
             block.style.display = 'block';
             
-            /* 🌟 НАШЕ ЖЕЛЕЗНОЕ ИСПРАВЛЕНИЕ: */
             if (q !== '') {
-                // Если пользователь что-то ищет, принудительно РАСПАХИВАЕМ блок и контент на экране
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
             } else {
-                // Если поиск пустой, возвращаем базу в исходное свернутое состояние
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
             }
