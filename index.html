@@ -722,9 +722,19 @@
      }
 @media (max-width: 600px) {
     #ruDbView {
-        margin-top: 5px !important; /* 🌟 Защищает первую кнопку от залезания под шапку на телефонах */
+        margin-top: 5px !important; /* Защищает первую кнопку от залезания под шапку */
+    }
+    
+    /* 🌟 ВОТ ЭТОТ КЛАСС СДЕЛАЕТ КНОПКИ РФ ТОЧНО ТАКИМИ ЖЕ, КАК В БАЗЕ ЕВРОПЫ */
+    .ru-main-tab {
+        margin-left: -4px !important;       /* Прижимает левый край к стеклу телефона */
+        margin-right: -4px !important;      /* Прижимает правый край к стеклу телефона */
+        width: calc(100% + 8px) !important;  /* Компенсирует ширину, убирая обрезку краев */
+        border-radius: 0px !important;      /* Прямые углы на мобильном, как у континентов */
+        box-sizing: border-box !important;
     }
 }
+
 
     </style>
 </head>
@@ -770,7 +780,8 @@
     <div id="dbView" class="view-section active">
         <div id="tablesContainer"></div>
     </div>
-        <div id="ruDbView" class="view-section" style="margin-top: 40px;">
+            <div id="ruDbView" class="view-section" style="padding-top: 15px; box-sizing: border-box;">
+
         <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
         <button class="continent-header ru-main-tab active" id="btnSub" onclick="switchRuSubView('subjects')" style="
             width: 100%;
