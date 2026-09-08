@@ -721,18 +721,7 @@
          margin-top: 15px; 
      }
 @media (max-width: 600px) {
-    #ruDbView {
-        margin-top: 5px !important; /* Защищает первую кнопку от залезания под шапку */
-    }
-    
-    /* 🌟 ВОТ ЭТОТ КЛАСС СДЕЛАЕТ КНОПКИ РФ ТОЧНО ТАКИМИ ЖЕ, КАК В БАЗЕ ЕВРОПЫ */
-    .ru-main-tab {
-        margin-left: -4px !important;       /* Прижимает левый край к стеклу телефона */
-        margin-right: -4px !important;      /* Прижимает правый край к стеклу телефона */
-        width: calc(100% + 8px) !important;  /* Компенсирует ширину, убирая обрезку краев */
-        border-radius: 0px !important;      /* Прямые углы на мобильном, как у континентов */
-        box-sizing: border-box !important;
-    }
+
 }
 
 
@@ -777,42 +766,27 @@
 </div>
 
 <div class="container">
+    <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА, И РЕГИОНОВ РФ -->
     <div id="dbView" class="view-section active">
-        <div id="tablesContainer"></div>
+        <div id="tablesContainer">
+            
+            <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ (Появляется только в режиме ru-db) -->
+            <button class="continent-header ru-main-tab" id="btnSub" onclick="switchRuSubView('subjects')" style="display: none; width: 100%;">
+                <span>Субъекты России</span>
+            </button>
+            <!-- Контейнер для 1-го раздела (Субъекты) -->
+            <div id="ruSubjectsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
+            
+            <!-- 🌟 КНОПКА-ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА (Появляется только в режиме ru-db) -->
+            <button class="continent-header ru-main-tab" id="btnOkr" onclick="switchRuSubView('okrugs')" style="display: none; width: 100%;">
+                <span>Федеральные округа</span>
+            </button>
+            <!-- Контейнер для 2-го раздела (Округа) -->
+            <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
+
+        </div>
     </div>
-    <div id="ruDbView" class="view-section" style="padding-top: 15px; box-sizing: border-box;">
-        <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
-        <button class="continent-header ru-main-tab active" id="btnSub" onclick="switchRuSubView('subjects')" style="
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin-bottom: 0px;
-            text-align: left;
-            box-sizing: border-box;
-            background-color: #e9ecef !important;
-            font-weight: 800 !important;
-        ">
-            <span>Субъекты России</span>
-        </button>
-        
-        <!-- Контейнер для 1-го раздела (Субъекты) -->
-        <div id="ruSubjectsContainer" class="ru-sub-section active" style="margin-bottom: 15px;"></div>
-        
-        <!-- 🌟 КНОПКА-ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
-        <button class="continent-header ru-main-tab" id="btnOkr" onclick="switchRuSubView('okrugs')" style="
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin-bottom: 0px;
-            text-align: left;
-            box-sizing: border-box;
-            background-color: #f1f3f5 !important;
-            font-weight: 600 !important;
-        ">
-            <span>Федеральные округа</span>
-        </button>
-        
-        <!-- subdivision container (Округа) -->
-        <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
-    </div>
+
 
     <div id="quizFlagsView" class="view-section">
         <div class="quiz-panel">
@@ -1384,8 +1358,12 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('dbControls').style.display = 'none';
     
-    /* 🌟 НАША БЕЗОПАСНАЯ СИНХРОННАЯ ЗАЩИТА: */
-    /* При каждом нажатии на меню сбрасываем очки и возвращаем раунды на 1 */
+    // Скрываем кнопки и подразделы России по умолчанию
+    document.getElementById('btnSub').style.display = 'none';
+    document.getElementById('btnOkr').style.display = 'none';
+    document.getElementById('ruSubjectsContainer').style.display = 'none';
+    document.getElementById('ruOkrugsContainer').style.display = 'none';
+    
     flagScore = 0; flagRound = 1;
     capScore = 0; capRound = 1;
     countryScore = 0; countryRound = 1;
@@ -1394,69 +1372,75 @@ function switchView(viewId) {
         document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
+        
+        // Показываем мировые континенты, прячем РФ
+        document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
     } else if (viewId === 'ru-db') {
-        // 🌟 ИСПРАВЛЕНО: Теперь 2-я кнопка активирует раздел России и включает поиск
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-        document.getElementById('ruDbView').classList.add('active');
+        document.getElementById('dbView').classList.add('active'); // Активируем общий dbView!
         document.getElementById('dbControls').style.display = 'flex';
+        
+        // Прячем мировые континенты
+        document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'none');
+        
+        // Включаем отображение главных кнопок России
+        document.getElementById('btnSub').style.display = 'flex';
+        document.getElementById('btnOkr').style.display = 'flex';
+        
+        // По умолчанию открываем первый подраздел (Субъекты)
+        switchRuSubView('subjects');
     } else if (viewId === 'quiz-flags') {
-        // 🌟 ИСПРАВЛЕНО: Сдвинули порядковый номер кнопки с 2 на 3
         document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
         document.getElementById('quizFlagsView').classList.add('active');
         loadQuizFlagRound();
     } else if (viewId === 'quiz-capitals') {
-        // 🌟 ИСПРАВЛЕНО: Сдвинули порядковый номер кнопки с 3 на 4
         document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
         document.getElementById('quizCapitalsView').classList.add('active');
         loadQuizCapitalRound();
     } else if (viewId === 'quiz-countries') {
-        // 🌟 ИСПРАВЛЕНО: Сдвинули порядковый номер кнопки с 4 на 5
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
     }
 }
+
 function switchRuSubView(subViewId) {
     const btnSub = document.getElementById('btnSub');
     const btnOkr = document.getElementById('btnOkr');
     const subContainer = document.getElementById('ruSubjectsContainer');
     const okrContainer = document.getElementById('ruOkrugsContainer');
     
+    // Сбрасываем стили кнопок в дефолт (как у обычного закрытого континента)
     [btnSub, btnOkr].forEach(btn => {
-        btn.classList.remove('active');
         btn.style.setProperty('background-color', '#f1f3f5', 'important');
-        btn.style.setProperty('font-weight', '600', 'important');
+        btn.style.setProperty('font-weight', '800', 'important'); // Единый вес шрифта заголовков
     });
     
     subContainer.style.display = 'none';
     okrContainer.style.display = 'none';
-    subContainer.classList.remove('active');
-    okrContainer.classList.remove('active');
     
     if (subViewId === 'subjects') {
-        btnSub.classList.add('active');
-        btnSub.style.setProperty('background-color', '#e9ecef', 'important');
-        btnSub.style.setProperty('font-weight', '800', 'important');
-        
+        btnSub.style.setProperty('background-color', '#e9ecef', 'important'); // Подсветка активного
         subContainer.style.display = 'block';
-        subContainer.classList.add('active');
+        
+        // Показываем аккордеоны субъектов, прячем аккордеоны округов
+        document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'block');
+        document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'none');
         
         setTimeout(() => {
-            // Подтягиваем кнопку аккуратно под нижний край поиска (минус 120 пикселей)
             const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 120;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
         
     } else if (subViewId === 'okrugs') {
-        btnOkr.classList.add('active');
-        btnOkr.style.setProperty('background-color', '#e9ecef', 'important');
-        btnOkr.style.setProperty('font-weight', '800', 'important');
-        
+        btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); // Подсветка активного
         okrContainer.style.display = 'block';
-        okrContainer.classList.add('active');
+        
+        // Показываем аккордеоны округов, прячем аккордеоны субъектов
+        document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'block');
+        document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'none');
         
         setTimeout(() => {
-            // Подтягиваем кнопку аккуратно под нижний край поиска (минус 120 пикселей)
             const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
@@ -1466,6 +1450,7 @@ function switchRuSubView(subViewId) {
         clearSearch();
     }
 }
+
 
 function toggleBlock(id) {
     const block = document.getElementById(id);
