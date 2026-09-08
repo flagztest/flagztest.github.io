@@ -719,10 +719,7 @@
      }
  
 @media (max-width: 600px) {
-    /* 🌟 ПОДТЯГИВАЕМ ПЕРВУЮ КНОПКУ РОССИИ РУКАМИ ПОД СРЕЗ ПОИСКА */
-    #btnSub {
-        margin-top: -10px !important; 
-    }
+
 }
 
 
@@ -772,18 +769,18 @@
     <div id="dbView" class="view-section active">
         <div id="tablesContainer">
             
-            <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РОССИИ (Один в один как Европа!) -->
-            <div class="continent-block" id="block-ru-sub-header" style="display: none; margin-bottom: 15px;">
-                <h2 class="continent-header" id="btnSub" onclick="switchRuSubView('subjects')" style="background-color: #e9ecef !important; font-weight: 800 !important;">
+            <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РОССИИ (Один в один как Европа по ширине и цвету!) -->
+            <div class="continent-block" id="block-ru-sub-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
+                <h2 class="continent-header" id="btnSub" onclick="switchRuSubView('subjects')" style="background-color: #e9ecef !important; font-weight: 800 !important; width: 100%; box-sizing: border-box;">
                     <span>Субъекты России</span>
                 </h2>
             </div>
             <!-- Контейнер для 1-го раздела (Субъекты) -->
             <div id="ruSubjectsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
             
-            <!-- 🌟 ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА (Один в один как Европа!) -->
-            <div class="continent-block" id="block-ru-okr-header" style="display: none; margin-bottom: 15px;">
-                <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')">
+            <!-- 🌟 ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА (Один в один как Европа по ширине и цвету!) -->
+            <div class="continent-block" id="block-ru-okr-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
+                <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')" style="width: 100%; box-sizing: border-box;">
                     <span>Федеральные округа</span>
                 </h2>
             </div>
@@ -791,8 +788,6 @@
             <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
 
         </div>
-
-
 
     <div id="quizFlagsView" class="view-section">
         <div class="quiz-panel">
