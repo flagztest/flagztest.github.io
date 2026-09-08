@@ -1608,24 +1608,24 @@ if (content && content.style.display === 'block') {
     setTimeout(() => {
         const header = block.querySelector('.continent-header');
         
-        // 🌟 ИСПРАВЛЕНО: Увеличили мобильный отступ до 130px, чтобы заголовки 
-        // гарантированно останавливались ровно под поиском и не прятались в шапку!
-        const offset = window.innerWidth <= 600 ? 130 : 120;
+        // 🌟 ИСПРАВЛЕНО: Задаем идеальный физический отступ под шапку
+        // На смартфонах строго 114px, на ПК — 120px
+        const offset = window.innerWidth <= 600 ? 114 : 120;
         
-        const elementPosition = header.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - offset;
+        // 🌟 ИСПРАВЛЕНО: Считаем позицию через жесткий offsetTop родительского блока,
+        // а не динамическийgetBoundingClientRect, защищая от микро-искажений Safari
+        const offsetPosition = block.offsetTop - offset;
 
         const diff = Math.abs(window.scrollY - offsetPosition);
 
-        if (diff > 4) {
+        if (diff > 2) {
             window.scrollTo({
                 top: offsetPosition,
                 behavior: 'smooth'
             });
         }
-    }, 120); 
+    }, 60); // Чуть ускорили таймер для мгновенного подхвата скролла
 }
-
 
     } // ЭТА СКОБКА ТЕПЕРЬ ПРАВИЛЬНО ЗАКРЫВАЕТ БЛОК if (content)
 } // ЭТА СКОБКА ОКОНЧАТЕЛЬНО ЗАКРЫВАЕТ ФУНКЦИЮ toggleBlock
