@@ -708,6 +708,7 @@
 
 
      /* Стиль для подразделов России */
+     /* Стиль для подразделов России */
      .ru-sub-section {
          display: none;
      }
@@ -717,19 +718,25 @@
      @media (max-width: 600px) {
          /* Корректируем высоту прилипания кнопок базы РФ на смартфонах */
          #ruDbView > div:first-child {
-             top: 112px !important; /* Идеальный мобильный стык с синей шапкой */
+             top: 112px !important; 
              padding-bottom: 8px !important;
              gap: 6px !important;
          }
          #ruDbView .tab-btn {
-             font-size: 14px !important; /* Компактный размер для мобильных экранов */
+             font-size: 14px !important; 
              padding: 10px 5px !important;
+         }
+         /* Заставляем новые главные кнопки прижиматься к краям телефона БЕЗ отступов, как континенты */
          .ru-main-tab {
              padding: 15px 20px !important;
              font-size: 18px !important;
              border-radius: 0px !important;
+             margin-left: -4px !important;  /* Сбрасываем боковой отступ body */
+             margin-right: -4px !important; /* Сбрасываем боковой отступ body */
+             width: calc(100% + 8px) !important; /* Компенсируем сброс по ширине */
          }
      }
+
     </style>
 </head>
 <body>
@@ -774,7 +781,7 @@
     <div id="dbView" class="view-section active">
         <div id="tablesContainer"></div>
     </div>
-    <div id="ruDbView" class="view-section">
+    <div id="ruDbView" class="view-section" style="margin-top: 15px;">
         <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
         <button class="continent-header ru-main-tab active" id="btnSub" onclick="switchRuSubView('subjects')" style="
             width: 100%;
@@ -786,12 +793,11 @@
             background-color: #e9ecef !important;
             font-weight: 800 !important;
         ">
-            <span>🏛️ Субъекты России</span>
+            <span>Субъекты России</span>
         </button>
         
         <!-- Контейнер для 1-го раздела (Субъекты) -->
         <div id="ruSubjectsContainer" class="ru-sub-section active" style="margin-bottom: 15px;"></div>
-        
         
         <!-- 🌟 КНОПКА-ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
         <button class="continent-header ru-main-tab" id="btnOkr" onclick="switchRuSubView('okrugs')" style="
@@ -804,12 +810,13 @@
             background-color: #f1f3f5 !important;
             font-weight: 600 !important;
         ">
-            <span>🗺️ Федеральные округа</span>
+            <span>Федеральные округа</span>
         </button>
         
         <!-- Контейнер для 2-го раздела (Округа) -->
         <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
     </div>
+
         
         <!-- Контейнер для 1-го раздела (Субъекты) -->
         <div id="ruSubjectsContainer" class="ru-sub-section active"></div>
@@ -1434,20 +1441,17 @@ function switchRuSubView(subViewId) {
     const subContainer = document.getElementById('ruSubjectsContainer');
     const okrContainer = document.getElementById('ruOkrugsContainer');
     
-    // Перевод обеих кнопок в дефолтное "свернутое" состояние
     [btnSub, btnOkr].forEach(btn => {
         btn.classList.remove('active');
         btn.style.setProperty('background-color', '#f1f3f5', 'important');
         btn.style.setProperty('font-weight', '600', 'important');
     });
     
-    // Скрываем контент
     subContainer.style.display = 'none';
     okrContainer.style.display = 'none';
     subContainer.classList.remove('active');
     okrContainer.classList.remove('active');
     
-    // Раскрываем выбранный раздел
     if (subViewId === 'subjects') {
         btnSub.classList.add('active');
         btnSub.style.setProperty('background-color', '#e9ecef', 'important');
@@ -1456,11 +1460,10 @@ function switchRuSubView(subViewId) {
         subContainer.style.display = 'block';
         subContainer.classList.add('active');
         
-        // Автоскролл к первой кнопке для удобства
         setTimeout(() => {
-            const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 120;
+            const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 130;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 50);
+        }, 80);
         
     } else if (subViewId === 'okrugs') {
         btnOkr.classList.add('active');
@@ -1470,18 +1473,17 @@ function switchRuSubView(subViewId) {
         okrContainer.style.display = 'block';
         okrContainer.classList.add('active');
         
-        // Автоскролл ко второй кнопке, чтобы списки округов сразу оказались перед глазами
         setTimeout(() => {
-            const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
+            const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 130;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 50);
+        }, 80);
     }
     
-    // Сбрасываем поиск для предотвращения визуальных багов таблиц
     if(document.getElementById('searchInput').value !== "") {
         clearSearch();
     }
 }
+
 
 
 
