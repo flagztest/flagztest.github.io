@@ -1050,6 +1050,111 @@ const specialFlags = {
 
 };
 
+// 🌟 ПОЛНАЯ БАЗА НАЗВАНИЙ СУБЪЕКТОВ РФ (89 РЕГИОНОВ, СГРУППИРОВАННЫХ ПО ТИПАМ)
+const russiaSubjectsData = {
+    "Республики": [
+        { name: "Республика Адыгея", capital: "Майкоп" },
+        { name: "Республика Алтай", capital: "Горно-Алтайск" },
+        { name: "Республика Башкортостан", capital: "Уфа" },
+        { name: "Республика Бурятия", capital: "Улан-Удэ" },
+        { name: "Республика Дагестан", capital: "Махачкала" },
+        { name: "Донецкая Народная Республика", capital: "Донецк" },
+        { name: "Республика Ингушетия", capital: "Магас" },
+        { name: "Кабардино-Балкарская Республика", capital: "Нальчик" },
+        { name: "Республика Калмыкия", capital: "Элиста" },
+        { name: "Карачаево-Черкесская Республика", capital: "Черкесск" },
+        { name: "Республика Карелия", capital: "Петрозаводск" },
+        { name: "Республика Коми", capital: "Сыктывкар" },
+        { name: "Республика Крым", capital: "Симферополь" },
+        { name: "Луганская Народная Республика", capital: "Луганск" },
+        { name: "Республика Марий Эл", capital: "Йошкар-Ола" },
+        { name: "Республика Мордовия", capital: "Саранск" },
+        { name: "Республика Саха (Якутия)", capital: "Якутск" },
+        { name: "Республика Северная Осетия — Алания", capital: "Владикавказ" },
+        { name: "Республика Татарстан", capital: "Казань" },
+        { name: "Республика Тыва", capital: "Кызыл" },
+        { name: "Удмуртская Республика", capital: "Ижевск" },
+        { name: "Республика Хакасия", capital: "Абакан" },
+        { name: "Чеченская Республика", capital: "Грозный" },
+        { name: "Чувашская Республика — Чувашия", capital: "Чебоксары" }
+    ],
+    "Края": [
+        { name: "Алтайский край", capital: "Барнаул" },
+        { name: "Забайкальский край", capital: "Чита" },
+        { name: "Камчатский край", capital: "Петропавловск-Камчатский" },
+        { name: "Краснодарский край", capital: "Краснодар" },
+        { name: "Красноярский край", capital: "Красноярск" },
+        { name: "Пермский край", capital: "Пермь" },
+        { name: "Приморский край", capital: "Владивосток" },
+        { name: "Ставропольский край", capital: "Ставрополь" },
+        { name: "Хабаровский край", capital: "Хабаровск" }
+    ],
+    "Области": [
+        { name: "Амурская область", capital: "Благовещенск" },
+        { name: "Архангельская область", capital: "Архангельск" },
+        { name: "Астраханская область", capital: "Астрахань" },
+        { name: "Белгородская область", capital: "Белгород" },
+        { name: "Брянская область", capital: "Брянск" },
+        { name: "Владимирская область", capital: "Владимир" },
+        { name: "Волгоградская область", capital: "Волгоград" },
+        { name: "Вологодская область", capital: "Вологда" },
+        { name: "Воронежская область", capital: "Воронеж" },
+        { name: "Запорожская область", capital: "Мелитополь" },
+        { name: "Ивановская область", capital: "Иваново" },
+        { name: "Иркутская область", capital: "Иркутск" },
+        { name: "Калининградская область", capital: "Калининград" },
+        { name: "Калужская область", capital: "Калуга" },
+        { name: "Кемеровская область — Кузбасс", capital: "Кемерово" },
+        { name: "Кировская область", capital: "Киров" },
+        { name: "Костромская область", capital: "Кострома" },
+        { name: "Курганская область", capital: "Курган" },
+        { name: "Курская область", capital: "Курск" },
+        { name: "Ленинградская область", capital: "Санкт-Петербург" },
+        { name: "Липецкая область", capital: "Липецк" },
+        { name: "Магаданская область", capital: "Магадан" },
+        { name: "Московская область", capital: "Москва" },
+        { name: "Мурманская область", capital: "Мурманск" },
+        { name: "Нижегородская область", capital: "Нижний Новгород" },
+        { name: "Новгородская область", capital: "Великий Новгород" },
+        { name: "Новосибирская область", capital: "Новосибирск" },
+        { name: "Омская область", capital: "Омск" },
+        { name: "Оренбургская область", capital: "Оренбург" },
+        { name: "Орловская область", capital: "Орёл" },
+        { name: "Пензенская область", capital: "Пенза" },
+        { name: "Псковская область", capital: "Псков" },
+        { name: "Ростовская область", capital: "Ростов-на-Дону" },
+        { name: "Рязанская область", capital: "Рязань" },
+        { name: "Самарская область", capital: "Самара" },
+        { name: "Саратовская область", capital: "Саратов" },
+        { name: "Сахалинская область", capital: "Южно-Сахалинск" },
+        { name: "Свердловская область", capital: "Екатеринбург" },
+        { name: "Смоленская область", capital: "Смоленск" },
+        { name: "Тамбовская область", capital: "Тамбов" },
+        { name: "Тверская область", capital: "Тверь" },
+        { name: "Томская область", capital: "Томск" },
+        { name: "Тульская область", capital: "Тула" },
+        { name: "Тюменская область", capital: "Тюмень" },
+        { name: "Ульяновская область", capital: "Ульяновск" },
+        { name: "Херсонская область", capital: "Геническ" },
+        { name: "Челябинская область", capital: "Челябинск" },
+        { name: "Ярославская область", capital: "Ярославль" }
+    ],
+    "Города федерального значения": [
+        { name: "Москва", capital: "Москва" },
+        { name: "Санкт-Петербург", capital: "Санкт-Петербург" },
+        { name: "Севастополь", capital: "Севастополь" }
+    ],
+    "Автономная область": [
+        { name: "Еврейская автономная область", capital: "Биробиджан" }
+    ],
+    "Автономные округа": [
+        { name: "Ненецкий автономный округ", capital: "Нарьян-Мар" },
+        { name: "Ханты-Мансийский автономный округ — Югра", capital: "Ханты-Мансийск" },
+        { name: "Чукотский автономный округ", capital: "Анадырь" },
+        { name: "Ямало-Ненецкий автономный округ", capital: "Салехард" }
+    ]
+};
+
 const countriesData = {
     "Европа": [
         { name: "Австрия", capital: "Вена", iso: "at", special: true },
@@ -1413,7 +1518,7 @@ function switchRuSubView(subViewId) {
     const subContainer = document.getElementById('ruSubjectsContainer');
     const okrContainer = document.getElementById('ruOkrugsContainer');
     
-    // Возвращаем обе плашки к стандартному светлому цвету континентов
+    // Перевод обеих кнопок в дефолтное состояние
     btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
     btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
     
@@ -1421,10 +1526,10 @@ function switchRuSubView(subViewId) {
     okrContainer.style.display = 'none';
     
     if (subViewId === 'subjects') {
-        // Активный раздел делаем чуть темнее для эффекта нажатия
         btnSub.style.setProperty('background-color', '#e9ecef', 'important'); 
         subContainer.style.display = 'block';
         
+        // 🌟 Показываем аккордеоны субъектов, прячем аккордеоны округов
         document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'block');
         document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'none');
         
@@ -1434,10 +1539,10 @@ function switchRuSubView(subViewId) {
         }, 80);
         
     } else if (subViewId === 'okrugs') {
-        // Активный раздел делаем чуть темнее для эффекта нажатия
         btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
         okrContainer.style.display = 'block';
         
+        // 🌟 Показываем аккордеоны округов, прячем аккордеоны субъектов
         document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'block');
         document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'none');
         
@@ -1883,7 +1988,68 @@ function closeFlagModal() {
 }
 
 
+// 🌟 АВТОМАТИЧЕСКАЯ СБОРКА ТАБЛИЦ СУБЪЕКТОВ РФ
+function generateRussiaSubjectsTables() {
+    const container = document.getElementById('ruSubjectsContainer');
+    if (!container) return;
 
+    for (const [typeName, regions] of Object.entries(russiaSubjectsData)) {
+        const block = document.createElement('div');
+        block.className = 'continent-block collapsed';
+        
+        // Задаем уникальный ID для каждого типа субъектов России
+        const safeId = `block-ru-subject-${typeName.replace(/\s+/g, '-')}`;
+        block.id = safeId;
+        
+        let rowsHtml = '';
+        regions.forEach(r => {
+            rowsHtml += `
+                <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
+                    <td class="col-flag">
+                       <div class="flag-wrapper">
+                           <!-- Временная защитная рамка вместо ткани флага -->
+                           <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
+                       </div>
+                    </td>
+                    <td>
+                        <a href="https://google.com{encodeURIComponent(r.name)}" 
+                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                            <strong>${r.name}</strong>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="https://google.com{encodeURIComponent(r.capital)}" 
+                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                            ${r.capital}
+                        </a> 
+                    </td>
+                </tr>`;
+        });
+
+        block.innerHTML = `
+            <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
+                <span>${typeName}</span>
+                <span class="count-badge" id="badge-${block.id}">${regions.length}</span>
+            </h2>
+            <div class="continent-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-flag">Флаг</th>
+                            <th>Регион</th>
+                            <th>Административный центр</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHtml}</tbody>
+                </table>
+            </div>
+        `;
+        container.appendChild(block);
+    }
+}
+
+// Запускаем автоматический рендеринг при старте скрипта
+generateRussiaSubjectsTables();
 
 
 </script>
