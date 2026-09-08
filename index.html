@@ -1336,20 +1336,29 @@ function switchView(viewId) {
         document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
-    } else if (viewId === 'quiz-flags') {
+    } else if (viewId === 'ru-db') {
+        // 🌟 ИСПРАВЛЕНО: Теперь 2-я кнопка активирует раздел России и включает поиск
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('ruDbView').classList.add('active');
+        document.getElementById('dbControls').style.display = 'flex';
+    } else if (viewId === 'quiz-flags') {
+        // 🌟 ИСПРАВЛЕНО: Сдвинули порядковый номер кнопки с 2 на 3
+        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
         document.getElementById('quizFlagsView').classList.add('active');
         loadQuizFlagRound();
     } else if (viewId === 'quiz-capitals') {
-        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+        // 🌟 ИСПРАВЛЕНО: Сдвинули порядковый номер кнопки с 3 на 4
+        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
         document.getElementById('quizCapitalsView').classList.add('active');
         loadQuizCapitalRound();
     } else if (viewId === 'quiz-countries') {
-        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
+        // 🌟 ИСПРАВЛЕНО: Сдвинули порядковый номер кнопки с 4 на 5
+        document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
     }
 }
+
 
 
 function toggleBlock(id) {
