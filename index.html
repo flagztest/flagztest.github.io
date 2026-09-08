@@ -166,11 +166,14 @@
     padding: 15px 20px;
     margin: 0;
     font-size: 18px;
-    /* 🌟 СВЕРХЖИРНЫЙ ГРАФИТ: теперь континенты в точности как вопросы и меню */
     font-weight: 800 !important;
     color: #495057 !important; 
     cursor: pointer;
     display: flex;
+    /* 🌟 ИСПРАВЛЕНО: Меняем на inline-flex, чтобы бэйдж шел впритык к названию, */
+    /* даже если текст переносится на новую строку на экранах телефонов */
+    display: inline-flex !important;
+    flex-wrap: wrap !important;
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
@@ -1599,15 +1602,16 @@ function toggleBlock(id) {
 if (content && content.style.display === 'block') {
     setTimeout(() => {
         const header = block.querySelector('.continent-header');
-        const offset = 120; // Высота фиксированного меню в пикселях
+        
+        // 🌟 ИСПРАВЛЕНО: На ПК оставляем отступ 120, а на смартфонах (экран меньше 600px) 
+        // уменьшаем до 105, чтобы плашки никогда не залезали под шапку поиска!
+        const offset = window.innerWidth <= 600 ? 105 : 120;
         
         const elementPosition = header.getBoundingClientRect().top + window.scrollY;
         const offsetPosition = elementPosition - offset;
 
-        // 🌟 ПРЕДОХРАНИТЕЛЬ: Вычисляем разницу между текущим скроллом и целевым
         const diff = Math.abs(window.scrollY - offsetPosition);
 
-        // Скроллим только в том случае, если разница больше 4 пикселей (защита от микро-дёрганий)
         if (diff > 4) {
             window.scrollTo({
                 top: offsetPosition,
@@ -1616,6 +1620,7 @@ if (content && content.style.display === 'block') {
         }
     }, 120); 
 }
+
 
     } // ЭТА СКОБКА ТЕПЕРЬ ПРАВИЛЬНО ЗАКРЫВАЕТ БЛОК if (content)
 } // ЭТА СКОБКА ОКОНЧАТЕЛЬНО ЗАКРЫВАЕТ ФУНКЦИЮ toggleBlock
