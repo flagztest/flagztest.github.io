@@ -719,11 +719,12 @@
      }
  
 @media (max-width: 600px) {
-    #ruDbView {
-        margin-top: 0px !important; /* 🌟 ВОТ ЭТО ПОДТЯНЕТ КНОПКУ РУКАМИ НАВЕРХ ДО УРОВНЯ ЕВРОПЫ */
+    /* 🌟 ПОДТЯГИВАЕМ ПЕРВУЮ КНОПКУ РОССИИ РУКАМИ ПОД СРЕЗ ПОИСКА */
+    #btnSub {
+        margin-top: -10px !important; 
     }
-
 }
+
 
 
     </style>
@@ -771,22 +772,26 @@
     <div id="dbView" class="view-section active">
         <div id="tablesContainer">
             
-            <!-- 🌟 КНОПКА-ПЛАШКА 1: СУБЪЕКТЫ РОССИИ (Появляется только в режиме ru-db) -->
-            <button class="continent-header ru-main-tab" id="btnSub" onclick="switchRuSubView('subjects')" style="display: none; width: 100%;">
-                <span>Субъекты России</span>
-            </button>
+            <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РОССИИ (Один в один как Европа!) -->
+            <div class="continent-block" id="block-ru-sub-header" style="display: none; margin-bottom: 15px;">
+                <h2 class="continent-header" id="btnSub" onclick="switchRuSubView('subjects')" style="background-color: #e9ecef !important; font-weight: 800 !important;">
+                    <span>Субъекты России</span>
+                </h2>
+            </div>
             <!-- Контейнер для 1-го раздела (Субъекты) -->
             <div id="ruSubjectsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
             
-            <!-- 🌟 КНОПКА-ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА (Появляется только в режиме ru-db) -->
-            <button class="continent-header ru-main-tab" id="btnOkr" onclick="switchRuSubView('okrugs')" style="display: none; width: 100%;">
-                <span>Федеральные округа</span>
-            </button>
+            <!-- 🌟 ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА (Один в один как Европа!) -->
+            <div class="continent-block" id="block-ru-okr-header" style="display: none; margin-bottom: 15px;">
+                <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')">
+                    <span>Федеральные округа</span>
+                </h2>
+            </div>
             <!-- Контейнер для 2-го раздела (Округа) -->
             <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
 
         </div>
-    </div>
+
 
 
     <div id="quizFlagsView" class="view-section">
@@ -1359,9 +1364,9 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('dbControls').style.display = 'none';
     
-    // Скрываем кнопки и подразделы России по умолчанию
-    document.getElementById('btnSub').style.display = 'none';
-    document.getElementById('btnOkr').style.display = 'none';
+    // Скрываем плашки-заголовки и подразделы России по умолчанию
+    document.getElementById('block-ru-sub-header').style.display = 'none';
+    document.getElementById('block-ru-okr-header').style.display = 'none';
     document.getElementById('ruSubjectsContainer').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     
@@ -1384,9 +1389,9 @@ function switchView(viewId) {
         // Прячем мировые континенты
         document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'none');
         
-        // Включаем отображение главных кнопок России
-        document.getElementById('btnSub').style.display = 'flex';
-        document.getElementById('btnOkr').style.display = 'flex';
+        // Включаем отображение главных плашек России
+        document.getElementById('block-ru-sub-header').style.display = 'block';
+        document.getElementById('block-ru-okr-header').style.display = 'block';
         
         // По умолчанию открываем первый подраздел (Субъекты)
         switchRuSubView('subjects');
@@ -1411,20 +1416,18 @@ function switchRuSubView(subViewId) {
     const subContainer = document.getElementById('ruSubjectsContainer');
     const okrContainer = document.getElementById('ruOkrugsContainer');
     
-    // Сбрасываем стили кнопок в дефолт (как у обычного закрытого континента)
-    [btnSub, btnOkr].forEach(btn => {
-        btn.style.setProperty('background-color', '#f1f3f5', 'important');
-        btn.style.setProperty('font-weight', '800', 'important'); // Единый вес шрифта заголовков
-    });
+    // Возвращаем обе плашки к стандартному светлому цвету континентов
+    btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
+    btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
     
     subContainer.style.display = 'none';
     okrContainer.style.display = 'none';
     
     if (subViewId === 'subjects') {
-        btnSub.style.setProperty('background-color', '#e9ecef', 'important'); // Подсветка активного
+        // Активный раздел делаем чуть темнее для эффекта нажатия
+        btnSub.style.setProperty('background-color', '#e9ecef', 'important'); 
         subContainer.style.display = 'block';
         
-        // Показываем аккордеоны субъектов, прячем аккордеоны округов
         document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'block');
         document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'none');
         
@@ -1434,10 +1437,10 @@ function switchRuSubView(subViewId) {
         }, 80);
         
     } else if (subViewId === 'okrugs') {
-        btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); // Подсветка активного
+        // Активный раздел делаем чуть темнее для эффекта нажатия
+        btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
         okrContainer.style.display = 'block';
         
-        // Показываем аккордеоны округов, прячем аккордеоны субъектов
         document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'block');
         document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'none');
         
@@ -1451,7 +1454,6 @@ function switchRuSubView(subViewId) {
         clearSearch();
     }
 }
-
 
 function toggleBlock(id) {
     const block = document.getElementById(id);
