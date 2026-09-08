@@ -1495,8 +1495,12 @@ function switchView(viewId) {
         document.getElementById('block-ru-sub-header').style.display = 'block';
         document.getElementById('block-ru-okr-header').style.display = 'block';
         
-        // По умолчанию открываем первый подраздел (Субъекты)
-        switchRuSubView('subjects');
+        // На старте сбрасываем стили кнопок в дефолт (как обычные закрытые континенты)
+        const btnSub = document.getElementById('btnSub');
+        const btnOkr = document.getElementById('btnOkr');
+        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
+        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+
     } else if (viewId === 'quiz-flags') {
         document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
         document.getElementById('quizFlagsView').classList.add('active');
@@ -1518,20 +1522,26 @@ function switchRuSubView(subViewId) {
     const subContainer = document.getElementById('ruSubjectsContainer');
     const okrContainer = document.getElementById('ruOkrugsContainer');
     
-    // Перевод обеих кнопок в дефолтное состояние
-    btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-    btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-    
-    subContainer.style.display = 'none';
-    okrContainer.style.display = 'none';
-    
     if (subViewId === 'subjects') {
+        // Проверяем, открыт ли этот подраздел прямо сейчас
+        const isAlreadyActive = subContainer.style.display === 'block';
+        
+        // Сначала намертво гасим абсолютно всё
+        subContainer.style.display = 'none';
+        okrContainer.style.display = 'none';
+        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
+        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+        document.querySelectorAll('.continent-block[id^="block-ru-"]').forEach(b => b.style.display = 'none');
+        
+        // Если он БЫЛ открыт — оставляем его закрытым (пользователь свернул плашку)
+        if (isAlreadyActive) {
+            return; 
+        }
+        
+        // Если был закрыт — эффектно раскрываем и подсвечиваем кнопку темным серым
         btnSub.style.setProperty('background-color', '#e9ecef', 'important'); 
         subContainer.style.display = 'block';
-        
-        // 🌟 Показываем аккордеоны субъектов, прячем аккордеоны округов
         document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'block');
-        document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'none');
         
         setTimeout(() => {
             const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 120;
@@ -1539,12 +1549,25 @@ function switchRuSubView(subViewId) {
         }, 80);
         
     } else if (subViewId === 'okrugs') {
+        // Проверяем, открыт ли этот подраздел прямо сейчас
+        const isAlreadyActive = okrContainer.style.display === 'block';
+        
+        // Сначала намертво гасим абсолютно всё
+        subContainer.style.display = 'none';
+        okrContainer.style.display = 'none';
+        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
+        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+        document.querySelectorAll('.continent-block[id^="block-ru-"]').forEach(b => b.style.display = 'none');
+        
+        // Если он БЫЛ открыт — оставляем его закрытым (пользователь свернул плашку)
+        if (isAlreadyActive) {
+            return;
+        }
+        
+        // Если был закрыт — эффектно раскрываем и подсвечиваем кнопку темным серым
         btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
         okrContainer.style.display = 'block';
-        
-        // 🌟 Показываем аккордеоны округов, прячем аккордеоны субъектов
         document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'block');
-        document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'none');
         
         setTimeout(() => {
             const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
