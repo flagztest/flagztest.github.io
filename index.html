@@ -715,16 +715,17 @@
          display: block;
      }
      @media (max-width: 600px) {
-         #ruDbView .nav-tabs {
-             grid-template-columns: 1fr 1fr !important; /* На смартфонах строго делим 50/50 */
+         /* Корректируем высоту прилипания кнопок базы РФ на смартфонах */
+         #ruDbView > div:first-child {
+             top: 112px !important; /* Идеальный мобильный стык с синей шапкой */
+             padding-bottom: 8px !important;
              gap: 6px !important;
          }
          #ruDbView .tab-btn {
-             font-size: 14px !important; /* Чуть компактнее шрифт для длинных названий */
-             padding: 8px 0px !important;
+             font-size: 14px !important; /* Компактный размер для мобильных экранов */
+             padding: 10px 5px !important;
          }
      }
-    
      
     </style>
 </head>
@@ -771,11 +772,51 @@
         <div id="tablesContainer"></div>
     </div>
     <div id="ruDbView" class="view-section">
-        <!-- 🌟 Мини-переключатель внутри Базы России -->
-        <div class="nav-tabs" style="grid-template-columns: 1fr 1fr; margin-bottom: 15px; border-bottom: 1px solid var(--border-color);">
-            <button class="tab-btn active" id="btnSub" onclick="switchRuSubView('subjects')">🏛️<br>Субъекты России</button>
-            <button class="tab-btn" id="btnOkr" onclick="switchRuSubView('okrugs')">🗺️<br>Федеральные округа</button>
+        <!-- 🌟 СТИЛИЗОВАННЫЕ КНОПКИ-ПЛАШКИ С ЭФФЕКТОМ ПРИЛИПАНИЯ (STICKY) -->
+        <div style="
+            position: sticky; 
+            top: 155px; 
+            z-index: 99; 
+            background-color: var(--bg-color); 
+            padding: 5px 0 15px 0; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px;
+        ">
+            <button class="tab-btn active" id="btnSub" onclick="switchRuSubView('subjects')" style="
+                background-color: #e9ecef !important;
+                border: 1px solid var(--border-color) !important;
+                padding: 12px 15px !important;
+                font-size: 16px !important;
+                font-weight: 800 !important;
+                color: #495057 !important;
+                border-radius: 8px !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                height: auto !important;
+            ">🏛️ Субъекты России</button>
+            
+            <button class="tab-btn" id="btnOkr" onclick="switchRuSubView('okrugs')" style="
+                background-color: #f1f3f5 !important;
+                border: 1px solid var(--border-color) !important;
+                padding: 12px 15px !important;
+                font-size: 16px !important;
+                font-weight: 600 !important;
+                color: #495057 !important;
+                border-radius: 8px !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                height: auto !important;
+            ">🗺️ Федеральные округа</button>
         </div>
+        
+        <!-- Контейнер для 1-го раздела (Субъекты) -->
+        <div id="ruSubjectsContainer" class="ru-sub-section active"></div>
+        
+        <!-- Контейнер для 2-го раздела (Округа) -->
+        <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none;"></div>
+    </div>
+
         
         <!-- Контейнер для 1-го раздела (Субъекты) -->
         <div id="ruSubjectsContainer" class="ru-sub-section active"></div>
@@ -1387,32 +1428,50 @@ function switchView(viewId) {
     }
 }
 function switchRuSubView(subViewId) {
-    // Скрываем оба контейнера и гасим активность кнопок
+    const btnSub = document.getElementById('btnSub');
+    const btnOkr = document.getElementById('btnOkr');
+    
+    // Скрываем оба контейнера
     document.getElementById('ruSubjectsContainer').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     document.getElementById('ruSubjectsContainer').classList.remove('active');
     document.getElementById('ruOkrugsContainer').classList.remove('active');
-    document.getElementById('btnSub').classList.remove('active');
-    document.getElementById('btnOkr').classList.remove('active');
     
-    // Включаем нужный подраздел
+    // Сбрасываем стили обеих кнопок в дефолтное состояние (как обычный континент)
+    [btnSub, btnOkr].forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.setProperty('background-color', '#f1f3f5', 'important');
+        btn.style.setProperty('font-weight', '600', 'important');
+    });
+    
+    // Включаем нужный подраздел и подсвечиваем кнопку (сверхжирный графит)
     if (subViewId === 'subjects') {
-        document.getElementById('btnSub').classList.add('active');
+        btnSub.classList.add('active');
+        btnSub.style.setProperty('background-color', '#e9ecef', 'important');
+        btnSub.style.setProperty('font-weight', '800', 'important');
+        
         const container = document.getElementById('ruSubjectsContainer');
         container.style.display = 'block';
         container.classList.add('active');
     } else if (subViewId === 'okrugs') {
-        document.getElementById('btnOkr').classList.add('active');
+        btnOkr.classList.add('active');
+        btnOkr.style.setProperty('background-color', '#e9ecef', 'important');
+        btnOkr.style.setProperty('font-weight', '800', 'important');
+        
         const container = document.getElementById('ruOkrugsContainer');
         container.style.display = 'block';
         container.classList.add('active');
     }
     
+    // Мягко возвращаем скролл к началу подраздела, чтобы прилипшие кнопки встали на место
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     // Сбрасываем поиск при переключении разделов для порядка
     if(document.getElementById('searchInput').value !== "") {
         clearSearch();
     }
 }
+
 
 
 
