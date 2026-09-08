@@ -1608,9 +1608,9 @@ if (content && content.style.display === 'block') {
     setTimeout(() => {
         const header = block.querySelector('.continent-header');
         
-        // 🌟 ИСПРАВЛЕНО: На ПК оставляем отступ 120, а на смартфонах (экран меньше 600px) 
-        // уменьшаем до 105, чтобы плашки никогда не залезали под шапку поиска!
-        const offset = window.innerWidth <= 600 ? 105 : 120;
+        // 🌟 ИСПРАВЛЕНО: Увеличили мобильный отступ до 130px, чтобы заголовки 
+        // гарантированно останавливались ровно под поиском и не прятались в шапку!
+        const offset = window.innerWidth <= 600 ? 130 : 120;
         
         const elementPosition = header.getBoundingClientRect().top + window.scrollY;
         const offsetPosition = elementPosition - offset;
