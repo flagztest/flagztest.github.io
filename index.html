@@ -169,15 +169,20 @@
     font-weight: 800 !important;
     color: #495057 !important; 
     cursor: pointer;
-    display: flex;
-    /* 🌟 ИСПРАВЛЕНО: Меняем на inline-flex, чтобы бэйдж шел впритык к названию, */
-    /* даже если текст переносится на новую строку на экранах телефонов */
-    display: inline-flex !important;
-    flex-wrap: wrap !important;
+    /* 🌟 ВОЗВРАЩАЕМ ФЛЕКС: теперь кнопки растянутся на всю ширину экрана */
+    display: flex !important;
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
     user-select: none;
+    box-sizing: border-box !important;
+    width: 100% !important;
+}
+
+/* 🌟 УМНОЕ ПРАВИЛО: не даёт цифре 3 улетать в правый угол на смартфонах */
+.continent-header span:first-child {
+    flex-grow: 0;
+    text-align: left;
 }
 
 .count-badge {
