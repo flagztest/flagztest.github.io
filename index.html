@@ -1608,7 +1608,7 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УМНЫЙ СИНХРОННЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
+            // 🌟 ПЛАВНЫЙ СИНХРОННЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРАЧИВАНИИ
             setTimeout(() => {
                 const offset = 120;
                 
@@ -1616,7 +1616,7 @@ function toggleBlock(id) {
                 const isRussia = id.startsWith('block-ru-');
                 
                 if (isRussia) {
-                    // 🇷🇺 В Базе России плавно катим экран к «Республикам»
+                    // 🇷🇺 В Базе России плавно возвращаем фокус к «Республикам»
                     const republicsBlock = document.getElementById('block-ru-subject-Республики');
                     if (republicsBlock && id !== 'block-ru-subject-Республики') {
                         const offsetPosition = republicsBlock.offsetTop - offset;
@@ -1624,12 +1624,13 @@ function toggleBlock(id) {
                         return;
                     }
                 } else {
-                    // 🌍 В Базе стран мира плавно катим экран к первому блоку («Европа»)
-                    const parent = block.parentNode;
-                    const firstBlock = parent ? parent.querySelector('.continent-block') : null;
+                    // 🌍 В Базе стран мира находим «Европу» через безопасный селектор атрибута
+                    const europeBlock = document.querySelector('[id="block-Европа"]');
                     
-                    if (firstBlock && block !== firstBlock) {
-                        const offsetPosition = firstBlock.offsetTop - offset;
+                    // Если закрывают любой нижний континент (Азия, Африка...),
+                    // скрипт плавно и красиво вернет экран наверх — ровно к Европе!
+                    if (europeBlock && id !== 'block-Европа') {
+                        const offsetPosition = europeBlock.offsetTop - offset;
                         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                         return;
                     }
