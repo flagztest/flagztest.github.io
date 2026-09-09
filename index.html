@@ -1615,39 +1615,36 @@ function toggleBlock(id) {
             // 🌟 УМНЫЙ СИНХРОННЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
             setTimeout(() => {
                 const offset = 120;
+                const parent = block.parentNode;
+                const firstBlock = parent ? parent.querySelector('.continent-block') : null;
                 
-                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
-                const isRussia = id.startsWith('block-ru-');
-                
-                if (isRussia) {
-                    // 🇷🇺 В Базе России плавно возвращаем фокус к «Республикам»
-                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
-                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
-                        const offsetPosition = republicsBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
+                if (firstBlock && block !== firstBlock) {
+                    // Проверяем, находится ли блок внутри мирового контейнера tablesContainer
+                    const isWorldDb = parent.id === 'tablesContainer';
+                    
+                    if (isWorldDb) {
+                        // 🌍 ИСПРАВЛЕНО ДЛЯ БАЗЫ СТРАН: Принудительный мягкий и плавный накат
+                        // в самый верх страницы. Теперь Safari будет скользить бархатно!
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        // 🇷🇺 ДЛЯ БАЗЫ РОССИИ: Оставляем точный расчет до «Республик»
+                        const offsetPosition = firstBlock.offsetTop - offset;
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
                     }
                 } else {
-                    // 🌍 В Базе стран мира находим «Европу» через безопасный селектор
-                    const europeBlock = document.getElementById('block-Европа');
-                    
-                    if (europeBlock && id !== 'block-Европа') {
-                        const offsetPosition = europeBlock.offsetTop - offset;
-                        
-                        // 🌟 ПРЕДОХРАНИТЕЛЬ SAFARI: Если координата упирается в самый верх страницы,
-                        // мы принудительно катим в абсолютный 0. Это включает идеальный плавный скролл!
-                        if (offsetPosition <= 0) {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        } else {
-                            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        }
-                        return;
-                    }
+                    // Если закрывают самый первый блок списка (Европу или Республики), держим камеру на месте
+                    const offsetPosition = block.offsetTop - offset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
                 }
-                
-                // Защитное удержание камеры, если схлопнули самую первую плашку текущего списка
-                const offsetPosition = block.offsetTop - offset;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }, 10);
             return;
         } else {
@@ -1661,7 +1658,10 @@ function toggleBlock(id) {
             const diff = Math.abs(window.scrollY - offsetPosition);
 
             if (diff > 2) {
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
             }
         }, 60); 
     }
