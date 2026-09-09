@@ -1589,17 +1589,16 @@ function switchView(viewId) {
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
         
-        // 🌟 ВКЛЮЧАЕМ БУФЕР СТРАН МИРА: даёт Safari высоту для бархатного скольжения до Европы
         if (worldBuffer) worldBuffer.style.display = 'block';
         
-        // Показываем мировые континенты, прячем РФ
         document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
 
-        // 🌟 ИСПРАВЛЕНО: Намертво гасим аккордеон городов России при переходе во вкладку стран мира!
         const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
-        if (capAlphabetBlock) capAlphabetBlock.style.setProperty('display', 'none', 'important');
-    }
+        if (capAlphabetBlock) { 
+            capAlphabetBlock.style.setProperty('display', 'none', 'important'); 
+        }
     } else if (viewId === 'ru-db') {
+
         // Принудительно сбрасываем экран в самый верх при переходе в Россию,
         // полностью исключая наезд шапки и скрытие кнопок из-за скролла базы стран!
         window.scrollTo(0, 0);
@@ -2198,7 +2197,6 @@ function generateRussiaCapitalsTable() {
     const container = document.getElementById('ruCapitalsContainer');
     if (!container) return;
 
-    // Извлекаем все города из базы типов регионов в один плоский список
     let flatCapitalsList = [];
     for (const [typeName, regions] of Object.entries(russiaSubjectsData)) {
         regions.forEach(r => {
@@ -2209,13 +2207,10 @@ function generateRussiaCapitalsTable() {
         });
     }
 
-    // Сортируем список городов строго по алфавиту от А до Я
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
 
     const block = document.createElement('div');
     block.className = 'continent-block collapsed';
-    
-    // Задаем уникальный ID, чтобы функция toggleBlock подхватила плавное открытие и скролл к нему
     block.id = 'block-ru-capital-alphabet';
     
     let rowsHtml = '';
@@ -2224,7 +2219,6 @@ function generateRussiaCapitalsTable() {
             <tr data-name="${c.cityName.toLowerCase()}" data-capital="${c.subjectName.toLowerCase()}">
                 <td class="col-flag">
                    <div class="flag-wrapper">
-                       <!-- Временная защитная рамка вместо ткани флага -->
                        <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
                    </div>
                 </td>
@@ -2243,11 +2237,9 @@ function generateRussiaCapitalsTable() {
             </tr>`;
     });
 
-    // Упаковываем таблицу в стандартный нативный контур continent-header и continent-content.
-    // За счет этого линии прижмутся впритык, а раскрытие будет плавным и нативным, как у континентов!
     block.innerHTML = `
         <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
-            <span>Административные центры</span>
+            <span>🌆 Административные центры</span>
             <span class="count-badge" id="badge-${block.id}">${flatCapitalsList.length}</span>
         </h2>
         <div class="continent-content">
@@ -2266,7 +2258,6 @@ function generateRussiaCapitalsTable() {
     container.appendChild(block);
 }
 
-// Запускаем автоматический рендеринг центров при старте сайта
 generateRussiaCapitalsTable();
 
 </script>
