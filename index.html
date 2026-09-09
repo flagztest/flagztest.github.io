@@ -1608,15 +1608,21 @@ function switchRuSubView(subViewId) {
 }
 
 function switchView(viewId) {
-    // 🌟 АВТОМАТИЧЕСКОЕ ЗАКРЫТИЕ ВСЕХ РАСКРЫТЫХ БЛОКОВ ПРИ ПЕРЕХОДЕ НА ДРУГИЕ ВКЛАДКИ
-    // Скрипт пробежится по всем аккордеонам и мягко закроет их контент без лишних прыжков
-    document.querySelectorAll('.continent-block').forEach(b => {
+    // 🌟 ИСПРАВЛЕНО: Сворачиваем блоки только у МИРОВЫХ континентов, 
+    // не трогая плашки-кнопки Базы России, чтобы не блокировать их кликабельность!
+    document.querySelectorAll('#tablesContainer .continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const content = b.querySelector('.continent-content');
+        if (content) content.style.display = 'none';
+    });
+
+    // 🌟 ТАКЖЕ МЯГКО СВЕРУЕМ АККОРДЕОНЫ СУБЪЕКТОВ РФ ПРИ УХОДЕ ИЗ ВКЛАДКИ
+    document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
     });
     
-    // Сбрасываем текст на кнопке "Развернуть всё", если она используется
     const toggleAllBtn = document.getElementById('toggleAllBtn');
     if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
     allCollapsed = true;
@@ -2140,6 +2146,68 @@ function generateRussiaSubjectsTables() {
 // Запускаем автоматический рендеринг при старте скрипта
 generateRussiaSubjectsTables();
 
+function toggleBlock(id) {
+    const block = document.getElementById(id);
+    if (!block) return;
+    
+    block.classList.toggle('collapsed');
+    const content = block.querySelector('.continent-content');
+    
+    if (content) {
+        if (block.classList.contains('collapsed')) {
+            content.style.display = 'none';
+            
+            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
+            setTimeout(() => {
+                const offset = 120;
+                
+                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
+                const isRussia = id.startsWith('block-ru-');
+                
+                if (isRussia) {
+                    // 🇷🇺 В Базе России плавно возвращаем фокус строго к «Республикам»
+                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
+                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
+                        const offsetPosition = republicsBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        return;
+                    }
+                } else {
+                    // 🌍 В Базе стран мира при закрытии любого нижнего континента (Азии, Африки...),
+                    // мы просто плавно катим экран в абсолютный верх страницы к Европе!
+                    if (id !== 'block-Европа') {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                        return;
+                    }
+                }
+                
+                // Защитное удержание камеры, если схлопнули самую первую плашку текущего списка
+                const offsetPosition = block.offsetTop - offset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }, 10);
+            return;
+        } else {
+            content.style.display = 'block';
+        }
+
+        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
+        setTimeout(() => {
+            const offset = 120;
+            const offsetPosition = block.offsetTop - offset;
+            const diff = Math.abs(window.scrollY - offsetPosition);
+
+            if (diff > 2) {
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }, 60); 
+    }
+}
 
 </script>
 </body>
