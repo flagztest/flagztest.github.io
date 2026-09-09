@@ -1608,9 +1608,9 @@ if (content && content.style.display === 'block') {
     setTimeout(() => {
         const header = block.querySelector('.continent-header');
         
-        // 🌟 ИСПРАВЛЕНО: Задаем идеальный физический отступ под шапку
-        // На смартфонах строго 114px, на ПК — 120px
-        const offset = window.innerWidth <= 600 ? 114 : 120;
+        // 🌟 ИСПРАВЛЕНО: Увеличили мобильный отступ до 120px, чтобы заголовки 
+        // континентов больше ни на пиксель не заезжали под синюю шапку!
+        const offset = window.innerWidth <= 600 ? 120 : 120;
         
         // 🌟 ИСПРАВЛЕНО: Считаем позицию через жесткий offsetTop родительского блока,
         // а не динамическийgetBoundingClientRect, защищая от микро-искажений Safari
