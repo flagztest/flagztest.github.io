@@ -1659,8 +1659,11 @@ function switchRuSubView(subViewId) {
     }
 }
 
-// 🌟 ФУНКЦИЯ ВХОДА В ИЗОЛИРОВАННУЮ ОБЛАСТЬ СУБЪЕКТОВ (ЗОНА Б)
 function enterRuSubmissions(type) {
+    // Принудительно зажигаем общую родительскую навигационную коробку России
+    const navHeaders = document.getElementById('ruNavigationHeaders');
+    if (navHeaders) navHeaders.style.display = 'block';
+
     if (type === 'subjects') {
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'block';
@@ -1671,7 +1674,7 @@ function enterRuSubmissions(type) {
         });
         window.scrollTo(0, 0);
     } else if (type === 'okrugs') {
-        // 🌟 ВХОД В ИЗОЛИРОВАННУЮ ОБЛАСТЬ ОКРУГОВ (ЗОНА В)
+        // ВХОД В ИЗОЛИРОВАННУЮ ОБЛАСТЬ ОКРУГОВ (ЗОНА В)
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -1684,13 +1687,15 @@ function enterRuSubmissions(type) {
 }
 
 function exitRuSubmissions() {
-    // Мягко сворачиваем внутренности субъектов перед выходом
+    // Принудительно держим родительскую коробку открытой при внутренних переходах
+    const navHeaders = document.getElementById('ruNavigationHeaders');
+    if (navHeaders) navHeaders.style.display = 'block';
+
     document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
     });
-    // Мягко сворачиваем внутренности округов перед выходом
     document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
