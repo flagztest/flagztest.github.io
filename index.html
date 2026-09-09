@@ -1601,10 +1601,6 @@ function toggleBlock(id) {
     const block = document.getElementById(id);
     if (!block) return;
     
-    // Запоминаем текущее положение заголовка на экране до сворачивания
-    const rectBefore = block.getBoundingClientRect();
-    const scrollTopBefore = window.scrollY;
-    
     block.classList.toggle('collapsed');
     const content = block.querySelector('.continent-content');
     
@@ -1612,16 +1608,41 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 МЯГКАЯ СТАБИЛИЗАЦИЯ: Удерживаем экран ровно на месте закрытия плашки,
-            // полностью блокируя резкие прыжки и залезание под шапку!
-            const rectAfter = block.getBoundingClientRect();
-            window.scrollTo(0, scrollTopBefore + (rectAfter.top - rectBefore.top));
+            // 🌟 УМНЫЙ БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРАЧИВАНИИ ДЛЯ ВСЕХ ВКЛАДОК
+            setTimeout(() => {
+                const offset = 120;
+                
+                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
+                const isRussia = id.startsWith('block-ru-');
+                
+                if (isRussia) {
+                    // 🇷🇺 В Базе России плавно катим экран к «Республикам»
+                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
+                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
+                        const offsetPosition = republicsBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        return;
+                    }
+                } else {
+                    // 🌍 В Базе стран мира плавно катим экран к «Европе»
+                    const europeBlock = document.getElementById('block-Европа');
+                    if (europeBlock && id !== 'block-Европа') {
+                        const offsetPosition = europeBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        return;
+                    }
+                }
+                
+                // Защитное удержание камеры, если схлопнули самую первую плашку списка
+                const offsetPosition = block.offsetTop - offset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }, 10);
             return;
         } else {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
+        // РАСКРЫТИЕ: плавно подтягивает любой открытый блок ровно под поиск
         setTimeout(() => {
             const offset = 120;
             const offsetPosition = block.offsetTop - offset;
