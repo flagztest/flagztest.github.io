@@ -778,26 +778,41 @@
         
         <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ -->
         <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box;">
-            <!-- ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
-            <div class="continent-block" id="block-ru-sub-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
-                <h2 class="continent-header" id="btnSub" onclick="switchRuSubView('subjects')" style="background-color: #e9ecef !important; font-weight: 800 !important; width: 100%; box-sizing: border-box;">
-                    <span>Субъекты России</span>
-                </h2>
-            </div>
-            <!-- Контейнер для 1-го раздела (Субъекты) -->
-            <div id="ruSubjectsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
             
-            <!-- ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
-            <div class="continent-block" id="block-ru-okr-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
-                <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')" style="width: 100%; box-sizing: border-box;">
-                    <span>Федеральные округа</span>
-                </h2>
-            </div>
-            <!--badge- Контейнер для 2-го раздела (Округа) -->
-            <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
+            <!-- ЗОНА А: ГЛАВНЫЕ КНОПКИ РОССИИ (Первый уровень меню) -->
+            <div id="ruMainMenuZone" style="display: block; width: 100%;">
+                <!-- ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
+                <div class="continent-block" id="block-ru-sub-header" style="margin-bottom: 15px; padding: 0px !important;">
+                    <h2 class="continent-header" id="btnSub" onclick="enterRuSubmissions('subjects')" style="width: 100%; box-sizing: border-box;">
+                        <span>Субъекты России</span>
+                    </h2>
+                </div>
+                
+                <!-- ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
+                <div class="continent-block" id="block-ru-okr-header" style="margin-bottom: 15px; padding: 0px !important;">
+                    <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')" style="width: 100%; box-sizing: border-box;">
+                        <span>Федеральные округа</span>
+                    </h2>
+                    <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 0px;"></div>
+                </div>
 
-            <!-- 🌟 НОВАЯ ТРЕТЬЯ ВКЛАДКА РОССИИ: Контейнер для Административных центров -->
-            <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 15px;"></div>
+                <!-- ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ -->
+                <div class="continent-block" id="block-ru-cap-header" style="margin-bottom: 15px; padding: 0px !important;">
+                    <h2 class="continent-header" id="btnCap" onclick="switchRuSubView('capitals')" style="width: 100%; box-sizing: border-box;">
+                        <span>Административные центры</span>
+                    </h2>
+                    <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 0px;"></div>
+                </div>
+            </div>
+
+            <!-- ЗОНА Б: ИЗОЛИРОВАННАЯ ОБЛАСТЬ 6 СУБЪЕКТОВ (Второй уровень меню) -->
+            <div id="ruSubmissionsZone" style="display: none; width: 100%;">
+                <!-- Кнопка возврата на первый уровень -->
+                <button class="action-btn btn-secondary" onclick="exitRuSubmissions()" style="width: 100%; margin-bottom: 15px; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px;">⬅ Назад к главному меню РФ</button>
+                <!-- Сюда JavaScript автоматически построит 6 нативных аккордеонов-континентов -->
+                <div id="ruSubjectsContainer" style="width: 100%;"></div>
+            </div>
+
         </div>
 
         <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
@@ -1482,37 +1497,23 @@ function createContinentBlock(continent, countries) {
 }
 
 function switchRuSubView(subViewId) {
-    const btnSub = document.getElementById('btnSub');
     const btnOkr = document.getElementById('btnOkr');
     const btnCap = document.getElementById('btnCap');
-    const subContainer = document.getElementById('ruSubjectsContainer');
     const okrContainer = document.getElementById('ruOkrugsContainer');
     const capContainer = document.getElementById('ruCapitalsContainer');
     
-    // Сначала намертво гасим абсолютно все контейнеры перед переключением вкладок РФ
-    if (subContainer) subContainer.style.display = 'none';
     if (okrContainer) okrContainer.style.display = 'none';
     if (capContainer) capContainer.style.display = 'none';
     
-    // Возвращаем кнопкам стандартный светлый цвет
-    if (btnSub) btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
     if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
     if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
     
-    // Скрываем отображение внутренних аккордеонов регионов
     document.querySelectorAll('.ru-sub-section .continent-block').forEach(b => b.style.display = 'none');
     
-    if (subViewId === 'subjects') {
-        if (btnSub) btnSub.style.setProperty('background-color', '#e9ecef', 'important'); 
-        if (subContainer) subContainer.style.display = 'block';
-        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => b.style.display = 'block');
+    if (subViewId === 'okrugs') {
+        const isAlreadyActive = (okrContainer.style.display === 'block');
+        if (isAlreadyActive) return;
         
-        setTimeout(() => {
-            const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 80);
-        
-    } else if (subViewId === 'okrugs') {
         if (btnOkr) btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
         if (okrContainer) okrContainer.style.display = 'block';
         document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => b.style.display = 'block');
@@ -1523,6 +1524,9 @@ function switchRuSubView(subViewId) {
         }, 80);
         
     } else if (subViewId === 'capitals') {
+        const isAlreadyActive = (capContainer.style.display === 'block');
+        if (isAlreadyActive) return;
+        
         if (btnCap) btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
         if (capContainer) capContainer.style.display = 'block';
         document.querySelectorAll('#ruCapitalsContainer .continent-block').forEach(b => b.style.display = 'block');
@@ -1538,10 +1542,37 @@ function switchRuSubView(subViewId) {
     }
 }
 
+// 🌟 ФУНКЦИЯ ВХОДА В ИЗОЛИРОВАННУЮ ОБЛАСТЬ СУБЪЕКТОВ (ЗОНА Б)
+function enterRuSubmissions(type) {
+    if (type === 'subjects') {
+        document.getElementById('ruMainMenuZone').style.display = 'none';
+        document.getElementById('ruSubmissionsZone').style.display = 'block';
+        
+        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
+            b.style.display = 'block';
+        });
+        
+        window.scrollTo(0, 0);
+    }
+}
+
+// 🌟 ФУНКЦИЯ ВЫХОДА ИЗ ОБЛАСТИ СУБЪЕКТОВ НАЗАД В ГЛАВНОЕ МЕНЮ РФ (ЗОНА А)
+function exitRuSubmissions() {
+    document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const content = b.querySelector('.continent-content');
+        if (content) content.style.display = 'none';
+    });
+    
+    document.getElementById('ruSubmissionsZone').style.display = 'none';
+    document.getElementById('ruMainMenuZone').style.display = 'block';
+    
+    window.scrollTo(0, 0);
+}
 
 function switchView(viewId) {
-    // 🌟 ИСПРАВЛЕНО: Сворачиваем блоки строго по их родительским коробкам, исключая смешивание!
-    document.querySelectorAll('#tablesContainer .continent-block, #ruSubjectsContainer .continent-block, #block-ru-capital-alphabet').forEach(b => {
+    // Автоматически закрываем и сворачиваем вообще все открытые блоки на странице
+    document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
@@ -1555,16 +1586,13 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('dbControls').style.display = 'none';
     
-    // Скрываем подразделы России по умолчанию
-    document.getElementById('ruSubjectsContainer').style.display = 'none';
+    // Скрываем все зоны и контейнеры России по умолчанию
+    document.getElementById('ruNavigationHeaders').style.display = 'none';
+    document.getElementById('ruMainMenuZone').style.display = 'none';
+    document.getElementById('ruSubmissionsZone').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
-    document.getElementById('ruCapitalsContainer').style.display = 'none'; // Скрываем новый контейнер
+    document.getElementById('ruCapitalsContainer').style.display = 'none';
     
-    // Скрываем плашки-заголовки России по умолчанию
-    document.getElementById('block-ru-sub-header').style.display = 'none';
-    document.getElementById('block-ru-okr-header').style.display = 'none';
-    
-    // Скрываем мобильные буферы безопасности по умолчанию
     const buffer = document.getElementById('ruPaddingBuffer');
     if (buffer) buffer.style.display = 'none';
     
@@ -1582,14 +1610,8 @@ function switchView(viewId) {
         
         if (worldBuffer) worldBuffer.style.display = 'block';
         
-        // 🌟 ИСПРАВЛЕНО: Показываем только мировые континенты из таблицы стран
+        // Показываем только мировые континенты из tablesContainer
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
-
-        // Намертво гасим аккордеон городов России при переходе во вкладку стран мира!
-        const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
-        if (capAlphabetBlock) {
-            capAlphabetBlock.style.setProperty('display', 'none', 'important');
-        }
     } else if (viewId === 'ru-db') {
         window.scrollTo(0, 0);
 
@@ -1597,29 +1619,18 @@ function switchView(viewId) {
         document.getElementById('dbView').classList.add('active'); 
         document.getElementById('dbControls').style.display = 'flex';
         
-        // 🌟 ИСПРАВЛЕНО: Прячем абсолютно все мировые континенты из таблицы стран
+        // Прячем страны мира контента
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
         
-        // Показываем контейнер субъектов и новый контейнер центров одновременно
-        document.getElementById('ruSubjectsContainer').style.display = 'block';
-        document.getElementById('ruCapitalsContainer').style.display = 'block';
+        // Включаем корневой блок навигации России и показываем строго Первое меню (Зону А)
+        document.getElementById('ruNavigationHeaders').style.display = 'block';
+        document.getElementById('ruMainMenuZone').style.display = 'block';
         
-        // Активируем отображение внутренних аккордеонов регионов и нового аккордеона городов
-        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => b.style.display = 'block');
-        
-        const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
-        if (capAlphabetBlock) {
-            capAlphabetBlock.style.setProperty('display', 'block', 'important');
-        }
-        
-        // Включаем отображение старых заголовков-переключателей
-        document.getElementById('block-ru-sub-header').style.display = 'block';
-        document.getElementById('block-ru-okr-header').style.display = 'block';
-        
-        const btnSub = document.getElementById('btnSub');
+        // На старте сбрасываем кнопки в дефолтный светлый цвет
         const btnOkr = document.getElementById('btnOkr');
-        if (btnSub) btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
+        const btnCap = document.getElementById('btnCap');
         if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+        if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
 
         if (buffer) buffer.style.display = 'block';
 
@@ -1635,6 +1646,80 @@ function switchView(viewId) {
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
+    }
+}
+
+// 🌟 ФУНКЦИЯ ВХОДА В ИЗОЛИРОВАННУЮ ОБЛАСТЬ СУБЪЕКТОВ (ЗОНА Б)
+function enterRuSubmissions(type) {
+    if (type === 'subjects') {
+        document.getElementById('ruMainMenuZone').style.display = 'none';
+        document.getElementById('ruSubmissionsZone').style.display = 'block';
+        
+        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
+            b.style.display = 'block';
+        });
+        
+        window.scrollTo(0, 0);
+    }
+}
+
+// 🌟 ФУНКЦИЯ ВЫХОДА ИЗ ОБЛАСТИ СУБЪЕКТОВ НАЗАД В ГЛАВНОЕ МЕНЮ РФ (ЗОНА А)
+function exitRuSubmissions() {
+    document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const content = b.querySelector('.continent-content');
+        if (content) content.style.display = 'none';
+    });
+    
+    document.getElementById('ruSubmissionsZone').style.display = 'none';
+    document.getElementById('ruMainMenuZone').style.display = 'block';
+    
+    window.scrollTo(0, 0);
+}
+
+function switchRuSubView(subViewId) {
+    const btnOkr = document.getElementById('btnOkr');
+    const btnCap = document.getElementById('btnCap');
+    const okrContainer = document.getElementById('ruOkrugsContainer');
+    const capContainer = document.getElementById('ruCapitalsContainer');
+    
+    if (okrContainer) okrContainer.style.display = 'none';
+    if (capContainer) capContainer.style.display = 'none';
+    
+    if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+    if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
+    
+    document.querySelectorAll('.ru-sub-section .continent-block').forEach(b => b.style.display = 'none');
+    
+    if (subViewId === 'okrugs') {
+        const isAlreadyActive = (okrContainer.style.display === 'block');
+        if (isAlreadyActive) return;
+        
+        if (btnOkr) btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
+        if (okrContainer) okrContainer.style.display = 'block';
+        document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => b.style.display = 'block');
+        
+        setTimeout(() => {
+            const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }, 80);
+        
+    } else if (subViewId === 'capitals') {
+        const isAlreadyActive = (capContainer.style.display === 'block');
+        if (isAlreadyActive) return;
+        
+        if (btnCap) btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
+        if (capContainer) capContainer.style.display = 'block';
+        document.querySelectorAll('#ruCapitalsContainer .continent-block').forEach(b => b.style.display = 'block');
+        
+        setTimeout(() => {
+            const offsetPosition = btnCap.getBoundingClientRect().top + window.scrollY - 120;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }, 80);
+    }
+    
+    if(document.getElementById('searchInput').value !== "") {
+        clearSearch();
     }
 }
 
@@ -2029,16 +2114,16 @@ function closeFlagModal() {
 }
 
 
-// 🌟 АВТОМАТИЧЕСКАЯ СБОРКА ТАБЛИЦ СУБЪЕКТОВ РФ
+// 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
 function generateRussiaSubjectsTables() {
     const container = document.getElementById('ruSubjectsContainer');
     if (!container) return;
 
     for (const [typeName, regions] of Object.entries(russiaSubjectsData)) {
         const block = document.createElement('div');
+        // Задаем стандартный класс continent-block, за счет чего кнопки станут круглыми серо-белыми континентами!
         block.className = 'continent-block collapsed';
         
-        // Задаем уникальный ID для каждого типа субъектов России
         const safeId = `block-ru-subject-${typeName.replace(/\s+/g, '-')}`;
         block.id = safeId;
         
@@ -2048,7 +2133,6 @@ function generateRussiaSubjectsTables() {
                 <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
                     <td class="col-flag">
                        <div class="flag-wrapper">
-                           <!-- Временная защитная рамка вместо ткани флага -->
                            <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
                        </div>
                     </td>
@@ -2067,6 +2151,7 @@ function generateRussiaSubjectsTables() {
                 </tr>`;
         });
 
+        // Контур шапки h2 и continent-content копейка в копейку повторяет Европу и Азию!
         block.innerHTML = `
             <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
                 <span>${typeName}</span>
@@ -2206,7 +2291,7 @@ function generateRussiaCapitalsTable() {
     // Упаковываем таблицу в стандартный нативный контур continent-header и continent-content.
     block.innerHTML = `
         <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
-            <span>🌆 Административные центры</span>
+            <span>Административные центры</span>
             <span class="count-badge" id="badge-${block.id}">${flatCapitalsList.length}</span>
         </h2>
         <div class="continent-content">
