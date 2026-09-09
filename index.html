@@ -2238,7 +2238,7 @@ function toggleBlock(id) {
         }, 60); 
     }
 }
-// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ В ВИДЕ ОТДЕЛЬНОГО АККОРДЕОНА (КАК КОНТИНЕНТ)
+// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ РФ (БЕЗ ДУБЛИРОВАНИЯ КНОПОК)
 function generateRussiaCapitalsTable() {
     const container = document.getElementById('ruCapitalsContainer');
     if (!container) return;
@@ -2256,11 +2256,17 @@ function generateRussiaCapitalsTable() {
 
     // Сортируем список городов строго по алфавиту от А до Я
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
-
-    const block = document.createElement('div');
-    block.className = 'continent-block collapsed';
-    block.id = 'block-ru-capital-alphabet';
     
+    // 🌟 Добавляем бэйдж со счётчиком 89 на вашу главную HTML-кнопку
+    const mainBtnHeader = document.querySelector('#block-ru-cap-header .continent-header');
+    if (mainBtnHeader && !document.getElementById('badge-ru-capitals-main')) {
+        const badge = document.createElement('span');
+        badge.className = 'count-badge';
+        badge.id = 'badge-ru-capitals-main';
+        badge.textContent = flatCapitalsList.length;
+        mainBtnHeader.appendChild(badge);
+    }
+
     let rowsHtml = '';
     flatCapitalsList.forEach(c => {
         rowsHtml += `
@@ -2272,27 +2278,17 @@ function generateRussiaCapitalsTable() {
                    </div>
                 </td>
                 <td>
-                    <a href="https://google.com{encodeURIComponent(c.cityName)}" 
-                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                        <strong>${c.cityName}</strong>
-                    </a>
+                    <strong>${c.cityName}</strong>
                 </td>
                 <td>
-                    <a href="https://google.com{encodeURIComponent(c.subjectName)}" 
-                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                        ${c.subjectName}
-                    </a> 
+                    ${c.subjectName}
                 </td>
             </tr>`;
     });
 
-    // Упаковываем таблицу в стандартный нативный контур continent-header и continent-content.
-    block.innerHTML = `
-        <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
-            <span>Административные центры</span>
-            <span class="count-badge" id="badge-${block.id}">${flatCapitalsList.length}</span>
-        </h2>
-        <div class="continent-content">
+    // 🌟 ВСТАВЛЯЕМ СТРОГО ТАБЛИЦУ: прижимаем линии вплотную к вашей главной серой кнопке без щелей
+    container.innerHTML = `
+        <div class="continent-content" style="display: block; padding-top: 0px !important;">
             <table>
                 <thead>
                     <tr>
@@ -2305,12 +2301,12 @@ function generateRussiaCapitalsTable() {
             </table>
         </div>
     `;
-    container.appendChild(block);
 }
 
 // Запускаем автоматический рендеринг центров при старте сайта
 generateRussiaCapitalsTable();
 
 </script>
+
 </body>
 </html>
