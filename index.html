@@ -1608,48 +1608,48 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УМНЫЙ БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРАЧИВАНИИ ДЛЯ ВСЕХ ВКЛАДОК
+            // 🌟 УНИВЕРСАЛЬНЫЙ БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
             setTimeout(() => {
                 const offset = 120;
                 
-                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
-                const isRussia = id.startsWith('block-ru-');
+                // Скрипт автоматически находит самую первую плашку-соседа в текущей вкладке 
+                // (Европу в странах мира или Республики во вкладке России)
+                const parent = block.parentNode;
+                const firstBlock = parent ? parent.querySelector('.continent-block') : null;
                 
-                if (isRussia) {
-                    // 🇷🇺 В Базе России плавно катим экран к «Республикам»
-                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
-                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
-                        const offsetPosition = republicsBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
-                    }
+                // Если мы закрываем любой нижний блок (и это не самая первая плашка списка),
+                // страница совершит бархатное и плавное скольжение к началу текущей базы!
+                if (firstBlock && block !== firstBlock) {
+                    const offsetPosition = firstBlock.offsetTop - offset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
                 } else {
-                    // 🌍 В Базе стран мира плавно катим экран к «Европе»
-                    const europeBlock = document.getElementById('block-Европа');
-                    if (europeBlock && id !== 'block-Европа') {
-                        const offsetPosition = europeBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
-                    }
+                    // Если закрывают самый первый блок списка, удерживаем камеру ровно на месте
+                    const offsetPosition = block.offsetTop - offset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
                 }
-                
-                // Защитное удержание камеры, если схлопнули самую первую плашку списка
-                const offsetPosition = block.offsetTop - offset;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }, 10);
             return;
         } else {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно подтягивает любой открытый блок ровно под поиск
+        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
         setTimeout(() => {
             const offset = 120;
             const offsetPosition = block.offsetTop - offset;
             const diff = Math.abs(window.scrollY - offsetPosition);
 
             if (diff > 2) {
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
             }
         }, 60); 
     }
