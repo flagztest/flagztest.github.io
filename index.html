@@ -1594,6 +1594,11 @@ function switchView(viewId) {
         
         // Показываем мировые континенты, прячем РФ
         document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
+
+        // 🌟 ИСПРАВЛЕНО: Намертво гасим аккордеон городов России при переходе во вкладку стран мира!
+        const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
+        if (capAlphabetBlock) capAlphabetBlock.style.setProperty('display', 'none', 'important');
+    }
     } else if (viewId === 'ru-db') {
         // Принудительно сбрасываем экран в самый верх при переходе в Россию,
         // полностью исключая наезд шапки и скрытие кнопок из-за скролла базы стран!
