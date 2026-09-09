@@ -1590,41 +1590,40 @@ function switchRuSubView(subViewId) {
 
 function toggleBlock(id) {
     const block = document.getElementById(id);
-    block.classList.toggle('collapsed');
+    if (!block) return;
     
+    block.classList.toggle('collapsed');
     const content = block.querySelector('.continent-content');
+    
     if (content) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
+            // 🌟 ИСПРАВЛЕНО: Если блок только что свернули, мы завершаем работу функции 
+            // и ВООБЩЕ не запускаем автоскролл. Страница останется неподвижной, 
+            // и «Республики» больше никогда не улетят под шапку!
+            return;
         } else {
             content.style.display = 'block';
         }
 
-    const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
-    allCollapsed = hasExpanded ? false : true; /* Работаем скрыто в памяти, не трогая элементы DOM */
+        const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
+        allCollapsed = hasExpanded ? false : true;
 
-/* НАШ ТОЧНЫЙ АВТОСКРОЛЛ С ЗАЩИТОЙ: Теперь он железно внутри if (content) */
-if (content && content.style.display === 'block') {
-    setTimeout(() => {
-        const header = block.querySelector('.continent-header');
-        
-        // 🌟 ИСПРАВЛЕНО: Увеличили мобильный отступ до 120px, чтобы заголовки 
-        // континентов больше ни на пиксель не заезжали под синюю шапку!
-        const offset = window.innerWidth <= 600 ? 120 : 120;
-        
-        // 🌟 ИСПРАВЛЕНО: Считаем позицию через жесткий offsetTop родительского блока,
-        // а не динамическийgetBoundingClientRect, защищая от микро-искажений Safari
-        const offsetPosition = block.offsetTop - offset;
+        // 🌟 АВТОСКРОЛЛ ДЛЯ РАСКРЫТИЯ: Работает пиксель в пиксель и для стран мира, и для РФ
+        setTimeout(() => {
+            // На смартфонах задаем идеальный зазор 120px, на ПК — 120px
+            const offset = 120;
+            const offsetPosition = block.offsetTop - offset;
+            const diff = Math.abs(window.scrollY - offsetPosition);
 
-        const diff = Math.abs(window.scrollY - offsetPosition);
-
-        if (diff > 2) {
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        }
-    }, 60); // Чуть ускорили таймер для мгновенного подхвата скролла
+            if (diff > 2) {
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }, 60); 
+    }
 }
 
     } // ЭТА СКОБКА ТЕПЕРЬ ПРАВИЛЬНО ЗАКРЫВАЕТ БЛОК if (content)
