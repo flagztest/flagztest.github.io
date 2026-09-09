@@ -1608,23 +1608,33 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УНИВЕРСАЛЬНЫЙ БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
+            // 🌟 УМНЫЙ И ПЛАВНЫЙ ВОЗВРАТ К НАЧАЛУ ТЕКУЩЕЙ БАЗЫ
             setTimeout(() => {
                 const offset = 120;
                 
-                // Скрипт автоматически находит самую первую плашку-соседа в текущей вкладке 
-                // (Европу в странах мира или Республики во вкладке России)
+                // Находим самый первый блок-заголовок в текущей активной вкладке
                 const parent = block.parentNode;
                 const firstBlock = parent ? parent.querySelector('.continent-block') : null;
                 
-                // Если мы закрываем любой нижний блок (и это не самая первая плашка списка),
-                // страница совершит бархатное и плавное скольжение к началу текущей базы!
                 if (firstBlock && block !== firstBlock) {
+                    // Рассчитываем идеальное положение для остановки
                     const offsetPosition = firstBlock.offsetTop - offset;
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
+                    
+                    // 🌟 ИСПРАВЛЕНО: Если мы в базе стран мира и катимся к первому элементу (Европе),
+                    // мы принудительно даем команду мягкого скролла в абсолютный 0 (в самый верх).
+                    // Это заставляет Safari катить экран бархатно и плавно, не ломая анимацию!
+                    if (offsetPosition <= 0 || firstBlock.id === 'block-Европа') {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        // Для Базы России (откат к Республикам) оставляем точный offsetTop
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
                 } else {
                     // Если закрывают самый первый блок списка, удерживаем камеру ровно на месте
                     const offsetPosition = block.offsetTop - offset;
