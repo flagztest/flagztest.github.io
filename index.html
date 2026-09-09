@@ -1598,9 +1598,18 @@ function toggleBlock(id) {
     if (content) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
-            // 🌟 ИСПРАВЛЕНО: Если блок только что свернули, мы завершаем работу функции 
-            // и ВООБЩЕ не запускаем автоскролл. Страница останется неподвижной, 
-            // и «Республики» больше никогда не улетят под шапку!
+            
+            // 🌟 ИСПРАВЛЕНО: Когда блок сворачивают, мы плавно фиксируем экран 
+            // на его заголовке, не позволяя странице резко подпрыгнуть наверх 
+            // и закинуть «Республики» под шапку поиска!
+            setTimeout(() => {
+                const offset = 120;
+                const offsetPosition = block.offsetTop - offset;
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }, 10);
             return;
         } else {
             content.style.display = 'block';
@@ -1609,9 +1618,8 @@ function toggleBlock(id) {
         const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
         allCollapsed = hasExpanded ? false : true;
 
-        // 🌟 АВТОСКРОЛЛ ДЛЯ РАСКРЫТИЯ: Работает пиксель в пиксель и для стран мира, и для РФ
+        // Автоскролл для красивого раскрытия плашки
         setTimeout(() => {
-            // На смартфонах задаем идеальный зазор 120px, на ПК — 120px
             const offset = 120;
             const offsetPosition = block.offsetTop - offset;
             const diff = Math.abs(window.scrollY - offsetPosition);
