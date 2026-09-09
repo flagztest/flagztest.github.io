@@ -156,10 +156,9 @@
             border-left: none !important;
             border-right: none !important;
             border-top: 1px solid var(--border-color);
+            /* 🌟 УБРАЛИ НИЖНЮЮ ЛИНЕЮ БЛОКА, ЧТОБЫ ИЗБАВИТЬСЯ ОТ ЗАДВОЕНИЯ ПОЛОС: */
             border-bottom: none !important; 
             box-shadow: none !important; 
-            /* 🌟 ЖЕЛЕЗНЫЙ БУФЕР: сообщает Safari точную высоту синей шапки для мягкого удержания */
-            scroll-margin-top: 120px !important; 
         }
 
 .continent-header {
@@ -1609,29 +1608,50 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 ИСПРАВЛЕНО: При сворачивании любого блока, мы приказываем Safari
-            // плавно удержать этот заголовок на экране, учитывая наш scroll-margin-top в 120px.
-            // Это полностью устраняет резкие скачки Европы и залезание Республик!
-            block.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest'
-            });
+            // 🌟 УМНЫЙ СИНХРОННЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
+            setTimeout(() => {
+                const offset = 120;
+                
+                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
+                const isRussia = id.startsWith('block-ru-');
+                
+                if (isRussia) {
+                    // 🇷🇺 В Базе России плавно катим экран к «Республикам»
+                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
+                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
+                        const offsetPosition = republicsBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        return;
+                    }
+                } else {
+                    // 🌍 В Базе стран мира плавно катим экран к первому блоку («Европа»)
+                    const parent = block.parentNode;
+                    const firstBlock = parent ? parent.querySelector('.continent-block') : null;
+                    
+                    if (firstBlock && block !== firstBlock) {
+                        const offsetPosition = firstBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        return;
+                    }
+                }
+                
+                // Защитное удержание камеры, если схлопнули самую первую плашку списка
+                const offsetPosition = block.offsetTop - offset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }, 10);
             return;
         } else {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
+        // РАСКРЫТИЕ: плавно подтягивает любой открытый блок ровно под поиск
         setTimeout(() => {
             const offset = 120;
             const offsetPosition = block.offsetTop - offset;
             const diff = Math.abs(window.scrollY - offsetPosition);
 
             if (diff > 2) {
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }
         }, 60); 
     }
