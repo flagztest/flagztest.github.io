@@ -1480,6 +1480,25 @@ function createContinentBlock(continent, countries) {
 }
 
 function switchView(viewId) {
+    // 🌟 АВТОМАТИЧЕСКОЕ ЗАКРЫТИЕ ВСЕХ РАСКРЫТЫХ БЛОКОВ ПРИ ПЕРЕХОДЕ НА ДРУГИЕ ВКЛАДКИ
+    // Сворачиваем блоки только у МИРОВЫХ континентов, не трогая плашки-кнопки Базы России
+    document.querySelectorAll('#tablesContainer .continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const content = b.querySelector('.continent-content');
+        if (content) content.style.display = 'none';
+    });
+
+    // Также мягко сворачиваем аккордеоны субъектов РФ при уходе из вкладки
+    document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const content = b.querySelector('.continent-content');
+        if (content) content.style.display = 'none';
+    });
+    
+    const toggleAllBtn = document.getElementById('toggleAllBtn');
+    if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
+    allCollapsed = true;
+
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('dbControls').style.display = 'none';
@@ -1490,11 +1509,10 @@ function switchView(viewId) {
     document.getElementById('ruSubjectsContainer').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     
-    // Скрываем буферы по умолчанию
+    // Скрываем мобильные буферы безопасности по умолчанию на всех страницах квизов
     const buffer = document.getElementById('ruPaddingBuffer');
     if (buffer) buffer.style.display = 'none';
     
-    // 🌟 ДОБАВИТЬ ЭТУ СТРОКY:
     const worldBuffer = document.getElementById('worldPaddingBuffer');
     if (worldBuffer) worldBuffer.style.display = 'none';
     
@@ -1507,13 +1525,13 @@ function switchView(viewId) {
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
         
-        // 🌟 ДОБАВИТЬ ЭТУ СТРОКY: Включаем буфер стран мира при заходе во вкладку
+        // Включаем буфер стран мира: даёт Safari высоту для бархатного скольжения до Европы
         if (worldBuffer) worldBuffer.style.display = 'block';
         
+        // Показываем мировые континенты, прячем РФ
         document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
-    }
-     } else if (viewId === 'ru-db') {
-        // 🌟 ИСПРАВЛЕНО: Принудительно сбрасываем экран в самый верх при переходе в Россию,
+    } else if (viewId === 'ru-db') {
+        // Принудительно сбрасываем экран в самый верх при переходе в Россию,
         // полностью исключая наезд шапки и скрытие кнопок из-за скролла базы стран!
         window.scrollTo(0, 0);
 
@@ -1534,7 +1552,7 @@ function switchView(viewId) {
         if (btnSub) btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
         if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
 
-        // 🌟 Активируем буфер для мягкого скролла на смартфонах
+        // Активируем буфер для мягкого скролла на смартфонах
         if (buffer) buffer.style.display = 'block';
 
     } else if (viewId === 'quiz-flags') {
