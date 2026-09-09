@@ -776,8 +776,6 @@
     <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА, И РЕГИОНОВ РФ -->
     <div id="dbView" class="view-section active">
         <div id="tablesContainer">
-            <!-- 🌟 ТЕХНИЧЕСКИЙ ЗАЗОР ДЛЯ КИНЕМАТОГРАФИЧНОГО СКРОЛЛА ЕВРОПЫ НА ТЕЛЕФОНАХ -->
-            <div class="continent-block" style="height: 1px; margin: 0; padding: 0; border: none; background: transparent;"></div>
             
             <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РОССИИ (Один в один как Европа по ширине и цвету!) -->
             <div class="continent-block" id="block-ru-sub-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
@@ -1614,8 +1612,9 @@ function toggleBlock(id) {
             setTimeout(() => {
                 const offset = 120;
                 
+                // Скрипт автоматически находит самую первую плашку-соседа в текущей вкладке 
+                // (Европу в странах мира или Республики во вкладке России)
                 const parent = block.parentNode;
-                // Находим самый первый блок-сосед в текущей вкладке
                 const firstBlock = parent ? parent.querySelector('.continent-block') : null;
                 
                 // Если мы закрываем любой нижний блок (и это не самая первая плашка списка),
