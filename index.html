@@ -777,7 +777,7 @@
     <div id="dbView" class="view-section active">
         
         <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ -->
-        <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box;">
+        <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box; display: none;">
             
             <!-- ЗОНА А: ГЛАВНЫЕ КНОПКИ РОССИИ (Первый уровень меню) -->
             <div id="ruMainMenuZone" style="display: block; width: 100%;">
@@ -807,8 +807,6 @@
 
             <!-- ЗОНА Б: ИЗОЛИРОВАННАЯ ОБЛАСТЬ 6 СУБЪЕКТОВ (Второй уровень меню) -->
             <div id="ruSubmissionsZone" style="display: none; width: 100%;">
-                <!-- Кнопка возврата на первый уровень -->
-                <button class="action-btn btn-secondary" onclick="exitRuSubmissions()" style="width: 100%; margin-bottom: 15px; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px;">⬅ Назад к главному меню РФ</button>
                 <!-- Сюда JavaScript автоматически построит 6 нативных аккордеонов-континентов -->
                 <div id="ruSubjectsContainer" style="width: 100%;"></div>
             </div>
