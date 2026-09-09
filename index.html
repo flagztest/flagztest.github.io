@@ -794,13 +794,10 @@
             </div>
             <!-- Контейнер для 2-го раздела (Округа) -->
             <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
-
         </div>
-    <!-- 🌟 ИСПРАВЛЕНО: добавили padding-bottom, чтобы Safari на телефонах больше не выталкивал контент в шапку -->
     </div>
-
-    <div id="ruPaddingBuffer" style="height: 100vh; display: none;"></div> 
-</div>
+    <!-- 🌟 ПОДУШКА БЕЗОПАСНОСТИ: не даёт Safari выталкивать плашки под шапку при сворачивании -->
+    <div id="ruPaddingBuffer" style="height: 100vh; display: none;"></div>
 
 
     <div id="quizFlagsView" class="view-section">
@@ -1484,7 +1481,7 @@ function switchView(viewId) {
     document.getElementById('ruSubjectsContainer').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     
-    // 🌟 Прячем буфер на всех страницах по умолчанию
+    // 🌟 Скрываем мобильный буфер безопасности по умолчанию
     const buffer = document.getElementById('ruPaddingBuffer');
     if (buffer) buffer.style.display = 'none';
     
@@ -1511,16 +1508,14 @@ function switchView(viewId) {
         document.getElementById('block-ru-sub-header').style.display = 'block';
         document.getElementById('block-ru-okr-header').style.display = 'block';
         
-        // 🌟 ДОБАВИТЬ ЭТИ СТРОКИ: Включаем буфер для мягкого скролла
-        const buffer = document.getElementById('ruPaddingBuffer');
-        if (buffer) buffer.style.display = 'block';
-    }
-        
         // На старте сбрасываем стили кнопок в дефолт (как обычные закрытые континенты)
         const btnSub = document.getElementById('btnSub');
         const btnOkr = document.getElementById('btnOkr');
-        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+        if (btnSub) btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
+        if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+
+        // 🌟 Активируем буфер для мягкого скролла на смартфонах
+        if (buffer) buffer.style.display = 'block';
 
     } else if (viewId === 'quiz-flags') {
         document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
@@ -1536,6 +1531,7 @@ function switchView(viewId) {
         loadQuizCountryRound();
     }
 }
+
 
 function switchRuSubView(subViewId) {
     const btnSub = document.getElementById('btnSub');
