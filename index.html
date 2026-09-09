@@ -1496,7 +1496,11 @@ function switchView(viewId) {
         
         // Показываем мировые континенты, прячем РФ
         document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
-    } else if (viewId === 'ru-db') {
+     } else if (viewId === 'ru-db') {
+        // 🌟 ИСПРАВЛЕНО: Принудительно сбрасываем экран в самый верх при переходе в Россию,
+        // полностью исключая наезд шапки и скрытие кнопок из-за скролла базы стран!
+        window.scrollTo(0, 0);
+
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
         document.getElementById('dbView').classList.add('active'); // Активируем общий dbView!
         document.getElementById('dbControls').style.display = 'flex';
