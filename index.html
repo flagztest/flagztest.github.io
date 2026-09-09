@@ -1521,13 +1521,22 @@ function switchRuSubView(subViewId) {
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
         
-    } else if (subViewId === 'capitals') {
+     } else if (subViewId === 'capitals') {
+        const targetTable = document.getElementById('content-ru-capital-alphabet');
         const isAlreadyActive = (capContainer.style.display === 'block');
-        if (isAlreadyActive) return;
         
+        // 🌟 ЭФФЕКТ СХЛОПЫВАНИЯ: если по кнопке кликают повторно — аккуратно закрываем таблицу
+        if (isAlreadyActive) {
+            if (capContainer) capContainer.style.display = 'none';
+            if (targetTable) targetTable.style.display = 'none';
+            if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
+            return;
+        }
+        
+        // Включаем отображение контейнера и самой таблицы городов впритык
         if (btnCap) btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
         if (capContainer) capContainer.style.display = 'block';
-        document.querySelectorAll('#ruCapitalsContainer .continent-block').forEach(b => b.style.display = 'block');
+        if (targetTable) targetTable.style.display = 'block';
         
         setTimeout(() => {
             const offsetPosition = btnCap.getBoundingClientRect().top + window.scrollY - 120;
