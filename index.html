@@ -1608,34 +1608,30 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УМНЫЙ СИНХРОННЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРАЧИВАНИИ
+            // 🌟 УМНЫЙ СИНХРОННЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
             setTimeout(() => {
                 const offset = 120;
                 
-                // 1. Проверяем, в каком разделе мы находимся (Россия или Страны мира)
-                const isRussia = id.startsWith('block-ru-');
+                // Находим самый первый блок-сосед в текущем списке (tablesContainer или ruSubjectsContainer)
+                const parent = block.parentNode;
+                const firstBlock = parent ? parent.querySelector('.continent-block') : null;
                 
-                if (isRussia) {
-                    // В Базе России плавно возвращаем фокус к «Республикам»
-                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
-                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
-                        const offsetPosition = republicsBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
-                    }
+                // Если мы закрываем любой нижний блок (и это не самый первый элемент списка),
+                // страница совершит бархатное и плавное скольжение к началу текущей базы!
+                if (firstBlock && block !== firstBlock) {
+                    const offsetPosition = firstBlock.offsetTop - offset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
                 } else {
-                    // 🌟 В Базе стран мира плавно возвращаем фокус к «Европе»
-                    const europeBlock = document.getElementById('block-Европа');
-                    if (europeBlock && id !== 'block-Европа') {
-                        const offsetPosition = europeBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
-                    }
+                    // Если закрывают самый верхний блок (Европу или Республики), удерживаем камеру ровно на месте
+                    const offsetPosition = block.offsetTop - offset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
                 }
-                
-                // Дефолтное удержание камеры, если закрывают самый первый блок (Европу или Республики)
-                const offsetPosition = block.offsetTop - offset;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }, 10);
             return;
         } else {
@@ -1649,7 +1645,10 @@ function toggleBlock(id) {
             const diff = Math.abs(window.scrollY - offsetPosition);
 
             if (diff > 2) {
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
             }
         }, 60); 
     }
