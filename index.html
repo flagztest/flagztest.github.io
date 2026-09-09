@@ -1660,11 +1660,12 @@ function switchRuSubView(subViewId) {
 }
 
 function enterRuSubmissions(type) {
-    // Принудительно зажигаем общую родительскую навигационную коробку России
+    // Жестко зажигаем общую родительскую навигационную коробку России со старта кликов
     const navHeaders = document.getElementById('ruNavigationHeaders');
     if (navHeaders) navHeaders.style.display = 'block';
 
     if (type === 'subjects') {
+        // ЭФФЕКТ СУБЪЕКТОВ: прячем главное меню, зажигаем Зону Б
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'block';
         document.getElementById('ruOkrugsZone').style.display = 'none';
@@ -1674,7 +1675,7 @@ function enterRuSubmissions(type) {
         });
         window.scrollTo(0, 0);
     } else if (type === 'okrugs') {
-        // ВХОД В ИЗОЛИРОВАННУЮ ОБЛАСТЬ ОКРУГОВ (ЗОНА В)
+        // 🌟 ЭФФЕКТ ОКРУГОВ (ОДИН В ОДИН): прячем главное меню, зажигаем новую Зону В!
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -1687,15 +1688,16 @@ function enterRuSubmissions(type) {
 }
 
 function exitRuSubmissions() {
-    // Принудительно держим родительскую коробку открытой при внутренних переходах
     const navHeaders = document.getElementById('ruNavigationHeaders');
     if (navHeaders) navHeaders.style.display = 'block';
 
+    // Мягко сворачиваем внутренности субъектов перед выходом
     document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
     });
+    // Мягко сворачиваем внутренности округов перед выходом
     document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
@@ -1758,11 +1760,18 @@ function switchView(viewId) {
         
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
         
-        // 🌟 СБРОС И ВОЗВРАТ: Всегда принудительно зажигаем корневое меню (Зону А) и гасим Зоны Б и В
+        // 🌟 СБРОС И КОРРЕКЦИЯ: Принудительно зажигаем корневое меню (Зону А) и намертво гасим Зоны Б и В
         document.getElementById('ruNavigationHeaders').style.display = 'block';
         document.getElementById('ruMainMenuZone').style.display = 'block';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'none';
+        
+        // Мягко сворачиваем все внутренние аккордеоны субъектов и округов при переключении
+        document.querySelectorAll('#ruSubjectsContainer .continent-block, #ruOkrugsContainer .continent-block').forEach(b => {
+            b.classList.add('collapsed');
+            const content = b.querySelector('.continent-content');
+            if (content) content.style.display = 'none';
+        });
         
         const capContainer = document.getElementById('ruCapitalsContainer');
         if (capContainer) capContainer.style.display = 'block';
