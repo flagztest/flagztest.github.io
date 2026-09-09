@@ -1484,6 +1484,10 @@ function switchView(viewId) {
     document.getElementById('ruSubjectsContainer').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     
+    // 🌟 Прячем буфер на всех страницах по умолчанию
+    const buffer = document.getElementById('ruPaddingBuffer');
+    if (buffer) buffer.style.display = 'none';
+    
     flagScore = 0; flagRound = 1;
     capScore = 0; capRound = 1;
     countryScore = 0; countryRound = 1;
@@ -1506,6 +1510,11 @@ function switchView(viewId) {
         // Включаем отображение главных плашек России
         document.getElementById('block-ru-sub-header').style.display = 'block';
         document.getElementById('block-ru-okr-header').style.display = 'block';
+        
+        // 🌟 ДОБАВИТЬ ЭТИ СТРОКИ: Включаем буфер для мягкого скролла
+        const buffer = document.getElementById('ruPaddingBuffer');
+        if (buffer) buffer.style.display = 'block';
+    }
         
         // На старте сбрасываем стили кнопок в дефолт (как обычные закрытые континенты)
         const btnSub = document.getElementById('btnSub');
