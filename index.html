@@ -790,10 +790,9 @@
                 
                 <!-- ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
                 <div class="continent-block" id="block-ru-okr-header" style="margin-bottom: 15px; padding: 0px !important;">
-                    <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')" style="width: 100%; box-sizing: border-box;">
+                    <h2 class="continent-header" id="btnOkr" onclick="enterRuSubmissions('okrugs')" style="width: 100%; box-sizing: border-box;">
                         <span>Федеральные округа</span>
                     </h2>
-                    <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 0px;"></div>
                 </div>
 
                 <!-- ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ -->
@@ -804,6 +803,12 @@
             <div id="ruSubmissionsZone" style="display: none; width: 100%;">
                 <!-- Сюда JavaScript автоматически построит 6 нативных аккордеонов-континентов -->
                 <div id="ruSubjectsContainer" style="width: 100%;"></div>
+            </div>
+
+            <!-- 🌟 ЗОНА В: ИЗОЛИРОВАННАЯ ОБЛАСТЬ ФЕДЕРАЛЬНЫХ ОКРУГОВ РФ (Второй уровень меню) -->
+            <div id="ruOkrugsZone" style="display: none; width: 100%;">
+                <!-- Сюда JavaScript автоматически построит нативные аккордеоны-округа -->
+                <div id="ruOkrugsContainer" style="width: 100%;"></div>
             </div>
 
         </div>
@@ -1183,6 +1188,114 @@ const russiaSubjectsData = {
     ]
 };
 
+// 🌟 ПОЛНАЯ ОФИЦИАЛЬНАЯ БАЗА РАСПРЕДЕЛЕНИЯ 89 РЕГИОНОВ ПО 8 ФЕДЕРАЛЬНЫМ ОКРУГАМ РФ
+const russiaOkrugsData = {
+    "Центральный федеральный округ": [
+        { name: "Белгородская область", capital: "Белгород" },
+        { name: "Брянская область", capital: "Брянск" },
+        { name: "Владимирская область", capital: "Владимир" },
+        { name: "Воронежская область", capital: "Воронеж" },
+        { name: "Ивановская область", capital: "Иваново" },
+        { name: "Калужская область", capital: "Калуга" },
+        { name: "Костромская область", capital: "Кострома" },
+        { name: "Курская область", capital: "Курск" },
+        { name: "Липецкая область", capital: "Липецк" },
+        { name: "Москва", capital: "Москва" },
+        { name: "Московская область", capital: "Москва" },
+        { name: "Нижегородская область", capital: "Нижний Новгород" },
+        { name: "Орловская область", capital: "Орёл" },
+        { name: "Рязанская область", capital: "Рязань" },
+        { name: "Смоленская область", capital: "Смоленск" },
+        { name: "Тамбовская область", capital: "Тамбов" },
+        { name: "Тверская область", capital: "Тверь" },
+        { name: "Тульская область", capital: "Тула" },
+        { name: "Ярославская область", capital: "Ярославль" }
+    ],
+    "Северо-Западный федеральный округ": [
+        { name: "Архангельская область", capital: "Архангельск" },
+        { name: "Вологодская область", capital: "Вологда" },
+        { name: "Калининградская область", capital: "Калининград" },
+        { name: "Республика Карелия", capital: "Петрозаводск" },
+        { name: "Республика Коми", capital: "Сыктывкар" },
+        { name: "Ленинградская область", capital: "Санкт-Петербург" },
+        { name: "Мурманская область", capital: "Мурманск" },
+        { name: "Ненецкий автономный округ", capital: "Нарьян-Мар" },
+        { name: "Новгородская область", capital: "Великий Новгород" },
+        { name: "Псковская область", capital: "Псков" },
+        { name: "Санкт-Петербург", capital: "Санкт-Петербург" }
+    ],
+    "Южный федеральный округ": [
+        { name: "Республика Адыгея", capital: "Майкоп" },
+        { name: "Астраханская область", capital: "Астрахань" },
+        { name: "Волгоградская область", capital: "Волгоград" },
+        { name: "Республика Калмыкия", capital: "Элиста" },
+        { name: "Республика Крым", capital: "Симферополь" },
+        { name: "Ростовская область", capital: "Ростов-на-Дону" },
+        { name: "Севастополь", capital: "Севастополь" },
+        { name: "Донецкая Народная Республика", capital: "Донецк" },
+        { name: "Луганская Народная Республика", capital: "Луганск" },
+        { name: "Запорожская область", capital: "Мелитополь" },
+        { name: "Херсонская область", capital: "Геническ" }
+    ],
+    "Северо-Кавказский федеральный округ": [
+        { name: "Республика Дагестан", capital: "Махачкала" },
+        { name: "Республика Ингушетия", capital: "Магас" },
+        { name: "Кабардино-Балкарская Республика", capital: "Нальчик" },
+        { name: "Карачаево-Черкесская Республика", capital: "Черкесск" },
+        { name: "Республика Северная Осетия — Алания", capital: "Владикавказ" },
+        { name: "Ставропольский край", capital: "Ставрополь" },
+        { name: "Чеченская Республика", capital: "Грозный" }
+    ],
+    "Приволжский федеральный округ": [
+        { name: "Республика Башкортостан", capital: "Уфа" },
+        { name: "Кировская область", capital: "Киров" },
+        { name: "Республика Марий Эл", capital: "Йошкар-Ола" },
+        { name: "Республика Мордовия", capital: "Саранск" },
+        { name: "Оренбургская область", capital: "Оренбург" },
+        { name: "Пензенская область", capital: "Пенза" },
+        { name: "Пермский край", capital: "Пермь" },
+        { name: "Самарская область", capital: "Самара" },
+        { name: "Саратовская область", capital: "Саратов" },
+        { name: "Республика Татарстан", capital: "Казань" },
+        { name: "Удмуртская Республика", capital: "Ижевск" },
+        { name: "Ульяновская область", capital: "Ульяновск" },
+        { name: "Чувашская Республика — Чувашия", capital: "Чебоксары" }
+    ],
+    "Уральский федеральный округ": [
+        { name: "Курганская область", capital: "Курган" },
+        { name: "Свердловская область", capital: "Екатеринбург" },
+        { name: "Тюменская область", capital: "Тюмень" },
+        { name: "Ханты-Мансийский автономный округ — Югра", capital: "Ханты-Мансийск" },
+        { name: "Челябинская область", capital: "Челябинск" },
+        { name: "Ямало-Ненецкий автономный округ", capital: "Салехард" }
+    ],
+    "Сибирский федеральный округ": [
+        { name: "Республика Алтай", capital: "Горно-Алтайск" },
+        { name: "Алтайский край", capital: "Барнаул" },
+        { name: "Иркутская область", capital: "Иркутск" },
+        { name: "Кемеровская область — Кузбасс", capital: "Кемерово" },
+        { name: "Красноярский край", capital: "Красноярск" },
+        { name: "Новосибирская область", capital: "Новосибирск" },
+        { name: "Омская область", capital: "Омск" },
+        { name: "Томская область", capital: "Томск" },
+        { name: "Республика Тыва", capital: "Кызыл" },
+        { name: "Республика Хакасия", capital: "Абакан" }
+    ],
+    "Дальневосточный федеральный округ": [
+        { name: "Амурская область", capital: "Благовещенск" },
+        { name: "Республика Бурятия", capital: "Улан-Удэ" },
+        { name: "Еврейская автономная область", capital: "Биробиджан" },
+        { name: "Забайкальский край", capital: "Чита" },
+        { name: "Камчатский край", capital: "Петропавловск-Камчатский" },
+        { name: "Магаданская область", capital: "Магадан" },
+        { name: "Приморский край", capital: "Владивосток" },
+        { name: "Республика Саха (Якутия)", capital: "Якутск" },
+        { name: "Сахалинская область", capital: "Южно-Сахалинск" },
+        { name: "Хабаровский край", capital: "Хабаровск" },
+        { name: "Чукотский автономный округ", capital: "Анадырь" }
+    ]
+};
+
 const countriesData = {
     "Европа": [
         { name: "Австрия", capital: "Вена", iso: "at", special: true },
@@ -1551,31 +1664,47 @@ function enterRuSubmissions(type) {
     if (type === 'subjects') {
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'block';
+        document.getElementById('ruOkrugsZone').style.display = 'none';
         
         document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
             b.style.display = 'block';
         });
+        window.scrollTo(0, 0);
+    } else if (type === 'okrugs') {
+        // 🌟 ВХОД В ИЗОЛИРОВАННУЮ ОБЛАСТЬ ОКРУГОВ (ЗОНА В)
+        document.getElementById('ruMainMenuZone').style.display = 'none';
+        document.getElementById('ruSubmissionsZone').style.display = 'none';
+        document.getElementById('ruOkrugsZone').style.display = 'block';
         
+        document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
+            b.style.display = 'block';
+        });
         window.scrollTo(0, 0);
     }
 }
 
-// 🌟 ФУНКЦИЯ ВЫХОДА ИЗ ОБЛАСТИ СУБЪЕКТОВ НАЗАД В ГЛАВНОЕ МЕНЮ РФ (ЗОНА А)
 function exitRuSubmissions() {
+    // Мягко сворачиваем внутренности субъектов перед выходом
     document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const content = b.querySelector('.continent-content');
+        if (content) content.style.display = 'none';
+    });
+    // Мягко сворачиваем внутренности округов перед выходом
+    document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
     });
     
     document.getElementById('ruSubmissionsZone').style.display = 'none';
+    document.getElementById('ruOkrugsZone').style.display = 'none';
     document.getElementById('ruMainMenuZone').style.display = 'block';
     
     window.scrollTo(0, 0);
 }
 
 function switchView(viewId) {
-    // Автоматически закрываем и сворачиваем вообще все открытые блоки на странице
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
@@ -1590,10 +1719,11 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('dbControls').style.display = 'none';
     
-    // Скрываем все зоны и контейнеры России по умолчанию
+    // Скрываем абсолютно все зоны и контейнеры России по умолчанию
     document.getElementById('ruNavigationHeaders').style.display = 'none';
     document.getElementById('ruMainMenuZone').style.display = 'none';
     document.getElementById('ruSubmissionsZone').style.display = 'none';
+    document.getElementById('ruOkrugsZone').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     document.getElementById('ruCapitalsContainer').style.display = 'none';
     
@@ -1613,8 +1743,6 @@ function switchView(viewId) {
         document.getElementById('dbControls').style.display = 'flex';
         
         if (worldBuffer) worldBuffer.style.display = 'block';
-        
-        // Показываем только мировые континенты из tablesContainer
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
     } else if (viewId === 'ru-db') {
         window.scrollTo(0, 0);
@@ -1623,24 +1751,24 @@ function switchView(viewId) {
         document.getElementById('dbView').classList.add('active'); 
         document.getElementById('dbControls').style.display = 'flex';
         
-        // Прячем страны мира контента
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
         
-        // Включаем корневой блок навигации России и показываем строго Первое меню (Зону А)
+        // 🌟 СБРОС И ВОЗВРАТ: Всегда принудительно зажигаем корневое меню (Зону А) и гасим Зоны Б и В
         document.getElementById('ruNavigationHeaders').style.display = 'block';
         document.getElementById('ruMainMenuZone').style.display = 'block';
+        document.getElementById('ruSubmissionsZone').style.display = 'none';
+        document.getElementById('ruOkrugsZone').style.display = 'none';
         
-        // 🌟 ИСПРАВЛЕНО: Принудительно зажигаем обертку Административных центров, чтобы кнопка появилась на экране!
         const capContainer = document.getElementById('ruCapitalsContainer');
         if (capContainer) capContainer.style.display = 'block';
         
-        // На старте сбрасываем кнопки в дефолтный светлый цвет
         const btnOkr = document.getElementById('btnOkr');
         const btnCap = document.getElementById('btnCap');
         if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
         if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
 
         if (buffer) buffer.style.display = 'block';
+
     } else if (viewId === 'quiz-flags') {
         document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
         document.getElementById('quizFlagsView').classList.add('active');
@@ -1656,77 +1784,32 @@ function switchView(viewId) {
     }
 }
 
-// 🌟 ФУНКЦИЯ ВХОДА В ИЗОЛИРОВАННУЮ ОБЛАСТЬ СУБЪЕКТОВ (ЗОНА Б)
-function enterRuSubmissions(type) {
-    if (type === 'subjects') {
-        document.getElementById('ruMainMenuZone').style.display = 'none';
-        document.getElementById('ruSubmissionsZone').style.display = 'block';
-        
-        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
-            b.style.display = 'block';
-        });
-        
-        window.scrollTo(0, 0);
-    }
-}
-
-// 🌟 ФУНКЦИЯ ВЫХОДА ИЗ ОБЛАСТИ СУБЪЕКТОВ НАЗАД В ГЛАВНОЕ МЕНЮ РФ (ЗОНА А)
-function exitRuSubmissions() {
-    document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
-        b.classList.add('collapsed');
-        const content = b.querySelector('.continent-content');
-        if (content) content.style.display = 'none';
-    });
-    
-    document.getElementById('ruSubmissionsZone').style.display = 'none';
-    document.getElementById('ruMainMenuZone').style.display = 'block';
-    
-    window.scrollTo(0, 0);
-}
-
 function switchRuSubView(subViewId) {
-    const btnOkr = document.getElementById('btnOkr');
     const btnCap = document.getElementById('btnCap');
-    const okrContainer = document.getElementById('ruOkrugsContainer');
     const capContainer = document.getElementById('ruCapitalsContainer');
     
-    if (okrContainer) okrContainer.style.display = 'none';
     if (capContainer) capContainer.style.display = 'none';
-    
-    if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
     if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
     
-    document.querySelectorAll('.ru-sub-section .continent-block').forEach(b => b.style.display = 'none');
-    
-    if (subViewId === 'okrugs') {
-        const isAlreadyActive = (okrContainer.style.display === 'block');
-        if (isAlreadyActive) return;
+    if (subViewId === 'capitals') {
+        const targetTable = document.getElementById('content-ru-capital-alphabet');
+        const isTableVisible = targetTable && (targetTable.style.display === 'block');
         
-        if (btnOkr) btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
-        if (okrContainer) okrContainer.style.display = 'block';
-        document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => b.style.display = 'block');
-        
-        setTimeout(() => {
-            const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 80);
-        
-    } else if (subViewId === 'capitals') {
-        const isAlreadyActive = (capContainer.style.display === 'block');
-        if (isAlreadyActive) return;
+        if (isTableVisible) {
+            if (capContainer) capContainer.style.display = 'none';
+            if (targetTable) targetTable.style.display = 'none';
+            if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
+            return;
+        }
         
         if (btnCap) btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
         if (capContainer) capContainer.style.display = 'block';
-        document.querySelectorAll('#ruCapitalsContainer .continent-block').forEach(b => b.style.display = 'block');
+        if (targetTable) targetTable.style.display = 'block';
         
         setTimeout(() => {
             const offsetPosition = btnCap.getBoundingClientRect().top + window.scrollY - 120;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
-    }
-    
-    if(document.getElementById('searchInput').value !== "") {
-        clearSearch();
     }
 }
 
@@ -2314,6 +2397,60 @@ function generateRussiaCapitalsTable() {
     `;
     container.appendChild(block);
 }
+// 🌟 АВТОМАТИЧЕСКАЯ СБОРКА ТАБЛИЦ ФЕДЕРАЛЬНЫХ ОКРУГОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ
+function generateRussiaOkrugsTables() {
+    const container = document.getElementById('ruOkrugsContainer');
+    if (!container) return;
+
+    for (const [okrugName, regions] of Object.entries(russiaOkrugsData)) {
+        const block = document.createElement('div');
+        block.className = 'continent-block collapsed';
+        
+        const safeId = `block-ru-okrug-${okrugName.replace(/\s+/g, '-')}`;
+        block.id = safeId;
+        
+        let rowsHtml = '';
+        regions.forEach(r => {
+            rowsHtml += `
+                <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
+                    <td class="col-flag">
+                       <div class="flag-wrapper">
+                           <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
+                       </div>
+                    </td>
+                    <td>
+                        <strong>${r.name}</strong>
+                    </td>
+                    <td>
+                        ${r.capital}
+                    </td>
+                </tr>`;
+        });
+
+        block.innerHTML = `
+            <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
+                <span>${okrugName}</span>
+                <span class="count-badge" id="badge-${block.id}">${regions.length}</span>
+            </h2>
+            <div class="continent-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-flag">Флаг</th>
+                            <th>Регион</th>
+                            <th>Адм. центр</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHtml}</tbody>
+                </table>
+            </div>
+        `;
+        container.appendChild(block);
+    }
+}
+
+// Запускаем автоматический рендеринг Федеральных округов при старте сайта
+generateRussiaOkrugsTables();
 
 // Запускаем автоматический рендеринг центров при старте сайта
 generateRussiaCapitalsTable();
