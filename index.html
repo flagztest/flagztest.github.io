@@ -800,9 +800,8 @@
 
         <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
         <div id="tablesContainer"></div>
-        <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
-        <div id="tablesContainer"></div>
-        <!-- 🌟 НОВАЯ ПОДУШКА БЕЗОПАСНОСТИ: даёт Safari высоту для плавного скролла к Европе -->
+        
+        <!-- 🌟 ПОДУШКА БЕЗОПАСНОСТИ СТРАН МИРА: даёт Safari высоту для плавного скролла к Европе -->
         <div id="worldPaddingBuffer" style="height: 100vh; display: block; background: transparent;"></div>
         
     </div>
@@ -1648,9 +1647,12 @@ function switchView(viewId) {
     document.getElementById('ruSubjectsContainer').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     
-    // Скрываем мобильный буфер безопасности по умолчанию
+    // Скрываем мобильные буферы безопасности по умолчанию на всех страницах квизов
     const buffer = document.getElementById('ruPaddingBuffer');
     if (buffer) buffer.style.display = 'none';
+    
+    const worldBuffer = document.getElementById('worldPaddingBuffer');
+    if (worldBuffer) worldBuffer.style.display = 'none';
     
     flagScore = 0; flagRound = 1;
     capScore = 0; capRound = 1;
@@ -1660,6 +1662,9 @@ function switchView(viewId) {
         document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
+        
+        // 🌟 ВКЛЮЧАЕМ БУФЕР СТРАН МИРА: даёт Safari высоту для бархатного скольжения до Европы
+        if (worldBuffer) worldBuffer.style.display = 'block';
         
         // Показываем мировые континенты, прячем РФ
         document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
