@@ -166,23 +166,15 @@
     padding: 15px 20px;
     margin: 0;
     font-size: 18px;
+    /* 🌟 СВЕРХЖИРНЫЙ ГРАФИТ: теперь континенты в точности как вопросы и меню */
     font-weight: 800 !important;
     color: #495057 !important; 
     cursor: pointer;
-    /* 🌟 ВОЗВРАЩАЕМ ФЛЕКС: теперь кнопки растянутся на всю ширину экрана */
-    display: flex !important;
+    display: flex;
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
     user-select: none;
-    box-sizing: border-box !important;
-    width: 100% !important;
-}
-
-/* 🌟 УМНОЕ ПРАВИЛО: не даёт цифре 3 улетать в правый угол на смартфонах */
-.continent-header span:first-child {
-    flex-grow: 0;
-    text-align: left;
 }
 
 .count-badge {
@@ -367,6 +359,10 @@
             border-top: 1px solid var(--border-color);
             padding-top: 15px;
         }
+     #quizRegionsView {
+         padding-top: 0px !important;
+     }
+
         .scroll-top-btn {
             position: fixed;
             bottom: 25px;
@@ -391,29 +387,29 @@
         .scroll-top-btn:hover {
             color: rgba(0, 0, 0, 0.6) !important; /* При наведении становится чуть отчетливее */
         }
-@media (max-width: 600px) {
-     /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок пиксель в пиксель по ширине поиска */
-.nav-tabs {
-    border-bottom: none !important; 
-    padding-bottom: 0px !important;
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important; /* Изменили 4 на 5 */
-    width: 100% !important; 
-    gap: 4px !important;    
-    box-sizing: border-box !important;
-}
+     /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок на 5 абсолютно равных долей */
+     .nav-tabs {
+         border-bottom: none !important; 
+         padding-bottom: 0px !important;
+         display: grid !important;
+         grid-template-columns: repeat(5, 1fr) !important; 
+         width: 100% !important; 
+         gap: 3px !important;    /* Сделали зазоры чуть плотнее ради экономии места */
+         box-sizing: border-box !important;
+     }
      
-     /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
+     /* КНОПКИ: Идеальный баланс 5 элементов на экранах Айфонов */
      .tab-btn {
          width: 100% !important;
-         padding: 6px 0px !important; /* Намертво зануляем боковые поля, убирая раздувание Safari! */
-         font-size: 15px !important;  /* ВАШ КРУПНЫЙ ШРИФТ ОСТАЁТСЯ НЕИЗМЕННЫМ */
+         padding: 6px 0px !important; 
+         font-size: 13px !important;  /* 🌟 УПЛОТНИЛИ ШРИФТ ДО 13px: всё влезет без переносов слов */
          font-weight: 600 !important;
          text-align: center !important;
-         white-space: nowrap !important; /* СТРОГИЙ ЗАПРЕТ НА ПЕРЕНОС СЛОВ */
+         white-space: nowrap !important; 
          overflow: visible !important;
          box-sizing: border-box !important;
      }
+
      /* 🌟 ЖЕЛЕЗНАЯ МОБИЛЬНАЯ ПОДСВЕТКА: сверхжирность 800 при нажатии на телефоне */
      .tab-btn.active {
          font-weight: 800 !important;
@@ -646,93 +642,61 @@
          color: #495057 !important;            /* 🌟 БУКВЫ СТАЛИ ЧУТОЧКУ ТЕМНЕЕ И НА СТУПЕНЬ КОНТРАСТНЕЕ */
      }
 
+     /* ВСТАВЛЯЕМ СЮДА: Делаем шрифт рекордов компактным на экранах Айфонов */
+          /* ВСТАВЛЯЕМ СЮДА: Делаем шрифт рекордов компактным на экранах Айфонов */
+     .quiz-stats {
+         font-size: 14px !important;
+         font-weight: 600 !important;
+         color: #495057 !important;
+         letter-spacing: 0.3px !important;
+     }
+} /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает мобильный режим @media */
 
-/* 🌟 ГРАФИТОВЫЙ МОБИЛЬНЫЙ ЩИТ С ЗАЩИТОЙ ТЕМНЫХ ПОЛОС */
+/* 🌟 ГРАФИТОВЫЙ СУПЕР-ЩИТ ОКНА ПРОСМОТРА ФЛАГОВ (ОТКРЫВАЕТСЯ НА ВСЕХ УСТРОЙСТВАХ И ЭКРАНАХ ПК) */
 .flag-modal {
-    position: fixed;
-    top: -5px !important;    
-    left: -5px !important;
-    right: -5px !important;
-    bottom: -5px !important;
+    position: fixed !important;
+    top: 0 !important;    
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     background-color: #1a1a1a !important; 
     display: none; 
-    align-items: center;
-    justify-content: center;
-    z-index: 9999 !important; 
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 99999 !important; 
     opacity: 0;
-    /* 🌟 СВЕРХСКОРОСТЬ: окно исчезает за рекордные 0.05 секунды */
     transition: opacity 0.05s ease-in-out !important;
-    cursor: pointer;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
+    cursor: pointer !important;
 }
 .flag-modal.open {
     display: flex !important;
     opacity: 1 !important;
 }
 
-/* 🌟 КЛАСС ДЛЯ МГНОВЕННОЙ И ЧИСТОЙ ПОДВЕТКИ КОНТЕНТА */
 .site-fade {
     opacity: 0 !important;
     pointer-events: none !important; 
     transition: opacity 0.05s ease-in-out !important;
 }
 .fixed-header, .container {
-    /* 🌟 СКОРОСТЬ САЙТА: списки возвращаются на экран мгновенно и без зависаний */
     transition: opacity 0.05s ease-in-out !important;
 }
 
-
-/* 🌟 МОБИЛЬНАЯ КАРТИНКА: ТОТАЛЬНОЕ ОБНУЛЕНИЕ ВСЕХ КОНТУРОВ И ТЕНЕЙ SAFARI */
 .flag-modal-img {
     max-width: 95% !important;
     max-height: 75% !important;
     object-fit: contain !important;
     outline: none !important;
-    transform: scale(0.95);
-    transition: transform 0.2s ease-in-out;
+    transform: scale(0.95) !important;
+    transition: transform 0.05s ease-in-out !important;
     background-color: transparent !important;
-    
-    /* НАМЕРТВО СТИРАЕМ ЛЮБЫЕ ГРАНИЦЫ, РАМКИ, ТЕНИ И СВЕЧЕНИЯ: */
     border: none !important;
-    border-width: 0px !important;
-    border-style: none !important;
     box-shadow: none !important;
 }
-
 .flag-modal.open .flag-modal-img {
     transform: scale(1) !important;
 }
-
-     /* ВСТАВЛЯЕМ СЮДА: Делаем шрифт рекордов компактным на экранах Айфонов */
-     .quiz-stats {
-         font-size: 14px !important;
-         font-weight: 600 !important;
-         color: #495057 !important;
-         letter-spacing: 0.3px !important;
-
-} /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
-
-     /* Стиль для подразделов России */
-     .ru-sub-section {
-         display: none;
-     }
-     /* Стиль для подразделов России */
-     .ru-sub-section {
-         display: none;
-     }
-     .ru-sub-section.active {
-         display: block;
-     }
- 
-@media (max-width: 600px) {
-
-}
-
-
-
-    </style>
+</style>
 </head>
 <body>
 <!-- 🦖 КИНЕМАТОГРАФИЧНАЯ ЗАСТАВКА (SPLASH SCREEN) С ЧИСТОЙ КАРТИНКОЙ ГОДЗИЛЛЫ -->
@@ -756,59 +720,33 @@
 
 <div class="fixed-header">
     <div class="header-content">
-<div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
-    <button class="tab-btn" onclick="switchView('ru-db')">🇷🇺<br>База<br>России</button>
-    <button class="tab-btn" onclick="switchView('quiz-flags')">🏴‍☠️<br>Квиз:<br>Флаги</button>
-    <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
-    <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
-</div>
-          <div class="controls-row" id="dbControls">
+        <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
+        <button class="tab-btn" onclick="switchView('quiz-flags')">🇷🇺<br>Квиз:<br>Флаги</button>
+        <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
+        <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
+        <button class="tab-btn" onclick="switchView('quiz-regions')">🇷🇺<br>База<br>России</button>
+        </div>          
+            <div class="controls-row" id="dbControls">
             <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Поиск...">
+            <input type="text" id="searchInput" placeholder="Поиск по странам...">
             <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()">✖</button>
+            </div>
+        </div>
+        <!-- 🌟 ПЕРСОНАЛЬНЫЙ ПОИСК ДЛЯ РОССИИ: БЕЗ ДВОЯЩИХСЯ КНОПОК -->
+        <div class="controls-row" id="regionsControls" style="display: none;">
+            <div class="search-box">
+                <input type="text" id="regionsSearchInput" placeholder="Поиск по регионам...">
+                <button id="clearRegionsSearchBtn" class="clear-search-btn" onclick="clearRegionsSearch()">✖</button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="container">
-    <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
     <div id="dbView" class="view-section active">
-        
-        <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ -->
-        <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box;">
-            <!-- ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
-            <div class="continent-block" id="block-ru-sub-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
-                <h2 class="continent-header" id="btnSub" onclick="switchRuSubView('subjects')" style="background-color: #e9ecef !important; font-weight: 800 !important; width: 100%; box-sizing: border-box;">
-                    <span>Субъекты России</span>
-                </h2>
-            </div>
-            <!-- Контейнер для 1-го раздела (Субъекты) -->
-            <div id="ruSubjectsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
-            
-            <!-- ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
-            <div class="continent-block" id="block-ru-okr-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
-                <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')" style="width: 100%; box-sizing: border-box;">
-                    <span>Федеральные округа</span>
-                </h2>
-            </div>
-            <!-- Контейнер для 2-го раздела (Округа) -->
-            <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
-            <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 15px;"></div>
-        </div>
-
-        <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
         <div id="tablesContainer"></div>
-        
-        <!-- 🌟 ПОДУШКА БЕЗОПАСНОСТИ СТРАН МИРА: даёт Safari высоту для плавного скролла к Европе -->
-        <div id="worldPaddingBuffer" style="height: 100vh; display: block; background: transparent;"></div>
-        
     </div>
-    <!-- 🌟 ПОДУШКА БЕЗОПАСНОСТИ: не даёт Safari выталкивать плашки под шапку при сворачивании -->
-    <div id="ruPaddingBuffer" style="height: 100vh; display: none;"></div>
-
-
     <div id="quizFlagsView" class="view-section">
         <div class="quiz-panel">
             <div class="quiz-flag-container">
@@ -837,16 +775,87 @@
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
     </div>
-</div>
+     <!-- 🇷🇺 ГЛАВНЫЙ ЭКРАН ВКЛАДКИ РОССИЯ В СТИЛЕ КОНТИНЕНТОВ -->
+    <div id="quizRegionsView" class="view-section">
+        
+        <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РФ (Раскрывает внутренние типы) -->
+        <div class="continent-block collapsed" id="block-russia-types">
+            <h2 class="continent-header" onclick="toggleBlock('block-russia-types')">
+                <span>Субъекты Российской Федерации</span>
+                <span class="count-badge">89</span>
+            </h2>
+            <!-- 🌟 ВНУТРЕННЕЕ ПОДМЕНЮ: Изолированные плашки под-типов без конфликта высоты -->
+            <div class="continent-content" style="padding: 12px 0px 0px 0px !important; background-color: #ffffff !important; display: none;">
+                
+                <div class="sub-continent-block collapsed" id="sub-respubliki" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-respubliki')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
+                        <span>Республики</span>
+                        <span class="count-badge">24</span>
+                    </h2>
+                </div>
+
+                <div class="sub-continent-block collapsed" id="sub-kraya" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-kraya')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
+                        <span>Края</span>
+                        <span class="count-badge">9</span>
+                    </h2>
+                </div>
+
+                <div class="sub-continent-block collapsed" id="sub-oblasti" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-oblasti')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
+                        <span>Области</span>
+                        <span class="count-badge">48</span>
+                    </h2>
+                </div>
+
+                                 <div class="sub-continent-block collapsed" id="sub-goroda" style="background: #fff; border-radius: 8px; margin-bottom: 12px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-goroda')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
+                        <span>Города федерального значения</span>
+                        <span class="count-badge">3</span>
+                    </h2>
+                    <div class="continent-content" style="display: none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="col-flag">Флаг</th>
+                                    <th>Город</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody id="russiaGorodaTableBody">
+                                <!-- Скрипт JavaScript сам сгенерирует сюда строки по вашей технологии -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="sub-continent-block collapsed" id="sub-okruga" style="background: #fff; border-radius: 8px; margin-bottom: 4px !important; overflow: hidden; border-top: 1px solid var(--border-color);">
+                    <h2 class="continent-header" onclick="toggleBlock('sub-okruga')" style="background-color: #ffffff !important; padding: 15px 20px !important; font-size: 18px !important;">
+                        <span>Автономные округа и область</span>
+                        <span class="count-badge">5</span>
+                    </h2>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 🌟 ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
+        <div class="continent-block collapsed" id="block-russia-districts">
+            <h2 class="continent-header" onclick="toggleBlock('block-russia-districts')">
+                <span>Федеральные округа</span>
+                <span class="count-badge">89</span>
+            </h2>
+        </div>
+        
+    </div>
+
 
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
 <!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
-    <img id="flagModalImg" class="flag-modal-img" src="" alt="Крупный флаг">
+    <img id="flagModalImg" class="flag-modal-img" src="" alt="">
 </div>
-
-
 
 <script>
 // 🌟 АВТОМАТИЧЕСКОЕ ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ ЗАСТАВКИ (КИНЕМАТОГРАФИЧНЫЙ ТАЙМЕР)
@@ -1066,111 +1075,6 @@ const specialFlags = {
     "tv": "https://upload.wikimedia.org/wikipedia/commons/3/38/Flag_of_Tuvalu.svg",
     "fj": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Fiji.svg"
 
-};
-
-// 🌟 ПОЛНАЯ БАЗА НАЗВАНИЙ СУБЪЕКТОВ РФ (89 РЕГИОНОВ, СГРУППИРОВАННЫХ ПО ТИПАМ)
-const russiaSubjectsData = {
-    "Республики": [
-        { name: "Республика Адыгея", capital: "Майкоп" },
-        { name: "Республика Алтай", capital: "Горно-Алтайск" },
-        { name: "Республика Башкортостан", capital: "Уфа" },
-        { name: "Республика Бурятия", capital: "Улан-Удэ" },
-        { name: "Республика Дагестан", capital: "Махачкала" },
-        { name: "Донецкая Народная Республика", capital: "Донецк" },
-        { name: "Республика Ингушетия", capital: "Магас" },
-        { name: "Кабардино-Балкарская Республика", capital: "Нальчик" },
-        { name: "Республика Калмыкия", capital: "Элиста" },
-        { name: "Карачаево-Черкесская Республика", capital: "Черкесск" },
-        { name: "Республика Карелия", capital: "Петрозаводск" },
-        { name: "Республика Коми", capital: "Сыктывкар" },
-        { name: "Республика Крым", capital: "Симферополь" },
-        { name: "Луганская Народная Республика", capital: "Луганск" },
-        { name: "Республика Марий Эл", capital: "Йошкар-Ола" },
-        { name: "Республика Мордовия", capital: "Саранск" },
-        { name: "Республика Саха (Якутия)", capital: "Якутск" },
-        { name: "Республика Северная Осетия — Алания", capital: "Владикавказ" },
-        { name: "Республика Татарстан", capital: "Казань" },
-        { name: "Республика Тыва", capital: "Кызыл" },
-        { name: "Удмуртская Республика", capital: "Ижевск" },
-        { name: "Республика Хакасия", capital: "Абакан" },
-        { name: "Чеченская Республика", capital: "Грозный" },
-        { name: "Чувашская Республика — Чувашия", capital: "Чебоксары" }
-    ],
-    "Края": [
-        { name: "Алтайский край", capital: "Барнаул" },
-        { name: "Забайкальский край", capital: "Чита" },
-        { name: "Камчатский край", capital: "Петропавловск-Камчатский" },
-        { name: "Краснодарский край", capital: "Краснодар" },
-        { name: "Красноярский край", capital: "Красноярск" },
-        { name: "Пермский край", capital: "Пермь" },
-        { name: "Приморский край", capital: "Владивосток" },
-        { name: "Ставропольский край", capital: "Ставрополь" },
-        { name: "Хабаровский край", capital: "Хабаровск" }
-    ],
-    "Области": [
-        { name: "Амурская область", capital: "Благовещенск" },
-        { name: "Архангельская область", capital: "Архангельск" },
-        { name: "Астраханская область", capital: "Астрахань" },
-        { name: "Белгородская область", capital: "Белгород" },
-        { name: "Брянская область", capital: "Брянск" },
-        { name: "Владимирская область", capital: "Владимир" },
-        { name: "Волгоградская область", capital: "Волгоград" },
-        { name: "Вологодская область", capital: "Вологда" },
-        { name: "Воронежская область", capital: "Воронеж" },
-        { name: "Запорожская область", capital: "Мелитополь" },
-        { name: "Ивановская область", capital: "Иваново" },
-        { name: "Иркутская область", capital: "Иркутск" },
-        { name: "Калининградская область", capital: "Калининград" },
-        { name: "Калужская область", capital: "Калуга" },
-        { name: "Кемеровская область — Кузбасс", capital: "Кемерово" },
-        { name: "Кировская область", capital: "Киров" },
-        { name: "Костромская область", capital: "Кострома" },
-        { name: "Курганская область", capital: "Курган" },
-        { name: "Курская область", capital: "Курск" },
-        { name: "Ленинградская область", capital: "Санкт-Петербург" },
-        { name: "Липецкая область", capital: "Липецк" },
-        { name: "Магаданская область", capital: "Магадан" },
-        { name: "Московская область", capital: "Москва" },
-        { name: "Мурманская область", capital: "Мурманск" },
-        { name: "Нижегородская область", capital: "Нижний Новгород" },
-        { name: "Новгородская область", capital: "Великий Новгород" },
-        { name: "Новосибирская область", capital: "Новосибирск" },
-        { name: "Омская область", capital: "Омск" },
-        { name: "Оренбургская область", capital: "Оренбург" },
-        { name: "Орловская область", capital: "Орёл" },
-        { name: "Пензенская область", capital: "Пенза" },
-        { name: "Псковская область", capital: "Псков" },
-        { name: "Ростовская область", capital: "Ростов-на-Дону" },
-        { name: "Рязанская область", capital: "Рязань" },
-        { name: "Самарская область", capital: "Самара" },
-        { name: "Саратовская область", capital: "Саратов" },
-        { name: "Сахалинская область", capital: "Южно-Сахалинск" },
-        { name: "Свердловская область", capital: "Екатеринбург" },
-        { name: "Смоленская область", capital: "Смоленск" },
-        { name: "Тамбовская область", capital: "Тамбов" },
-        { name: "Тверская область", capital: "Тверь" },
-        { name: "Томская область", capital: "Томск" },
-        { name: "Тульская область", capital: "Тула" },
-        { name: "Тюменская область", capital: "Тюмень" },
-        { name: "Ульяновская область", capital: "Ульяновск" },
-        { name: "Херсонская область", capital: "Геническ" },
-        { name: "Челябинская область", capital: "Челябинск" },
-        { name: "Ярославская область", capital: "Ярославль" }
-    ],
-    "Города федерального значения": [
-        { name: "Москва", capital: "Москва" },
-        { name: "Санкт-Петербург", capital: "Санкт-Петербург" },
-        { name: "Севастополь", capital: "Севастополь" }
-    ],
-    "Автономная область": [
-        { name: "Еврейская автономная область", capital: "Биробиджан" }
-    ],
-    "Автономные округа": [
-        { name: "Ненецкий автономный округ", capital: "Нарьян-Мар" },
-        { name: "Ханты-Мансийский автономный округ — Югра", capital: "Ханты-Мансийск" },
-        { name: "Чукотский автономный округ", capital: "Анадырь" },
-        { name: "Ямало-Ненецкий автономный округ", capital: "Салехард" }
-    ]
 };
 
 const countriesData = {
@@ -1479,99 +1383,17 @@ function createContinentBlock(continent, countries) {
     tablesContainer.appendChild(block);
 }
 
-function switchRuSubView(subViewId) {
-    const btnSub = document.getElementById('btnSub');
-    const btnOkr = document.getElementById('btnOkr');
-    const subContainer = document.getElementById('ruSubjectsContainer');
-    const okrContainer = document.getElementById('ruOkrugsContainer');
-    
-    if (subViewId === 'subjects') {
-        // Проверяем, открыт ли этот подраздел прямо сейчас
-        const isAlreadyActive = subContainer.style.display === 'block';
-        
-        // Сначала намертво гасим абсолютно всё
-        subContainer.style.display = 'none';
-        okrContainer.style.display = 'none';
-        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        document.querySelectorAll('.continent-block[id^="block-ru-"]').forEach(b => b.style.display = 'none');
-        
-        // Если он БЫЛ открыт — оставляем его закрытым (пользователь свернул плашку)
-        if (isAlreadyActive) {
-            return; 
-        }
-        
-        // Если был закрыт — эффектно раскрываем и подсвечиваем кнопку темным серым
-        btnSub.style.setProperty('background-color', '#e9ecef', 'important'); 
-        subContainer.style.display = 'block';
-        document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'block');
-        
-        setTimeout(() => {
-            const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 80);
-        
-    } else if (subViewId === 'okrugs') {
-        // Проверяем, открыт ли этот подраздел прямо сейчас
-        const isAlreadyActive = okrContainer.style.display === 'block';
-        
-        // Сначала намертво гасим абсолютно всё
-        subContainer.style.display = 'none';
-        okrContainer.style.display = 'none';
-        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        document.querySelectorAll('.continent-block[id^="block-ru-"]').forEach(b => b.style.display = 'none');
-        
-        // Если он БЫЛ открыт — оставляем его закрытым (пользователь свернул плашку)
-        if (isAlreadyActive) {
-            return;
-        }
-        
-        // Если был закрыт — эффектно раскрываем и подсвечиваем кнопку темным серым
-        btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
-        okrContainer.style.display = 'block';
-        document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'block');
-        
-        setTimeout(() => {
-            const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 80);
-    }
-    
-    if(document.getElementById('searchInput').value !== "") {
-        clearSearch();
-    }
-}
-
 function switchView(viewId) {
-    // 🌟 ИСПРАВЛЕНО: Сворачиваем блоки точечно по их коробкам, чтобы не ломать кнопку центров контента!
-    document.querySelectorAll('#tablesContainer .continent-block, #ruSubjectsContainer .continent-block, #block-ru-capital-alphabet').forEach(b => {
-        b.classList.add('collapsed');
-        const content = b.querySelector('.continent-content');
-        if (content) content.style.display = 'none';
-    });
-    
-    const toggleAllBtn = document.getElementById('toggleAllBtn');
-    if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
-    allCollapsed = true;
-
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+    
+    /* 🌟 КУПИРУЕМ СТРОКИ ПОИСКА НА СТАРТЕ ПЕРЕКЛЮЧЕНИЯ */
     document.getElementById('dbControls').style.display = 'none';
+    const regControls = document.getElementById('regionsControls');
+    if (regControls) regControls.style.display = 'none';
     
-    // Скрываем плашки-заголовки и подразделы России по умолчанию
-    document.getElementById('block-ru-sub-header').style.display = 'none';
-    document.getElementById('block-ru-okr-header').style.display = 'none';
-    document.getElementById('ruSubjectsContainer').style.display = 'none';
-    document.getElementById('ruOkrugsContainer').style.display = 'none';
-    document.getElementById('ruCapitalsContainer').style.display = 'none';
-    
-    // Скрываем мобильные буферы безопасности по умолчанию на всех страницах квизов
-    const buffer = document.getElementById('ruPaddingBuffer');
-    if (buffer) buffer.style.display = 'none';
-    
-    const worldBuffer = document.getElementById('worldPaddingBuffer');
-    if (worldBuffer) worldBuffer.style.display = 'none';
+    /* 🌟 СБРОС ОТСТУПА: возвращаем стандартные 120px для всех обычных вкладок */
+    document.body.style.setProperty('padding-top', '120px', 'important');
     
     flagScore = 0; flagRound = 1;
     capScore = 0; capRound = 1;
@@ -1581,95 +1403,60 @@ function switchView(viewId) {
         document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
-        
-        // Включаем буфер стран мира: даёт Safari высоту для бархатного скольжения до Европы
-        if (worldBuffer) worldBuffer.style.display = 'block';
-        
-        // Показываем мировые континенты, прячем РФ
-        document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
-
-        // Намертво гасим аккордеон городов России при переходе во вкладку стран мира
-        const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
-        if (capAlphabetBlock) { 
-            capAlphabetBlock.style.setProperty('display', 'none', 'important'); 
-        }
-    } else if (viewId === 'ru-db') {
-        // 🌟 ИСПРАВЛЕНО ДЛЯ ЕВРОПЫ: Принудительно жестко обнуляем скролл страницы в абсолютный верх,
-        // полностью исключая огромные пустые белые зазоры над шапками при переключениях баз!
-        window.scrollTo(0, 0);
-
-        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-        document.getElementById('dbView').classList.add('active'); 
-        document.getElementById('dbControls').style.display = 'flex';
-        
-        // Включаем отображение главных плашек России
-        document.getElementById('block-ru-sub-header').style.display = 'block';
-        document.getElementById('block-ru-okr-header').style.display = 'block';
-        
-        // На старте сбрасываем стили кнопок в дефолт (как обычные закрытые континенты)
-        const btnSub = document.getElementById('btnSub');
-        const btnOkr = document.getElementById('btnOkr');
-        if (btnSub) btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-
-        // Показываем аккордеоны России
-        document.getElementById('ruSubjectsContainer').style.display = 'block';
-        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => b.style.display = 'block');
-        
-        // 🌟 ИСПРАВЛЕНО ДЛЯ БАЗЫ РОССИИ: Всегда принудительно зажигаем контейнер Административных центров
-        // и сбрасываем дисплей самого аккордеона в block, гарантируя, что кнопка никогда не исчезнет!
-        document.getElementById('ruCapitalsContainer').style.display = 'block';
-        const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
-        if (capAlphabetBlock) { 
-            capAlphabetBlock.style.setProperty('display', 'block', 'important'); 
-        }
-
-        // Активируем буфер для мягкого скролла на смартфонах
-        if (buffer) buffer.style.display = 'block';
-
     } else if (viewId === 'quiz-flags') {
-        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
         document.getElementById('quizFlagsView').classList.add('active');
         loadQuizFlagRound();
     } else if (viewId === 'quiz-capitals') {
-        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
+        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
         document.getElementById('quizCapitalsView').classList.add('active');
         loadQuizCapitalRound();
     } else if (viewId === 'quiz-countries') {
-        document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
+        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
+    } else if (viewId === 'quiz-regions') {
+        document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
+        
+        /* 🌟 АБСОЛЮТНАЯ СИММЕТРИЯ: приподняли плашку России ровно на уровень Европы */
+        document.body.style.setProperty('padding-top', '160px', 'important');
+        
+        document.getElementById('quizRegionsView').classList.add('active');
+        if (regControls) regControls.style.display = 'flex';
     }
 }
 
-function switchRuSubView(subViewId) {
-    const btnCap = document.getElementById('btnCap');
-    const capContainer = document.getElementById('ruCapitalsContainer');
-    const capHeaderBlock = document.getElementById('block-ru-cap-header');
+function toggleBlock(id) {
+    const block = document.getElementById(id);
+    if (!block) return;
     
-    if (subViewId === 'capitals') {
-        const isAlreadyActive = capContainer.style.display === 'block';
-        
-        // Сворачиваем контейнер и возвращаем стандартные маргины безопасности
-        capContainer.style.display = 'none';
-        if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-        if (capHeaderBlock) capHeaderBlock.style.setProperty('margin-bottom', '15px', 'important');
-        
-        if (isAlreadyActive) return;
-        
-        // Подсвечиваем кнопку и прижимаем линии таблицы впритык без щелей
-        if (btnCap) btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
-        capContainer.style.display = 'block';
-        if (capHeaderBlock) capHeaderBlock.style.setProperty('margin-bottom', '0px', 'important');
-        
-        setTimeout(() => {
-            const offsetPosition = btnCap.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 80);
-    }
+    block.classList.toggle('collapsed');
     
-    if(document.getElementById('searchInput').value !== "") {
-        clearSearch();
+    const content = block.querySelector('.continent-content');
+    if (content) {
+        if (block.classList.contains('collapsed')) {
+            content.style.display = 'none';
+        } else {
+            content.style.display = 'block';
+        }
+
+        const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
+        allCollapsed = hasExpanded ? false : true;
+
+        if (content && content.style.display === 'block') {
+            setTimeout(() => {
+                const header = block.querySelector('.continent-header');
+                const offset = 120;
+                
+                const elementPosition = header.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }, 120); 
+        }
     }
 }
 
@@ -1715,18 +1502,13 @@ function runSearch() {
 
     document.querySelectorAll('.continent-block').forEach(block => {
         const rows = block.querySelectorAll('tbody tr');
-        const content = block.querySelector('.continent-content'); 
-        
-        // 🌟 ЗАЩИТА: Если внутри блока нет строк таблицы (например, это кнопка-плашка РФ),
-        // мы просто пропускаем этот блок, чтобы поиск не ломался и не зависал
-        if (rows.length === 0) return;
-
+        const content = block.querySelector('.continent-content'); // Нашли скрытый контент таблицы
         let visibleCount = 0;
         
         rows.forEach(r => {
             const name = r.getAttribute('data-name');
             const cap = r.getAttribute('data-capital');
-            if (name && (name.includes(q) || cap.includes(q))) {
+            if (name.includes(q) || cap.includes(q)) {
                 r.classList.remove('hidden');
                 visibleCount++;
             } else {
@@ -1735,17 +1517,20 @@ function runSearch() {
         });
         
         const badge = document.getElementById(`badge-${block.id}`);
-        if (badge) badge.textContent = visibleCount;
+        badge.textContent = visibleCount;
         
         if (visibleCount === 0 && q !== '') {
             block.style.display = 'none';
         } else {
             block.style.display = 'block';
             
+            /* 🌟 НАШЕ ЖЕЛЕЗНОЕ ИСПРАВЛЕНИЕ: */
             if (q !== '') {
+                // Если пользователь что-то ищет, принудительно РАСПАХИВАЕМ блок и контент на экране
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
             } else {
+                // Если поиск пустой, возвращаем базу в исходное свернутое состояние
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
             }
@@ -2012,21 +1797,14 @@ function openFlagModal(imgSrc) {
     const modalImg = document.getElementById('flagModalImg');
     modalImg.src = imgSrc;
     
-    // 🌟 Намертво возвращаем окну его родной глубокий темный цвет
-    modal.style.setProperty('background-color', '#1a1a1a', 'important');
-    
     /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ НЕПАЛА */
     if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg')) {
         modalImg.style.setProperty('mix-blend-mode', 'multiply', 'important');
-        modalImg.style.setProperty('opacity', '1', 'important');
     } else {
-        // 🌟 ИСПРАВЛЕНО ДЛЯ МИРОВЫХ ФЛАГОВ: сбрасываем смешивание и принудительно включаем видимость
-        modalImg.style.setProperty('mix-blend-mode', 'unset', 'important');
-        modalImg.style.setProperty('display', 'block', 'important');
-        modalImg.style.setProperty('opacity', '1', 'important');
+        modalImg.style.setProperty('mix-blend-mode', 'normal', 'important');
     }
     
-    // Убираем рамки и тени, чтобы картинка была чистой
+    modalImg.style.setProperty('background-color', 'transparent', 'important');
     modalImg.style.setProperty('border', 'none', 'important');
     modalImg.style.setProperty('box-shadow', 'none', 'important');
     modalImg.style.setProperty('clip-path', 'none', 'important');
@@ -2063,201 +1841,45 @@ function closeFlagModal() {
     }, 50); 
 }
 
+// 🌟 МАССИВ ДАННЫХ ДЛЯ АВТОМАТИЧЕСКОЙ СБОРКИ ГОРОДОВ РФ
+const russiaGorodaData = [
+    { name: "Москва", status: "Столица / Город фед. значения", flag: "https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Moscow%2C_Russia.svg" },
+    { name: "Санкт-Петербург", status: "Город фед. значения", flag: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Saint_Petersburg.svg" },
+    { name: "Севастополь", status: "Город фед. значения", flag: "https://upload.wikimedia.org/wikipedia/commons/1/14/Flag_of_Sevastopol.svg" }
+];
 
-// 🌟 АВТОМАТИЧЕСКАЯ СБОРКА ТАБЛИЦ СУБЪЕКТОВ РФ
-function generateRussiaSubjectsTables() {
-    const container = document.getElementById('ruSubjectsContainer');
-    if (!container) return;
-
-    for (const [typeName, regions] of Object.entries(russiaSubjectsData)) {
-        const block = document.createElement('div');
-        block.className = 'continent-block collapsed';
-        
-        // Задаем уникальный ID для каждого типа субъектов России
-        const safeId = `block-ru-subject-${typeName.replace(/\s+/g, '-')}`;
-        block.id = safeId;
-        
-        let rowsHtml = '';
-        regions.forEach(r => {
-            rowsHtml += `
-                <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
-                    <td class="col-flag">
-                       <div class="flag-wrapper">
-                           <!-- Временная защитная рамка вместо ткани флага -->
-                           <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
-                       </div>
-                    </td>
-                    <td>
-                        <a href="https://google.com{encodeURIComponent(r.name)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                            <strong>${r.name}</strong>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="https://google.com{encodeURIComponent(r.capital)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                            ${r.capital}
-                        </a> 
-                    </td>
-                </tr>`;
-        });
-
-        block.innerHTML = `
-            <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
-                <span>${typeName}</span>
-                <span class="count-badge" id="badge-${block.id}">${regions.length}</span>
-            </h2>
-            <div class="continent-content">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="col-flag">Флаг</th>
-                            <th>Регион</th>
-                            <th>Адм. центр</th>
-                        </tr>
-                    </thead>
-                    <tbody>${rowsHtml}</tbody>
-                </table>
-            </div>
-        `;
-        container.appendChild(block);
-    }
-}
-
-// Запускаем автоматический рендеринг при старте скрипта
-generateRussiaSubjectsTables();
-
-function toggleBlock(id) {
-    const block = document.getElementById(id);
-    if (!block) return;
-    
-    block.classList.toggle('collapsed');
-    const content = block.querySelector('.continent-content');
-    
-    if (content) {
-        if (block.classList.contains('collapsed')) {
-            content.style.display = 'none';
-            
-            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
-            setTimeout(() => {
-                const offset = 120;
-                
-                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
-                const isRussia = id.startsWith('block-ru-');
-                
-                if (isRussia) {
-                    // 🇷🇺 В Базе России плавно возвращаем фокус строго к «Республикам»
-                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
-                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
-                        const offsetPosition = republicsBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
-                    }
-                } else {
-                    // 🌍 В Базе стран мира находим «Европу» по её точному элементу
-                    const europeBlock = document.getElementById('block-Европа');
-                    
-                    // Если закрывают любой нижний континент (Азию, Африку...),
-                    // мы плавно катим экран строго к координате Европы, сохраняя идеальную анимацию!
-                    if (europeBlock && id !== 'block-Европа') {
-                        const offsetPosition = europeBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
-                    }
-                }
-                
-                // Защитное удержание камеры, если схлопнули самую первую плашку текущего списка
-                const offsetPosition = block.offsetTop - offset;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-            }, 10);
-            return;
-        } else {
-            content.style.display = 'block';
-        }
-
-        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
-        setTimeout(() => {
-            const offset = 120;
-            const offsetPosition = block.offsetTop - offset;
-            const diff = Math.abs(window.scrollY - offsetPosition);
-
-            if (diff > 2) {
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        }, 60); 
-    }
-}
-
-// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ В ВИДЕ ОТДЕЛЬНОГО АККОРДЕОНА (КАК КОНТИНЕНТ)
-function generateRussiaCapitalsTable() {
-    const container = document.getElementById('ruCapitalsContainer');
-    if (!container) return;
-
-    let flatCapitalsList = [];
-    for (const [typeName, regions] of Object.entries(russiaSubjectsData)) {
-        regions.forEach(r => {
-            flatCapitalsList.push({
-                cityName: r.capital,
-                subjectName: r.name
-            });
-        });
-    }
-
-    flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
-
-    const block = document.createElement('div');
-    block.className = 'continent-block collapsed';
-    block.id = 'block-ru-capital-alphabet';
+function initRussiaGorodaTable() {
+    const tbody = document.getElementById('russiaGorodaTableBody');
+    if (!tbody) return;
     
     let rowsHtml = '';
-    flatCapitalsList.forEach(c => {
+    russiaGorodaData.forEach(g => {
         rowsHtml += `
-            <tr data-name="${c.cityName.toLowerCase()}" data-capital="${c.subjectName.toLowerCase()}">
-                <td class="col-flag">
+            <tr>
+                <td class="col-flag" style="-webkit-tap-highlight-color: transparent;">
                    <div class="flag-wrapper">
-                       <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
+                       <!-- 🍏 КОПИЯ ЛОГИКИ СТРАН МИРА: клик через this.src железно откроет флаг Москвы во весь экран -->
+                       <img class="flag-img" src="${g.flag}" alt="${g.name}" loading="lazy" onclick="openFlagModal(this.src)" style="cursor: pointer;">
                    </div>
                 </td>
                 <td>
-                    <a href="https://google.com{encodeURIComponent(c.cityName)}" 
-                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                        <strong>${c.cityName}</strong>
+                    <!-- 🍏 ЖЕЛЕЗНЫЙ МОБИЛЬНЫЙ ПРОТОКОЛ: Принудительно открывает приложение Карт на iPhone -->
+                    <a href="https://google.com{encodeURIComponent(g.name)}" 
+                       target="_blank" 
+                       style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <strong>${g.name}</strong>
                     </a>
                 </td>
-                <td>
-                    <a href="https://google.com{encodeURIComponent(c.subjectName)}" 
-                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                        ${c.subjectName}
-                    </a> 
-                </td>
+                <td style="color: #6c757d;">${g.status}</td>
             </tr>`;
     });
-
-    block.innerHTML = `
-        <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
-            <span>🌆 Административные центры</span>
-            <span class="count-badge" id="badge-${block.id}">${flatCapitalsList.length}</span>
-        </h2>
-        <div class="continent-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="col-flag">Флаг</th>
-                        <th>Город</th>
-                        <th>Субъект</th>
-                    </tr>
-                </thead>
-                <tbody>${rowsHtml}</tbody>
-            </table>
-        </div>
-    `;
-    container.appendChild(block);
+    tbody.innerHTML = rowsHtml;
 }
 
-generateRussiaCapitalsTable();
+
+// Запускаем автоматику сборки городов при старте сайта
+initRussiaGorodaTable();
+
 
 </script>
 </body>
