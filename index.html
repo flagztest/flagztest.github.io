@@ -1608,40 +1608,37 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 МЯГКОЕ СВОРАЧИВАНИЕ: если блок закрывают, мы плавно держим камеру
-            // на его заголовке, не давая страница резко прыгнуть наверх
+            // 🌟 ВОЗВРАТ К РЕСПУБЛИКАМ: если закрывают любой блок в Базе России,
+            // экран мягко отпружинит наверх, к самому первому заголовку!
             setTimeout(() => {
                 const offset = 120;
-                const offsetPosition = block.offsetTop - offset;
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                const republicsBlock = document.getElementById('block-ru-subject-Республики');
+                
+                if (republicsBlock && id !== 'block-ru-subject-Республики') {
+                    const offsetPosition = republicsBlock.offsetTop - offset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                } else {
+                    const offsetPosition = block.offsetTop - offset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
             }, 10);
             return;
         } else {
             content.style.display = 'block';
         }
 
-        const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
-        allCollapsed = hasExpanded ? false : true;
-
-        // 🌟 ИДЕАЛЬНОЕ РАСКРЫТИЕ: подтягивает любой континент и регион ровно под поиск
+        // 🌟 РАСКРЫТИЕ: подтягивает любой открытый блок ровно под поиск
         setTimeout(() => {
             const offset = 120;
             const offsetPosition = block.offsetTop - offset;
             const diff = Math.abs(window.scrollY - offsetPosition);
 
             if (diff > 2) {
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }
         }, 60); 
     }
 }
-
 
 let allCollapsed = true; // Сделали true на старте, так как всё свернуто
         
