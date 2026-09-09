@@ -796,15 +796,15 @@
             </div>
             <!-- Контейнер для 2-го раздела (Округа) -->
             <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
-            <!-- 🌟 НОВАЯ ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ -->
+            <!-- 🌟 НОВАЯ ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ (ИСПРАВЛЕНО: контейнер теперь внутри коробки!) -->
             <div class="continent-block" id="block-ru-cap-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
                 <h2 class="continent-header" id="btnCap" onclick="switchRuSubView('capitals')" style="width: 100%; box-sizing: border-box;">
                     <span>Административные центры</span>
                 </h2>
+                <!-- 🌟 Контейнер таблицы переехал сюда, унаследовав нативную бесшовную структуру Европы -->
+                <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 0px;"></div>
             </div>
-            <!-- Контейнер для 3-го раздела (Города по алфавиту) -->
-            <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>    
-</div>
+
 
         <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
         <div id="tablesContainer"></div>
@@ -1622,19 +1622,29 @@ function switchRuSubView(subViewId) {
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
     } else if (subViewId === 'capitals') {
-        // 🌟 ОБРАБОТКА ТРЕТЬЕЙ КНОПКИ: Административные центры России
+        // ОБРАБОТКА ТРЕТЬЕЙ КНОПКИ: Административные центры России
         const isAlreadyActive = capContainer.style.display === 'block';
+        const capHeaderBlock = document.getElementById('block-ru-cap-header');
+        
         subContainer.style.display = 'none'; okrContainer.style.display = 'none'; capContainer.style.display = 'none';
         btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
         btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
         btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-        document.querySelectorAll('.ru-sub-section .continent-block').forEach(b => b.style.display = 'none');
+        
+        // Возвращаем кнопкам стандартный внешний отступ
+        document.getElementById('block-ru-sub-header').style.setProperty('margin-bottom', '15px', 'important');
+        document.getElementById('block-ru-okr-header').style.setProperty('margin-bottom', '15px', 'important');
+        if (capHeaderBlock) capHeaderBlock.style.setProperty('margin-bottom', '15px', 'important');
+        
+        document.querySelectorAll('.ru-sub-section').forEach(b => b.style.display = 'none');
         
         if (isAlreadyActive) return;
         
         btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
         capContainer.style.display = 'block';
-        document.querySelectorAll('#ruCapitalsContainer .continent-block').forEach(b => b.style.display = 'block');
+        
+        // 🌟 ИСПРАВЛЕНО: Убираем маргин у родительской плашки, чтобы таблица прилегала идеально без щелей
+        if (capHeaderBlock) capHeaderBlock.style.setProperty('margin-bottom', '0px', 'important');
         
         setTimeout(() => {
             const offsetPosition = btnCap.getBoundingClientRect().top + window.scrollY - 120;
