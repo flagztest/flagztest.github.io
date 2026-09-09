@@ -797,12 +797,7 @@
                 </div>
 
                 <!-- ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ -->
-                <div class="continent-block" id="block-ru-cap-header" style="margin-bottom: 15px; padding: 0px !important;">
-                    <h2 class="continent-header" id="btnCap" onclick="switchRuSubView('capitals')" style="width: 100%; box-sizing: border-box;">
-                        <span>Административные центры</span>
-                    </h2>
-                    <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 0px;"></div>
-                </div>
+                <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 15px;"></div>
             </div>
 
             <!-- ЗОНА Б: ИЗОЛИРОВАННАЯ ОБЛАСТЬ 6 СУБЪЕКТОВ (Второй уровень меню) -->
@@ -2249,7 +2244,7 @@ function toggleBlock(id) {
         }, 60); 
     }
 }
-// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ РФ (БЕЗ ДУБЛИРОВАНИЯ И С НАДЛЕЖАЩИМ РАСКРЫТИЕМ)
+// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ В ВИДЕ ОДНОРОДНОГО АККОРДЕОНА (КАК КОНТИНЕНТ)
 function generateRussiaCapitalsTable() {
     const container = document.getElementById('ruCapitalsContainer');
     if (!container) return;
@@ -2267,17 +2262,14 @@ function generateRussiaCapitalsTable() {
 
     // Сортируем список городов строго по алфавиту от А до Я
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
-    
-    // Добавляем бэйдж со счётчиком 89 на вашу главную HTML-кнопку
-    const mainBtnHeader = document.querySelector('#block-ru-cap-header .continent-header');
-    if (mainBtnHeader && !document.getElementById('badge-ru-capitals-main')) {
-        const badge = document.createElement('span');
-        badge.className = 'count-badge';
-        badge.id = 'badge-ru-capitals-main';
-        badge.textContent = flatCapitalsList.length;
-        mainBtnHeader.appendChild(badge);
-    }
 
+    const block = document.createElement('div');
+    // Задаем стандартный класс continent-block, за счет чего кнопка станет круглой серой плашкой!
+    block.className = 'continent-block collapsed';
+    
+    // Задаем уникальный ID, чтобы функция toggleBlock подхватила плавное открытие и скролл к нему
+    block.id = 'block-ru-capital-alphabet';
+    
     let rowsHtml = '';
     flatCapitalsList.forEach(c => {
         rowsHtml += `
@@ -2297,9 +2289,14 @@ function generateRussiaCapitalsTable() {
             </tr>`;
     });
 
-    // 🌟 ИСПРАВЛЕНО: Возвращаем класс continent-content, чтобы таблица плавно выезжала вниз!
-    container.innerHTML = `
-        <div class="continent-content" id="content-ru-capital-alphabet" style="display: none; padding-top: 0px !important;">
+    // Упаковываем таблицу в стандартный нативный контур continent-header и continent-content.
+    // За счет этого линии прижмутся впритык, а раскрытие будет плавным и нативным, как у континентов!
+    block.innerHTML = `
+        <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
+            <span>Административные центры</span>
+            <span class="count-badge" id="badge-${block.id}">${flatCapitalsList.length}</span>
+        </h2>
+        <div class="continent-content">
             <table>
                 <thead>
                     <tr>
@@ -2312,12 +2309,14 @@ function generateRussiaCapitalsTable() {
             </table>
         </div>
     `;
+    container.appendChild(block);
 }
 
 // Запускаем автоматический рендеринг центров при старте сайта
 generateRussiaCapitalsTable();
 
 </script>
+
 
 </body>
 </html>
