@@ -1630,6 +1630,10 @@ function switchView(viewId) {
         document.getElementById('ruNavigationHeaders').style.display = 'block';
         document.getElementById('ruMainMenuZone').style.display = 'block';
         
+        // 🌟 ИСПРАВЛЕНО: Принудительно зажигаем обертку Административных центров, чтобы кнопка появилась на экране!
+        const capContainer = document.getElementById('ruCapitalsContainer');
+        if (capContainer) capContainer.style.display = 'block';
+        
         // На старте сбрасываем кнопки в дефолтный светлый цвет
         const btnOkr = document.getElementById('btnOkr');
         const btnCap = document.getElementById('btnCap');
@@ -1637,6 +1641,8 @@ function switchView(viewId) {
         if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
 
         if (buffer) buffer.style.display = 'block';
+
+    }
 
     } else if (viewId === 'quiz-flags') {
         document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
