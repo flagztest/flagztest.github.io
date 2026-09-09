@@ -800,6 +800,10 @@
 
         <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
         <div id="tablesContainer"></div>
+        <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
+        <div id="tablesContainer"></div>
+        <!-- 🌟 НОВАЯ ПОДУШКА БЕЗОПАСНОСТИ: даёт Safari высоту для плавного скролла к Европе -->
+        <div id="worldPaddingBuffer" style="height: 100vh; display: block; background: transparent;"></div>
         
     </div>
     <!-- 🌟 ПОДУШКА БЕЗОПАСНОСТИ: не даёт Safari выталкивать плашки под шапку при сворачивании -->
@@ -1487,9 +1491,13 @@ function switchView(viewId) {
     document.getElementById('ruSubjectsContainer').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     
-    // 🌟 Скрываем мобильный буфер безопасности по умолчанию
+    // Скрываем буферы по умолчанию
     const buffer = document.getElementById('ruPaddingBuffer');
     if (buffer) buffer.style.display = 'none';
+    
+    // 🌟 ДОБАВИТЬ ЭТУ СТРОКY:
+    const worldBuffer = document.getElementById('worldPaddingBuffer');
+    if (worldBuffer) worldBuffer.style.display = 'none';
     
     flagScore = 0; flagRound = 1;
     capScore = 0; capRound = 1;
@@ -1500,8 +1508,11 @@ function switchView(viewId) {
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
         
-        // Показываем мировые континенты, прячем РФ
+        // 🌟 ДОБАВИТЬ ЭТУ СТРОКY: Включаем буфер стран мира при заходе во вкладку
+        if (worldBuffer) worldBuffer.style.display = 'block';
+        
         document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
+    }
      } else if (viewId === 'ru-db') {
         // 🌟 ИСПРАВЛЕНО: Принудительно сбрасываем экран в самый верх при переходе в Россию,
         // полностью исключая наезд шапки и скрытие кнопок из-за скролла базы стран!
@@ -2157,7 +2168,7 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
+            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
             setTimeout(() => {
                 const offset = 120;
                 
@@ -2173,13 +2184,14 @@ function toggleBlock(id) {
                         return;
                     }
                 } else {
-                    // 🌍 В Базе стран мира при закрытии любого нижнего континента (Азии, Африки...),
-                    // мы просто плавно катим экран в абсолютный верх страницы к Европе!
-                    if (id !== 'block-Европа') {
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
+                    // 🌍 В Базе стран мира находим «Европу» по её точному элементу
+                    const europeBlock = document.getElementById('block-Европа');
+                    
+                    // Если закрывают любой нижний континент (Азию, Африку...),
+                    // мы плавно катим экран строго к координате Европы, сохраняя идеальную анимацию!
+                    if (europeBlock && id !== 'block-Европа') {
+                        const offsetPosition = europeBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                         return;
                     }
                 }
