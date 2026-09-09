@@ -1599,9 +1599,8 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 ИСПРАВЛЕНО: Когда блок сворачивают, мы плавно фиксируем экран 
-            // на его заголовке, не позволяя странице резко подпрыгнуть наверх 
-            // и закинуть «Республики» под шапку поиска!
+            // 🌟 МЯГКОЕ СВОРАЧИВАНИЕ: если блок закрывают, мы плавно держим камеру
+            // на его заголовке, не давая страница резко прыгнуть наверх
             setTimeout(() => {
                 const offset = 120;
                 const offsetPosition = block.offsetTop - offset;
@@ -1618,7 +1617,7 @@ function toggleBlock(id) {
         const hasExpanded = document.querySelector('.continent-block:not(.collapsed)');
         allCollapsed = hasExpanded ? false : true;
 
-        // Автоскролл для красивого раскрытия плашки
+        // 🌟 ИДЕАЛЬНОЕ РАСКРЫТИЕ: подтягивает любой континент и регион ровно под поиск
         setTimeout(() => {
             const offset = 120;
             const offsetPosition = block.offsetTop - offset;
