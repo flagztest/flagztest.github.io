@@ -1484,29 +1484,28 @@ function createContinentBlock(continent, countries) {
 function switchRuSubView(subViewId) {
     const btnSub = document.getElementById('btnSub');
     const btnOkr = document.getElementById('btnOkr');
+    const btnCap = document.getElementById('btnCap');
     const subContainer = document.getElementById('ruSubjectsContainer');
     const okrContainer = document.getElementById('ruOkrugsContainer');
+    const capContainer = document.getElementById('ruCapitalsContainer');
+    
+    // Сначала намертво гасим абсолютно все контейнеры перед переключением вкладок РФ
+    if (subContainer) subContainer.style.display = 'none';
+    if (okrContainer) okrContainer.style.display = 'none';
+    if (capContainer) capContainer.style.display = 'none';
+    
+    // Возвращаем кнопкам стандартный светлый цвет
+    if (btnSub) btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
+    if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+    if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
+    
+    // Скрываем отображение внутренних аккордеонов регионов
+    document.querySelectorAll('.ru-sub-section .continent-block').forEach(b => b.style.display = 'none');
     
     if (subViewId === 'subjects') {
-        // Проверяем, открыт ли этот подраздел прямо сейчас
-        const isAlreadyActive = subContainer.style.display === 'block';
-        
-        // Сначала намертво гасим абсолютно всё
-        subContainer.style.display = 'none';
-        okrContainer.style.display = 'none';
-        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        document.querySelectorAll('.continent-block[id^="block-ru-"]').forEach(b => b.style.display = 'none');
-        
-        // Если он БЫЛ открыт — оставляем его закрытым (пользователь свернул плашку)
-        if (isAlreadyActive) {
-            return; 
-        }
-        
-        // Если был закрыт — эффектно раскрываем и подсвечиваем кнопку темным серым
-        btnSub.style.setProperty('background-color', '#e9ecef', 'important'); 
-        subContainer.style.display = 'block';
-        document.querySelectorAll('.continent-block[id^="block-ru-subject-"]').forEach(b => b.style.display = 'block');
+        if (btnSub) btnSub.style.setProperty('background-color', '#e9ecef', 'important'); 
+        if (subContainer) subContainer.style.display = 'block';
+        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => b.style.display = 'block');
         
         setTimeout(() => {
             const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 120;
@@ -1514,28 +1513,22 @@ function switchRuSubView(subViewId) {
         }, 80);
         
     } else if (subViewId === 'okrugs') {
-        // Проверяем, открыт ли этот подраздел прямо сейчас
-        const isAlreadyActive = okrContainer.style.display === 'block';
-        
-        // Сначала намертво гасим абсолютно всё
-        subContainer.style.display = 'none';
-        okrContainer.style.display = 'none';
-        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        document.querySelectorAll('.continent-block[id^="block-ru-"]').forEach(b => b.style.display = 'none');
-        
-        // Если он БЫЛ открыт — оставляем его закрытым (пользователь свернул плашку)
-        if (isAlreadyActive) {
-            return;
-        }
-        
-        // Если был закрыт — эффектно раскрываем и подсвечиваем кнопку темным серым
-        btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
-        okrContainer.style.display = 'block';
-        document.querySelectorAll('.continent-block[id^="block-ru-okrug-"]').forEach(b => b.style.display = 'block');
+        if (btnOkr) btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
+        if (okrContainer) okrContainer.style.display = 'block';
+        document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => b.style.display = 'block');
         
         setTimeout(() => {
             const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }, 80);
+        
+    } else if (subViewId === 'capitals') {
+        if (btnCap) btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
+        if (capContainer) capContainer.style.display = 'block';
+        document.querySelectorAll('#ruCapitalsContainer .continent-block').forEach(b => b.style.display = 'block');
+        
+        setTimeout(() => {
+            const offsetPosition = btnCap.getBoundingClientRect().top + window.scrollY - 120;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
     }
@@ -1545,9 +1538,10 @@ function switchRuSubView(subViewId) {
     }
 }
 
+
 function switchView(viewId) {
-    // Автоматическое закрытие раскрытых мировых континентов и аккордеонов России при переключении
-    document.querySelectorAll('.continent-block').forEach(b => {
+    // 🌟 ИСПРАВЛЕНО: Сворачиваем блоки строго по их родительским коробкам, исключая смешивание!
+    document.querySelectorAll('#tablesContainer .continent-block, #ruSubjectsContainer .continent-block, #block-ru-capital-alphabet').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
@@ -1587,7 +1581,9 @@ function switchView(viewId) {
         document.getElementById('dbControls').style.display = 'flex';
         
         if (worldBuffer) worldBuffer.style.display = 'block';
-        document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
+        
+        // 🌟 ИСПРАВЛЕНО: Показываем только мировые континенты из таблицы стран
+        document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
 
         // Намертво гасим аккордеон городов России при переходе во вкладку стран мира!
         const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
@@ -1601,15 +1597,16 @@ function switchView(viewId) {
         document.getElementById('dbView').classList.add('active'); 
         document.getElementById('dbControls').style.display = 'flex';
         
+        // 🌟 ИСПРАВЛЕНО: Прячем абсолютно все мировые континенты из таблицы стран
+        document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
+        
         // Показываем контейнер субъектов и новый контейнер центров одновременно
         document.getElementById('ruSubjectsContainer').style.display = 'block';
         document.getElementById('ruCapitalsContainer').style.display = 'block';
         
-        // Активируем отображение всех 5 внутренних аккордеонов регионов и нового аккордеона городов
+        // Активируем отображение внутренних аккордеонов регионов и нового аккордеона городов
         document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => b.style.display = 'block');
-        document.querySelectorAll('#ruCapitalsContainer .continent-block').forEach(b => b.style.display = 'block');
-
-        // Всегда принудительно зажигаем аккордеон городов России во вкладке РФ
+        
         const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
         if (capAlphabetBlock) {
             capAlphabetBlock.style.setProperty('display', 'block', 'important');
@@ -2179,8 +2176,6 @@ function generateRussiaCapitalsTable() {
 
     const block = document.createElement('div');
     block.className = 'continent-block collapsed';
-    
-    // Задаем уникальный ID, чтобы функция toggleBlock подхватила плавное открытие и автоскролл
     block.id = 'block-ru-capital-alphabet';
     
     let rowsHtml = '';
@@ -2209,10 +2204,9 @@ function generateRussiaCapitalsTable() {
     });
 
     // Упаковываем таблицу в стандартный нативный контур continent-header и continent-content.
-    // За счет этого линии прижмутся впритык, а раскрытие будет плавным и нативным, как у континентов!
     block.innerHTML = `
         <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
-            <span>Административные центры</span>
+            <span>🌆 Административные центры</span>
             <span class="count-badge" id="badge-${block.id}">${flatCapitalsList.length}</span>
         </h2>
         <div class="continent-content">
