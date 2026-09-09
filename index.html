@@ -776,35 +776,35 @@
     <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
     <div id="dbView" class="view-section active">
         
-        <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ: вынесен из общего tablesContainer, -->
-        <!-- чтобы скролл и поиск стран мира больше никогда не пересекались с кнопками РФ! -->
+        <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ -->
         <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box;">
+            
             <!-- ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
             <div class="continent-block" id="block-ru-sub-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
                 <h2 class="continent-header" id="btnSub" onclick="switchRuSubView('subjects')" style="background-color: #e9ecef !important; font-weight: 800 !important; width: 100%; box-sizing: border-box;">
                     <span>Субъекты России</span>
                 </h2>
+                <!-- 🌟 ИСПРАВЛЕНО: Контейнер сквозного списка переехал внутрь коробки для идеального прилегания -->
+                <div id="ruSubjectsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 0px;"></div>
             </div>
-            <!-- Контейнер для 1-го раздела (Субъекты) -->
-            <div id="ruSubjectsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
             
             <!-- ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
             <div class="continent-block" id="block-ru-okr-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
                 <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')" style="width: 100%; box-sizing: border-box;">
                     <span>Федеральные округа</span>
                 </h2>
+                <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 0px;"></div>
             </div>
-            <!-- Контейнер для 2-го раздела (Округа) -->
-            <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
-            <!-- 🌟 НОВАЯ ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ (ИСПРАВЛЕНО: контейнер теперь внутри коробки!) -->
-            <!-- 🌟 ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ (ИСПРАВЛЕНО: контейнер теперь внутри коробки!) -->
+
+            <!-- ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ -->
             <div class="continent-block" id="block-ru-cap-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
                 <h2 class="continent-header" id="btnCap" onclick="switchRuSubView('capitals')" style="width: 100%; box-sizing: border-box;">
                     <span>Административные центры</span>
                 </h2>
-                <!-- 🌟 Контейнер таблицы переехал сюда, унаследовав нативную бесшовную структуру Европы -->
                 <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 0px;"></div>
             </div>
+
+        </div>
 
         <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
         <div id="tablesContainer"></div>
@@ -1584,19 +1584,38 @@ function switchRuSubView(subViewId) {
     const okrContainer = document.getElementById('ruOkrugsContainer');
     const capContainer = document.getElementById('ruCapitalsContainer');
     
+    const subHeaderBlock = document.getElementById('block-ru-sub-header');
+    const okrHeaderBlock = document.getElementById('block-ru-okr-header');
+    const capHeaderBlock = document.getElementById('block-ru-cap-header');
+    
+    // Проверяем, активна ли нажимаемая вкладка в текущий момент
+    let isAlreadyActive = false;
+    if (subViewId === 'subjects') isAlreadyActive = (subContainer.style.display === 'block');
+    if (subViewId === 'okrugs') isAlreadyActive = (okrContainer.style.display === 'block');
+    if (subViewId === 'capitals') isAlreadyActive = (capContainer.style.display === 'block');
+    
+    // Закрываем все контейнеры
+    subContainer.style.display = 'none';
+    okrContainer.style.display = 'none';
+    capContainer.style.display = 'none';
+    
+    // Сбрасываем цвета кнопок и возвращаем маргины безопасности
+    btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
+    btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+    btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
+    
+    if (subHeaderBlock) subHeaderBlock.style.setProperty('margin-bottom', '15px', 'important');
+    if (okrHeaderBlock) okrHeaderBlock.style.setProperty('margin-bottom', '15px', 'important');
+    if (capHeaderBlock) capHeaderBlock.style.setProperty('margin-bottom', '15px', 'important');
+    
+    // Если кнопка уже была открыта — оставляем её закрытой
+    if (isAlreadyActive) return;
+    
+    // Раскрываем выбранную вкладку
     if (subViewId === 'subjects') {
-        const isAlreadyActive = subContainer.style.display === 'block';
-        subContainer.style.display = 'none'; okrContainer.style.display = 'none'; capContainer.style.display = 'none';
-        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-        document.querySelectorAll('.ru-sub-section .continent-block').forEach(b => b.style.display = 'none');
-        
-        if (isAlreadyActive) return; 
-        
         btnSub.style.setProperty('background-color', '#e9ecef', 'important'); 
         subContainer.style.display = 'block';
-        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => b.style.display = 'block');
+        if (subHeaderBlock) subHeaderBlock.style.setProperty('margin-bottom', '0px', 'important');
         
         setTimeout(() => {
             const offsetPosition = btnSub.getBoundingClientRect().top + window.scrollY - 120;
@@ -1604,46 +1623,18 @@ function switchRuSubView(subViewId) {
         }, 80);
         
     } else if (subViewId === 'okrugs') {
-        const isAlreadyActive = okrContainer.style.display === 'block';
-        subContainer.style.display = 'none'; okrContainer.style.display = 'none'; capContainer.style.display = 'none';
-        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-        document.querySelectorAll('.ru-sub-section .continent-block').forEach(b => b.style.display = 'none');
-        
-        if (isAlreadyActive) return;
-        
         btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
         okrContainer.style.display = 'block';
-        document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => b.style.display = 'block');
+        if (okrHeaderBlock) okrHeaderBlock.style.setProperty('margin-bottom', '0px', 'important');
         
         setTimeout(() => {
             const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 80);
+        
     } else if (subViewId === 'capitals') {
-        // ОБРАБОТКА ТРЕТЬЕЙ КНОПКИ: Административные центры России
-        const isAlreadyActive = capContainer.style.display === 'block';
-        const capHeaderBlock = document.getElementById('block-ru-cap-header');
-        
-        subContainer.style.display = 'none'; okrContainer.style.display = 'none'; capContainer.style.display = 'none';
-        btnSub.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-        
-        // Возвращаем кнопкам стандартный внешний отступ
-        document.getElementById('block-ru-sub-header').style.setProperty('margin-bottom', '15px', 'important');
-        document.getElementById('block-ru-okr-header').style.setProperty('margin-bottom', '15px', 'important');
-        if (capHeaderBlock) capHeaderBlock.style.setProperty('margin-bottom', '15px', 'important');
-        
-        document.querySelectorAll('.ru-sub-section').forEach(b => b.style.display = 'none');
-        
-        if (isAlreadyActive) return;
-        
         btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
         capContainer.style.display = 'block';
-        
-        // 🌟 ИСПРАВЛЕНО: Убираем маргин у родительской плашки, чтобы таблица прилегала идеально без щелей
         if (capHeaderBlock) capHeaderBlock.style.setProperty('margin-bottom', '0px', 'important');
         
         setTimeout(() => {
@@ -1656,6 +1647,7 @@ function switchRuSubView(subViewId) {
         clearSearch();
     }
 }
+
 
 function switchView(viewId) {
     // Автоматическое закрытие раскрытых мировых континентов
@@ -2137,64 +2129,65 @@ function closeFlagModal() {
 }
 
 
-// 🌟 АВТОМАТИЧЕСКАЯ СБОРКА ТАБЛИЦ СУБЪЕКТОВ РФ
+// 🌟 СБОРКА СКВОРЗНОГО СПИСКА СУБЪЕКТОВ РФ ПО АЛФАВИТУ (БЕЗ ПРОМЕЖУТОЧНЫХ КНОПОК И ЩЕЛЕЙ)
 function generateRussiaSubjectsTables() {
     const container = document.getElementById('ruSubjectsContainer');
     if (!container) return;
 
+    // Собираем абсолютно все 89 регионов в один плоский список
+    let flatSubjectsList = [];
     for (const [typeName, regions] of Object.entries(russiaSubjectsData)) {
-        const block = document.createElement('div');
-        block.className = 'continent-block collapsed';
-        
-        // Задаем уникальный ID для каждого типа субъектов России
-        const safeId = `block-ru-subject-${typeName.replace(/\s+/g, '-')}`;
-        block.id = safeId;
-        
-        let rowsHtml = '';
         regions.forEach(r => {
-            rowsHtml += `
-                <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
-                    <td class="col-flag">
-                       <div class="flag-wrapper">
-                           <!-- Временная защитная рамка вместо ткани флага -->
-                           <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
-                       </div>
-                    </td>
-                    <td>
-                        <a href="https://google.com{encodeURIComponent(r.name)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                            <strong>${r.name}</strong>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="https://google.com{encodeURIComponent(r.capital)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                            ${r.capital}
-                        </a> 
-                    </td>
-                </tr>`;
+            flatSubjectsList.push({
+                name: r.name,
+                capital: r.capital
+            });
         });
-
-        block.innerHTML = `
-            <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
-                <span>${typeName}</span>
-                <span class="count-badge" id="badge-${block.id}">${regions.length}</span>
-            </h2>
-            <div class="continent-content">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="col-flag">Флаг</th>
-                            <th>Регион</th>
-                            <th>Адм. центр</th>
-                        </tr>
-                    </thead>
-                    <tbody>${rowsHtml}</tbody>
-                </table>
-            </div>
-        `;
-        container.appendChild(block);
     }
+
+    // Сортируем все регионы строго по алфавиту от А до Я
+    flatSubjectsList.sort((a, b) => a.name.localeCompare(b.name));
+    
+    let rowsHtml = '';
+    flatSubjectsList.forEach(r => {
+        rowsHtml += `
+            <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
+                <td class="col-flag">
+                   <div class="flag-wrapper">
+                       <!-- Временная защитная рамка вместо ткани флага -->
+                       <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
+                   </div>
+                </td>
+                <td>
+                    <a href="https://google.com{encodeURIComponent(r.name)}" 
+                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <strong>${r.name}</strong>
+                    </a>
+                </td>
+                <td>
+                    <a href="https://google.com{encodeURIComponent(r.capital)}" 
+                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        ${r.capital}
+                    </a> 
+                </td>
+            </tr>`;
+    });
+
+    // Встраиваем таблицу напрямую в нативный класс, за счет чего белая щель исчезнет навсегда!
+    container.innerHTML = `
+        <div class="continent-content" style="display: block; width: 100%;">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-flag">Флаг</th>
+                        <th>Регион</th>
+                        <th>Адм. центр</th>
+                    </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+            </table>
+        </div>
+    `;
 }
 
 // Запускаем автоматический рендеринг при старте скрипта
