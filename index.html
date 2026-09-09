@@ -1660,12 +1660,11 @@ function switchRuSubView(subViewId) {
 }
 
 function enterRuSubmissions(type) {
-    // Жестко зажигаем общую родительскую навигационную коробку России со старта кликов
+    // Принудительно зажигаем общую родительскую навигационную коробку России со старта кликов
     const navHeaders = document.getElementById('ruNavigationHeaders');
     if (navHeaders) navHeaders.style.display = 'block';
 
     if (type === 'subjects') {
-        // ЭФФЕКТ СУБЪЕКТОВ: прячем главное меню, зажигаем Зону Б
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'block';
         document.getElementById('ruOkrugsZone').style.display = 'none';
@@ -1675,7 +1674,7 @@ function enterRuSubmissions(type) {
         });
         window.scrollTo(0, 0);
     } else if (type === 'okrugs') {
-        // 🌟 ЭФФЕКТ ОКРУГОВ (ОДИН В ОДИН): прячем главное меню, зажигаем новую Зону В!
+        // 🌟 ИСПРАВЛЕНО: Полностью зажигаем Зону В округов внутри родительского Headers
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -1691,13 +1690,11 @@ function exitRuSubmissions() {
     const navHeaders = document.getElementById('ruNavigationHeaders');
     if (navHeaders) navHeaders.style.display = 'block';
 
-    // Мягко сворачиваем внутренности субъектов перед выходом
     document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
     });
-    // Мягко сворачиваем внутренности округов перед выходом
     document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
