@@ -2254,6 +2254,7 @@ function toggleBlock(id) {
     }
 }
 // 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ РФ ПО АЛФАВИТУ (ПРЯМОЙ СПИСОК БЕЗ КНОПОК)
+// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ РФ ПО АЛФАВИТУ (ОДИН В ОДИН КАК ЕВРОПА)
 function generateRussiaCapitalsTable() {
     const container = document.getElementById('ruCapitalsContainer');
     if (!container) return;
@@ -2297,15 +2298,16 @@ function generateRussiaCapitalsTable() {
             </tr>`;
     });
 
-    // 🌟 ИСПРАВЛЕНО: Встраиваем таблицу напрямую в контейнер вкладки, без h2-шапки и collapsed-классов
+    // 🌟 ИСПРАВЛЕНО: Интегрируем таблицу напрямую в нативный мобильный класс continent-content.
+    // За счет этого линии шапки таблицы прижмутся к кнопке пиксель в пиксель без белых зазоров!
     container.innerHTML = `
-        <div style="background: #fff; border-top: 1px solid var(--border-color); width: 100%;">
+        <div class="continent-content" style="display: block; width: 100%;">
             <table>
                 <thead>
                     <tr>
                         <th class="col-flag">Флаг</th>
-                        <th>Административный中心</th>
-                        <th>Субъект РФ</th>
+                        <th>Админ. центр</th>
+                        <th>Субъект</th>
                     </tr>
                 </thead>
                 <tbody>${rowsHtml}</tbody>
