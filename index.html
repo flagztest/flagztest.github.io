@@ -1544,16 +1544,8 @@ function switchRuSubView(subViewId) {
 }
 
 function switchView(viewId) {
-    // 🌟 ИСПРАВЛЕНО: Сворачиваем блоки только у МИРОВЫХ континентов, 
-    // не трогая плашки-кнопки Базы России, чтобы не блокировать их кликабельность!
-    document.querySelectorAll('#tablesContainer .continent-block').forEach(b => {
-        b.classList.add('collapsed');
-        const content = b.querySelector('.continent-content');
-        if (content) content.style.display = 'none';
-    });
-
-    // 🌟 ТАКЖЕ МЯГКО СВЕРУЕМ АККОРДЕОНЫ СУБЪЕКТОВ РФ ПРИ УХОДЕ ИЗ ВКЛАДКИ
-    document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
+    // 🌟 ИСПРАВЛЕНО: Сворачиваем блоки точечно по их коробкам, чтобы не ломать кнопку центров контента!
+    document.querySelectorAll('#tablesContainer .continent-block, #ruSubjectsContainer .continent-block, #block-ru-capital-alphabet').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
@@ -1572,6 +1564,7 @@ function switchView(viewId) {
     document.getElementById('block-ru-okr-header').style.display = 'none';
     document.getElementById('ruSubjectsContainer').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
+    document.getElementById('ruCapitalsContainer').style.display = 'none';
     
     // Скрываем мобильные буферы безопасности по умолчанию на всех страницах квизов
     const buffer = document.getElementById('ruPaddingBuffer');
@@ -1589,26 +1582,25 @@ function switchView(viewId) {
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
         
+        // Включаем буфер стран мира: даёт Safari высоту для бархатного скольжения до Европы
         if (worldBuffer) worldBuffer.style.display = 'block';
         
-        document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'block');
+        // Показываем мировые континенты, прячем РФ
+        document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
 
+        // Намертво гасим аккордеон городов России при переходе во вкладку стран мира
         const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
         if (capAlphabetBlock) { 
             capAlphabetBlock.style.setProperty('display', 'none', 'important'); 
         }
     } else if (viewId === 'ru-db') {
-
-        // Принудительно сбрасываем экран в самый верх при переходе в Россию,
-        // полностью исключая наезд шапки и скрытие кнопок из-за скролла базы стран!
+        // 🌟 ИСПРАВЛЕНО ДЛЯ ЕВРОПЫ: Принудительно жестко обнуляем скролл страницы в абсолютный верх,
+        // полностью исключая огромные пустые белые зазоры над шапками при переключениях баз!
         window.scrollTo(0, 0);
 
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-        document.getElementById('dbView').classList.add('active'); // Активируем общий dbView!
+        document.getElementById('dbView').classList.add('active'); 
         document.getElementById('dbControls').style.display = 'flex';
-        
-        // Прячем мировые континенты
-        document.querySelectorAll('.continent-block:not([id^="block-ru-"])').forEach(b => b.style.display = 'none');
         
         // Включаем отображение главных плашек России
         document.getElementById('block-ru-sub-header').style.display = 'block';
@@ -1621,11 +1613,18 @@ function switchView(viewId) {
         if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
 
         // Показываем аккордеоны России
+        document.getElementById('ruSubjectsContainer').style.display = 'block';
         document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => b.style.display = 'block');
         
-        // 🌟 Включаем отображение контейнера Административных центров под округами
+        // 🌟 ИСПРАВЛЕНО ДЛЯ БАЗЫ РОССИИ: Всегда принудительно зажигаем контейнер Административных центров
+        // и сбрасываем дисплей самого аккордеона в block, гарантируя, что кнопка никогда не исчезнет!
         document.getElementById('ruCapitalsContainer').style.display = 'block';
+        const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
+        if (capAlphabetBlock) { 
+            capAlphabetBlock.style.setProperty('display', 'block', 'important'); 
+        }
 
+        // Активируем буфер для мягкого скролла на смартфонах
         if (buffer) buffer.style.display = 'block';
 
     } else if (viewId === 'quiz-flags') {
