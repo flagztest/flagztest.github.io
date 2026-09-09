@@ -1601,6 +1601,10 @@ function toggleBlock(id) {
     const block = document.getElementById(id);
     if (!block) return;
     
+    // Запоминаем текущее положение заголовка на экране до сворачивания
+    const rectBefore = block.getBoundingClientRect();
+    const scrollTopBefore = window.scrollY;
+    
     block.classList.toggle('collapsed');
     const content = block.querySelector('.continent-content');
     
@@ -1608,47 +1612,23 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УМНЫЙ СИНХРОННЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
-            setTimeout(() => {
-                const offset = 120;
-                
-                // Находим самый первый блок-сосед в текущем списке (tablesContainer или ruSubjectsContainer)
-                const parent = block.parentNode;
-                const firstBlock = parent ? parent.querySelector('.continent-block') : null;
-                
-                // Если мы закрываем любой нижний блок (и это не самый первый элемент списка),
-                // страница совершит бархатное и плавное скольжение к началу текущей базы!
-                if (firstBlock && block !== firstBlock) {
-                    const offsetPosition = firstBlock.offsetTop - offset;
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-                } else {
-                    // Если закрывают самый верхний блок (Европу или Республики), удерживаем камеру ровно на месте
-                    const offsetPosition = block.offsetTop - offset;
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 10);
+            // 🌟 МЯГКАЯ СТАБИЛИЗАЦИЯ: Удерживаем экран ровно на месте закрытия плашки,
+            // полностью блокируя резкие прыжки и залезание под шапку!
+            const rectAfter = block.getBoundingClientRect();
+            window.scrollTo(0, scrollTopBefore + (rectAfter.top - rectBefore.top));
             return;
         } else {
             content.style.display = 'block';
         }
 
-        // 🌟 РАСКРЫТИЕ: подтягивает любой открытый блок ровно под поиск
+        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
         setTimeout(() => {
             const offset = 120;
             const offsetPosition = block.offsetTop - offset;
             const diff = Math.abs(window.scrollY - offsetPosition);
 
             if (diff > 2) {
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }
         }, 60); 
     }
