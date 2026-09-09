@@ -1608,19 +1608,34 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 ВОЗВРАТ К РЕСПУБЛИКАМ: если закрывают любой блок в Базе России,
-            // экран мягко отпружинит наверх, к самому первому заголовку!
+            // 🌟 УМНЫЙ СИНХРОННЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРАЧИВАНИИ
             setTimeout(() => {
                 const offset = 120;
-                const republicsBlock = document.getElementById('block-ru-subject-Республики');
                 
-                if (republicsBlock && id !== 'block-ru-subject-Республики') {
-                    const offsetPosition = republicsBlock.offsetTop - offset;
-                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                // 1. Проверяем, в каком разделе мы находимся (Россия или Страны мира)
+                const isRussia = id.startsWith('block-ru-');
+                
+                if (isRussia) {
+                    // В Базе России плавно возвращаем фокус к «Республикам»
+                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
+                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
+                        const offsetPosition = republicsBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        return;
+                    }
                 } else {
-                    const offsetPosition = block.offsetTop - offset;
-                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    // 🌟 В Базе стран мира плавно возвращаем фокус к «Европе»
+                    const europeBlock = document.getElementById('block-Европа');
+                    if (europeBlock && id !== 'block-Европа') {
+                        const offsetPosition = europeBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        return;
+                    }
                 }
+                
+                // Дефолтное удержание камеры, если закрывают самый первый блок (Европу или Республики)
+                const offsetPosition = block.offsetTop - offset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }, 10);
             return;
         } else {
