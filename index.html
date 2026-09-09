@@ -2238,7 +2238,7 @@ function toggleBlock(id) {
         }, 60); 
     }
 }
-// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ РФ (БЕЗ ДУБЛИРОВАНИЯ КНОПОК)
+// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ РФ (БЕЗ ДУБЛИРОВАНИЯ И С НАДЛЕЖАЩИМ РАСКРЫТИЕМ)
 function generateRussiaCapitalsTable() {
     const container = document.getElementById('ruCapitalsContainer');
     if (!container) return;
@@ -2257,7 +2257,7 @@ function generateRussiaCapitalsTable() {
     // Сортируем список городов строго по алфавиту от А до Я
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
     
-    // 🌟 Добавляем бэйдж со счётчиком 89 на вашу главную HTML-кнопку
+    // Добавляем бэйдж со счётчиком 89 на вашу главную HTML-кнопку
     const mainBtnHeader = document.querySelector('#block-ru-cap-header .continent-header');
     if (mainBtnHeader && !document.getElementById('badge-ru-capitals-main')) {
         const badge = document.createElement('span');
@@ -2286,9 +2286,9 @@ function generateRussiaCapitalsTable() {
             </tr>`;
     });
 
-    // 🌟 ВСТАВЛЯЕМ СТРОГО ТАБЛИЦУ: прижимаем линии вплотную к вашей главной серой кнопке без щелей
+    // 🌟 ИСПРАВЛЕНО: Возвращаем класс continent-content, чтобы таблица плавно выезжала вниз!
     container.innerHTML = `
-        <div class="continent-content" style="display: block; padding-top: 0px !important;">
+        <div class="continent-content" id="content-ru-capital-alphabet" style="display: none; padding-top: 0px !important;">
             <table>
                 <thead>
                     <tr>
