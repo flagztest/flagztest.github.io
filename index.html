@@ -2253,7 +2253,7 @@ function toggleBlock(id) {
         }, 60); 
     }
 }
-// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ РФ ПО АЛФАВИТУ (А-Я)
+// 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ РФ ПО АЛФАВИТУ (ПРЯМОЙ СПИСОК БЕЗ КНОПОК)
 function generateRussiaCapitalsTable() {
     const container = document.getElementById('ruCapitalsContainer');
     if (!container) return;
@@ -2271,10 +2271,6 @@ function generateRussiaCapitalsTable() {
 
     // Сортируем список городов строго по алфавиту от А до Я
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
-
-    const block = document.createElement('div');
-    block.className = 'continent-block collapsed';
-    block.id = 'block-ru-capital-alphabet';
     
     let rowsHtml = '';
     flatCapitalsList.forEach(c => {
@@ -2301,17 +2297,14 @@ function generateRussiaCapitalsTable() {
             </tr>`;
     });
 
-    block.innerHTML = `
-        <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
-            <span>🌆 Города России (А-Я)</span>
-            <span class="count-badge" id="badge-${block.id}">${flatCapitalsList.length}</span>
-        </h2>
-        <div class="continent-content">
+    // 🌟 ИСПРАВЛЕНО: Встраиваем таблицу напрямую в контейнер вкладки, без h2-шапки и collapsed-классов
+    container.innerHTML = `
+        <div style="background: #fff; border-top: 1px solid var(--border-color); width: 100%;">
             <table>
                 <thead>
                     <tr>
                         <th class="col-flag">Флаг</th>
-                        <th>Административный центр</th>
+                        <th>Административный中心</th>
                         <th>Субъект РФ</th>
                     </tr>
                 </thead>
@@ -2319,7 +2312,6 @@ function generateRussiaCapitalsTable() {
             </table>
         </div>
     `;
-    container.appendChild(block);
 }
 
 // Запускаем автоматический рендеринг центров при старте сайта
