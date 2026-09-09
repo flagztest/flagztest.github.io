@@ -1608,7 +1608,7 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 ПЛАВНЫЙ СИНХРОННЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРАЧИВАНИИ
+            // 🌟 УМНЫЙ СИНХРОННЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
             setTimeout(() => {
                 const offset = 120;
                 
@@ -1624,19 +1624,24 @@ function toggleBlock(id) {
                         return;
                     }
                 } else {
-                    // 🌍 В Базе стран мира находим «Европу» через безопасный селектор атрибута
-                    const europeBlock = document.querySelector('[id="block-Европа"]');
+                    // 🌍 В Базе стран мира находим «Европу» через безопасный селектор
+                    const europeBlock = document.getElementById('block-Европа');
                     
-                    // Если закрывают любой нижний континент (Азия, Африка...),
-                    // скрипт плавно и красиво вернет экран наверх — ровно к Европе!
                     if (europeBlock && id !== 'block-Европа') {
                         const offsetPosition = europeBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        
+                        // 🌟 ПРЕДОХРАНИТЕЛЬ SAFARI: Если координата упирается в самый верх страницы,
+                        // мы принудительно катим в абсолютный 0. Это включает идеальный плавный скролл!
+                        if (offsetPosition <= 0) {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } else {
+                            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        }
                         return;
                     }
                 }
                 
-                // Защитное удержание камеры, если схлопнули самую первую плашку списка
+                // Защитное удержание камеры, если схлопнули самую первую плашку текущего списка
                 const offsetPosition = block.offsetTop - offset;
                 window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }, 10);
@@ -1645,7 +1650,7 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно подтягивает любой открытый блок ровно под поиск
+        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
         setTimeout(() => {
             const offset = 120;
             const offsetPosition = block.offsetTop - offset;
