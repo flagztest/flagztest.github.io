@@ -773,11 +773,13 @@
 </div>
 
 <div class="container">
-    <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА, И РЕГИОНОВ РФ -->
+    <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
     <div id="dbView" class="view-section active">
-        <div id="tablesContainer">
-            
-            <!-- 🌟 ПЛАШКА 1: СУБЪЕКТЫ РОССИИ (Один в один как Европа по ширине и цвету!) -->
+        
+        <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ: вынесен из общего tablesContainer, -->
+        <!-- чтобы скролл и поиск стран мира больше никогда не пересекались с кнопками РФ! -->
+        <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box;">
+            <!-- ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
             <div class="continent-block" id="block-ru-sub-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
                 <h2 class="continent-header" id="btnSub" onclick="switchRuSubView('subjects')" style="background-color: #e9ecef !important; font-weight: 800 !important; width: 100%; box-sizing: border-box;">
                     <span>Субъекты России</span>
@@ -786,7 +788,7 @@
             <!-- Контейнер для 1-го раздела (Субъекты) -->
             <div id="ruSubjectsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
             
-            <!-- 🌟 ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА (Один в один как Европа по ширине и цвету!) -->
+            <!-- ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
             <div class="continent-block" id="block-ru-okr-header" style="display: none; margin-bottom: 15px; padding: 0px !important;">
                 <h2 class="continent-header" id="btnOkr" onclick="switchRuSubView('okrugs')" style="width: 100%; box-sizing: border-box;">
                     <span>Федеральные округа</span>
@@ -795,6 +797,10 @@
             <!-- Контейнер для 2-го раздела (Округа) -->
             <div id="ruOkrugsContainer" class="ru-sub-section" style="display: none; margin-bottom: 15px;"></div>
         </div>
+
+        <!-- 🌍 КРИСТАЛЬНО ЧИСТЫЙ КОНТЕЙНЕР СТРАН МИРА (Европа теперь тут самая первая!) -->
+        <div id="tablesContainer"></div>
+        
     </div>
     <!-- 🌟 ПОДУШКА БЕЗОПАСНОСТИ: не даёт Safari выталкивать плашки под шапку при сворачивании -->
     <div id="ruPaddingBuffer" style="height: 100vh; display: none;"></div>
@@ -1612,39 +1618,36 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УМНЫЙ СИНХРОННЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
+            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И ПЛАВНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
             setTimeout(() => {
                 const offset = 120;
-                const parent = block.parentNode;
-                const firstBlock = parent ? parent.querySelector('.continent-block') : null;
                 
-                if (firstBlock && block !== firstBlock) {
-                    // Проверяем, находится ли блок внутри мирового контейнера tablesContainer
-                    const isWorldDb = parent.id === 'tablesContainer';
-                    
-                    if (isWorldDb) {
-                        // 🌍 ИСПРАВЛЕНО ДЛЯ БАЗЫ СТРАН: Принудительный мягкий и плавный накат
-                        // в самый верх страницы. Теперь Safari будет скользить бархатно!
+                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
+                const isRussia = id.startsWith('block-ru-');
+                
+                if (isRussia) {
+                    // 🇷🇺 В Базе России плавно возвращаем фокус строго к «Республикам»
+                    const republicsBlock = document.getElementById('block-ru-subject-Республики');
+                    if (republicsBlock && id !== 'block-ru-subject-Республики') {
+                        const offsetPosition = republicsBlock.offsetTop - offset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        return;
+                    }
+                } else {
+                    // 🌍 В Базе стран мира (так как кнопки РФ уехали) при закрытии любого 
+                    // нижнего континента, мы просто плавно катим экран в абсолютный верх страницы к Европе!
+                    if (id !== 'block-Европа') {
                         window.scrollTo({
                             top: 0,
                             behavior: 'smooth'
                         });
-                    } else {
-                        // 🇷🇺 ДЛЯ БАЗЫ РОССИИ: Оставляем точный расчет до «Республик»
-                        const offsetPosition = firstBlock.offsetTop - offset;
-                        window.scrollTo({
-                            top: offsetPosition,
-                            behavior: 'smooth'
-                        });
+                        return;
                     }
-                } else {
-                    // Если закрывают самый первый блок списка (Европу или Республики), держим камеру на месте
-                    const offsetPosition = block.offsetTop - offset;
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
                 }
+                
+                // Защитное удержание камеры, если схлопнули самую первую плашку текущего списка
+                const offsetPosition = block.offsetTop - offset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }, 10);
             return;
         } else {
