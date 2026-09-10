@@ -2382,20 +2382,19 @@ function generateRussiaCapitalsTable() {
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
 
     const block = document.createElement('div');
-    // Задаем стандартный класс continent-block, за счет чего кнопка станет круглой серой плашкой!
     block.className = 'continent-block collapsed';
-    
-    // Задаем уникальный ID, чтобы функция toggleBlock подхватила плавное открытие и скролл к нему
     block.id = 'block-ru-capital-alphabet';
     
     let rowsHtml = '';
     flatCapitalsList.forEach(c => {
+        // Умный поиск флага: берем из cityFlags или ставим красивую прозрачную заглушку 100x42
+        let flagUrl = cityFlags[c.cityName] || "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='100' height='42'><rect width='100%' height='100%' fill='none'/></svg>";
+
         rowsHtml += `
             <tr data-name="${c.cityName.toLowerCase()}" data-capital="${c.subjectName.toLowerCase()}">
                 <td class="col-flag">
                    <div class="flag-wrapper">
-                       <!-- Временная защитная рамка вместо ткани флага -->
-                       <div class="flag-img" style="background-color: #f8f9fa; border: 1px dashed var(--border-color); width: 100px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; font-weight: 500;">-</div>
+                       <img class="flag-img" src="${flagUrl}" alt="Флаг ${c.cityName}" loading="lazy" onclick="openFlagModal(this.src)">
                    </div>
                 </td>
                 <td>
@@ -2407,8 +2406,6 @@ function generateRussiaCapitalsTable() {
             </tr>`;
     });
 
-    // Упаковываем таблицу в стандартный нативный контур continent-header и continent-content.
-    // За счет этого линии прижмутся впритык, а раскрытие будет плавным и нативным, как у континентов!
     block.innerHTML = `
         <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
             <span>Административные центры</span>
@@ -2429,6 +2426,7 @@ function generateRussiaCapitalsTable() {
     `;
     container.appendChild(block);
 }
+
 // 🌟 АВТОМАТИЧЕСКАЯ СБОРКА ТАБЛИЦ ФЕДЕРАЛЬНЫХ ОКРУГОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ
 function generateRussiaOkrugsTables() {
     const container = document.getElementById('ruOkrugsContainer');
