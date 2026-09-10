@@ -1623,6 +1623,9 @@ function enterRuSubmissions(type) {
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
         
+        // 🌟 ИСПРАВЛЕНИЕ: принудительно показываем сам контейнер с таблицами округов
+        document.getElementById('ruOkrugsContainer').style.display = 'block';
+        
         document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
             b.style.display = 'block';
         });
@@ -1647,6 +1650,7 @@ function exitRuSubmissions() {
     
     document.getElementById('ruSubmissionsZone').style.display = 'none';
     document.getElementById('ruOkrugsZone').style.display = 'none';
+    document.getElementById('ruOkrugsContainer').style.display = 'none';
     document.getElementById('ruMainMenuZone').style.display = 'block';
     
     window.scrollTo(0, 0);
@@ -1703,7 +1707,7 @@ function switchView(viewId) {
         
         // Всегда принудительно зажигаем корневое меню (Зону А) и гасим Зоны Б и В
         document.getElementById('ruNavigationHeaders').style.display = 'block';
-        document.getElementById('ruMainMenuZone').style.display = 'block';
+        document.getElementById('ruMainMenuZone').style.display = 'block'; // 🌟 Исправлена опечатка .style.block
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'none';
         
@@ -1735,179 +1739,6 @@ function switchView(viewId) {
         document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
-    }
-}
-
-function enterRuSubmissions(type) {
-    // Принудительно зажигаем общую родительскую навигационную коробку России со старта кликов
-    const navHeaders = document.getElementById('ruNavigationHeaders');
-    if (navHeaders) navHeaders.style.display = 'block';
-
-    if (type === 'subjects') {
-        // ЭФФЕКТ СУБЪЕКТОВ: прячем главное меню, зажигаем Зону Б (6 Субъектов)
-        document.getElementById('ruMainMenuZone').style.display = 'none';
-        document.getElementById('ruSubmissionsZone').style.display = 'block';
-        document.getElementById('ruOkrugsZone').style.display = 'none';
-        
-        document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
-            b.style.display = 'block';
-        });
-        window.scrollTo(0, 0);
-    } else if (type === 'okrugs') {
-        // ЭФФЕКТ ОКРУГОВ: прячем главное меню, зажигаем Зону В (8 Округов)
-        document.getElementById('ruMainMenuZone').style.display = 'none';
-        document.getElementById('ruSubmissionsZone').style.display = 'none';
-        document.getElementById('ruOkrugsZone').style.display = 'block';
-        
-        document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
-            b.style.display = 'block';
-        });
-        window.scrollTo(0, 0);
-    }
-}
-
-function exitRuSubmissions() {
-    const navHeaders = document.getElementById('ruNavigationHeaders');
-    if (navHeaders) navHeaders.style.display = 'block';
-
-    document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
-        b.classList.add('collapsed');
-        const content = b.querySelector('.continent-content');
-        if (content) content.style.display = 'none';
-    });
-    document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
-        b.classList.add('collapsed');
-        const content = b.querySelector('.continent-content');
-        if (content) content.style.display = 'none';
-    });
-    
-    document.getElementById('ruSubmissionsZone').style.display = 'none';
-    document.getElementById('ruOkrugsZone').style.display = 'none';
-    document.getElementById('ruMainMenuZone').style.display = 'block';
-    
-    window.scrollTo(0, 0);
-}
-
-function switchView(viewId) {
-    document.querySelectorAll('.continent-block').forEach(b => {
-        b.classList.add('collapsed');
-        const content = b.querySelector('.continent-content');
-        if (content) content.style.display = 'none';
-    });
-    
-    const toggleAllBtn = document.getElementById('toggleAllBtn');
-    if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
-    allCollapsed = true;
-
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-    document.getElementById('dbControls').style.display = 'none';
-    
-    // Скрываем абсолютно все зоны и контейнеры России по умолчанию
-    document.getElementById('ruNavigationHeaders').style.display = 'none';
-    document.getElementById('ruMainMenuZone').style.display = 'none';
-    document.getElementById('ruSubmissionsZone').style.display = 'none';
-    document.getElementById('ruOkrugsZone').style.display = 'none';
-    document.getElementById('ruOkrugsContainer').style.display = 'none';
-    document.getElementById('ruCapitalsContainer').style.display = 'none';
-    
-    const buffer = document.getElementById('ruPaddingBuffer');
-    if (buffer) buffer.style.display = 'none';
-    
-    const worldBuffer = document.getElementById('worldPaddingBuffer');
-    if (worldBuffer) worldBuffer.style.display = 'none';
-    
-    flagScore = 0; flagRound = 1;
-    capScore = 0; capRound = 1;
-    countryScore = 0; countryRound = 1;
-    
-    if (viewId === 'db') {
-        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
-        document.getElementById('dbView').classList.add('active');
-        document.getElementById('dbControls').style.display = 'flex';
-        
-        if (worldBuffer) worldBuffer.style.display = 'block';
-        document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
-    } else if (viewId === 'ru-db') {
-        window.scrollTo(0, 0);
-
-        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-        document.getElementById('dbView').classList.add('active'); 
-        document.getElementById('dbControls').style.display = 'flex';
-        
-        document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
-        
-        // Всегда принудительно зажигаем корневое меню (Зону А) и гасим Зоны Б и В
-        document.getElementById('ruNavigationHeaders').style.display = 'block';
-        document.getElementById('ruMainMenuZone').style.block = 'block';
-        document.getElementById('ruMainMenuZone').style.display = 'block';
-        document.getElementById('ruSubmissionsZone').style.display = 'none';
-        document.getElementById('ruOkrugsZone').style.display = 'none';
-        
-        // Мягко сворачиваем все внутренние аккордеоны субъектов и округов при переключении
-        document.querySelectorAll('#ruSubjectsContainer .continent-block, #ruOkrugsContainer .continent-block').forEach(b => {
-            b.classList.add('collapsed');
-            const content = b.querySelector('.continent-content');
-            if (content) content.style.display = 'none';
-        });
-        
-        const capContainer = document.getElementById('ruCapitalsContainer');
-        if (capContainer) capContainer.style.display = 'block';
-        
-        const btnOkr = document.getElementById('btnOkr');
-        const btnCap = document.getElementById('btnCap');
-        if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-
-        if (buffer) buffer.style.display = 'block';
-    } else if (viewId === 'quiz-flags') {
-        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
-        document.getElementById('quizFlagsView').classList.add('active');
-        loadQuizFlagRound();
-    } else if (viewId === 'quiz-capitals') {
-        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
-        document.getElementById('quizCapitalsView').classList.add('active');
-        loadQuizCapitalRound();
-    } else if (viewId === 'quiz-countries') {
-        document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
-        document.getElementById('quizCountriesView').classList.add('active');
-        loadQuizCountryRound();
-    }
-}
-
-function switchRuSubView(subViewId) {
-    const btnCap = document.getElementById('btnCap');
-    const capContainer = document.getElementById('ruCapitalsContainer');
-    
-    if (capContainer) capContainer.style.display = 'none';
-    if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-    
-    if (subViewId === 'capitals') {
-        const targetTable = document.getElementById('block-ru-capital-alphabet');
-        if (!targetTable) return;
-        
-        const content = targetTable.querySelector('.continent-content');
-        const isCollapsed = targetTable.classList.contains('collapsed');
-        
-        if (!isCollapsed) {
-            // Если таблица была развернута — плавно схлопываем её в дефолтный светлый вид
-            targetTable.classList.add('collapsed');
-            if (content) content.style.display = 'none';
-            if (capContainer) capContainer.style.display = 'none';
-            if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-            return;
-        }
-        
-        // Если была закрыта — зажигаем темный графит и плавно выкатываем блок вниз
-        if (btnCap) btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
-        if (capContainer) capContainer.style.display = 'block';
-        targetTable.classList.remove('collapsed');
-        if (content) content.style.display = 'block';
-        
-        setTimeout(() => {
-            const offsetPosition = btnCap.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 80);
     }
 }
 
@@ -2547,11 +2378,12 @@ function generateRussiaOkrugsTables() {
     }
 }
 
-// Запускаем автоматический рендеринг Федеральных округов при старте сайта
-generateRussiaOkrugsTables();
-
-// Запускаем автоматический рендеринг центров при старте сайта
-generateRussiaCapitalsTable();
+// 🌟 ОЖИВЛЯЕМ ОКРУГА И ЦЕНТРЫ: запускаем их сборку строго после того,
+// как браузер полностью прочитал всю страницу и создал HTML-контейнеры.
+window.addEventListener('DOMContentLoaded', () => {
+    generateRussiaOkrugsTables();
+    generateRussiaCapitalsTable();
+});
 
 </script>
 
