@@ -1675,7 +1675,7 @@ function enterRuSubmissions(type) {
         });
         window.scrollTo(0, 0);
     } else if (type === 'okrugs') {
-        // ЭФФЕКТ ОКРУГОВ: прячем главное меню, зажигаем Зону В
+        // ЭФФЕКТ ОКРУГОВ: прячем главное меню, зажигаем новую Зону В
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -1691,13 +1691,11 @@ function exitRuSubmissions() {
     const navHeaders = document.getElementById('ruNavigationHeaders');
     if (navHeaders) navHeaders.style.display = 'block';
 
-    // Мягко сворачиваем внутренности субъектов перед выходом
     document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
     });
-    // Мягко сворачиваем внутренности округов перед выходом
     document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
@@ -1760,7 +1758,7 @@ function switchView(viewId) {
         
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
         
-        // СБРОС И КОРРЕКЦИЯ: Принудительно зажигаем корневое меню (Зону А) и намертво гасим Зоны Б и В
+        // Всегда принудительно зажигаем корневое меню (Зону А) и гасим Зоны Б и В
         document.getElementById('ruNavigationHeaders').style.display = 'block';
         document.getElementById('ruMainMenuZone').style.display = 'block';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
