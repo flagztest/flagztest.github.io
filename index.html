@@ -1602,70 +1602,13 @@ function createContinentBlock(continent, countries) {
     tablesContainer.appendChild(block);
 }
 
-function switchRuSubView(subViewId) {
-    const btnOkr = document.getElementById('btnOkr');
-    const btnCap = document.getElementById('btnCap');
-    const okrContainer = document.getElementById('ruOkrugsContainer');
-    const capContainer = document.getElementById('ruCapitalsContainer');
-    
-    if (okrContainer) okrContainer.style.display = 'none';
-    if (capContainer) capContainer.style.display = 'none';
-    
-    if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-    if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-    
-    document.querySelectorAll('.ru-sub-section .continent-block').forEach(b => b.style.display = 'none');
-    
-    if (subViewId === 'okrugs') {
-        const isAlreadyActive = (okrContainer.style.display === 'block');
-        if (isAlreadyActive) return;
-        
-        if (btnOkr) btnOkr.style.setProperty('background-color', '#e9ecef', 'important'); 
-        if (okrContainer) okrContainer.style.display = 'block';
-        document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => b.style.display = 'block');
-        
-        setTimeout(() => {
-            const offsetPosition = btnOkr.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 80);
-        
-    } else if (subViewId === 'capitals') {
-        const targetTable = document.getElementById('content-ru-capital-alphabet');
-        
-        // Жестко проверяем видимость самой внутренней таблицы, а не внешней обертки
-        const isTableVisible = targetTable && (targetTable.style.display === 'block');
-        
-        if (isTableVisible) {
-            // Если таблица была развернута — плавно схлопываем её в дефолтный светлый вид
-            if (capContainer) capContainer.style.display = 'none';
-            if (targetTable) targetTable.style.display = 'none';
-            if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
-            return;
-        }
-        
-        // Если была закрыта — зажигаем темный графит и плавно выкатываем блок вниз
-        if (btnCap) btnCap.style.setProperty('background-color', '#e9ecef', 'important'); 
-        if (capContainer) capContainer.style.display = 'block';
-        if (targetTable) targetTable.style.display = 'block';
-        
-        setTimeout(() => {
-            const offsetPosition = btnCap.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 80);
-    }
-    
-    if(document.getElementById('searchInput').value !== "") {
-        clearSearch();
-    }
-}
-
 function enterRuSubmissions(type) {
     // Принудительно зажигаем общую родительскую навигационную коробку России со старта кликов
     const navHeaders = document.getElementById('ruNavigationHeaders');
     if (navHeaders) navHeaders.style.display = 'block';
 
     if (type === 'subjects') {
-        // ЭФФЕКТ СУБЪЕКТОВ: прячем главное меню, зажигаем Зону Б
+        // ЭФФЕКТ СУБЪЕКТОВ: прячем главное меню, зажигаем Зону Б (6 Субъектов)
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'block';
         document.getElementById('ruOkrugsZone').style.display = 'none';
@@ -1675,7 +1618,7 @@ function enterRuSubmissions(type) {
         });
         window.scrollTo(0, 0);
     } else if (type === 'okrugs') {
-        // ЭФФЕКТ ОКРУГОВ: прячем главное меню, зажигаем новую Зону В
+        // ЭФФЕКТ ОКРУГОВ: прячем главное меню, зажигаем Зону В (8 Округов)
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
