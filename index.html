@@ -1651,6 +1651,9 @@ function exitRuSubmissions() {
     document.getElementById('ruSubmissionsZone').style.display = 'none';
     document.getElementById('ruOkrugsZone').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
+    
+    // Возвращаем на место алфавитную таблицу центров при выходе на первый уровень
+    document.getElementById('ruCapitalsContainer').style.display = 'block';
     document.getElementById('ruMainMenuZone').style.display = 'block';
     
     window.scrollTo(0, 0);
@@ -1697,11 +1700,8 @@ function switchView(viewId) {
         if (worldBuffer) worldBuffer.style.display = 'block';
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
         
-        // 🌟 ЖЕЛЕЗНЫЙ СБРОС СКРОЛЛА: обнуляем прокрутку, возвращая камеру на самый верх,
-        // чтобы Европа встала идеально ровно встык под фиксированную шапку.
+        // 🌟 СБРОС СКРОЛЛА ДЛЯ БАЗЫ СТРАН: обнуляем прокрутку, камера летит на самый верх к Европе
         window.scrollTo(0, 0);
-    }
-
     } else if (viewId === 'ru-db') {
         window.scrollTo(0, 0);
 
@@ -1713,7 +1713,7 @@ function switchView(viewId) {
         
         // Всегда принудительно зажигаем корневое меню (Зону А) и гасим Зоны Б и В
         document.getElementById('ruNavigationHeaders').style.display = 'block';
-        document.getElementById('ruMainMenuZone').style.display = 'block'; // 🌟 Исправлена опечатка .style.block
+        document.getElementById('ruMainMenuZone').style.display = 'block'; 
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'none';
         
