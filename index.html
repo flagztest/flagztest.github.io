@@ -181,8 +181,11 @@
 
 /* 🌟 УМНОЕ ПРАВИЛО: не даёт цифре 3 улетать в правый угол на смартфонах */
 .continent-header span:first-child {
-    flex-grow: 0;
+    flex-grow: 1; /* Разрешаем тексту занимать свободную площадь, мягко отодвигая цифру */
     text-align: left;
+}
+.continent-header .count-badge {
+    flex-shrink: 0; /* Строгий запрет на сплющивание рамки на маленьких экранах */
 }
 
 .count-badge {
@@ -781,19 +784,21 @@
             
             <!-- ЗОНА А: ГЛАВНЫЕ КНОПКИ РОССИИ (Первый уровень меню) -->
             <div id="ruMainMenuZone" style="display: block; width: 100%;">
-                <!-- ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
-                <div class="continent-block" id="block-ru-sub-header" style="margin-bottom: 15px; padding: 0px !important;">
-                    <h2 class="continent-header" id="btnSub" onclick="enterRuSubmissions('subjects')" style="width: 100%; box-sizing: border-box;">
-                        <span>Субъекты России</span>
-                    </h2>
-                </div>
-                
-                <!-- ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
-                <div class="continent-block" id="block-ru-okr-header" style="margin-bottom: 15px; padding: 0px !important;">
-                    <h2 class="continent-header" id="btnOkr" onclick="enterRuSubmissions('okrugs')" style="width: 100%; box-sizing: border-box;">
-                        <span>Федеральные округа</span>
-                    </h2>
-                </div>
+<!-- ПЛАШКА 1: СУБЪЕКТЫ РОССИИ -->
+<div class="continent-block" id="block-ru-sub-header" style="margin-bottom: 15px; padding: 0px !important;">
+    <h2 class="continent-header" id="btnSub" onclick="enterRuSubmissions('subjects')" style="width: 100%; box-sizing: border-box;">
+        <span>Субъекты России</span>
+        <span class="count-badge" style="margin-left: auto;">6</span>
+    </h2>
+</div>
+
+<!-- ПЛАШКА 2: ФЕДЕРАЛЬНЫЕ ОКРУГА -->
+<div class="continent-block" id="block-ru-okr-header" style="margin-bottom: 15px; padding: 0px !important;">
+    <h2 class="continent-header" id="btnOkr" onclick="enterRuSubmissions('okrugs')" style="width: 100%; box-sizing: border-box;">
+        <span>Федеральные округа</span>
+        <span class="count-badge" style="margin-left: auto;">8</span>
+    </h2>
+</div>
 
                 <!-- ПЛАШКА 3: АДМИНИСТРАТИВНЫЕ ЦЕНТРЫ РФ -->
                 <div id="ruCapitalsContainer" class="ru-sub-section" style="display: none; width: 100%; margin-bottom: 15px;"></div>
