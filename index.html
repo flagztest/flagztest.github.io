@@ -1691,11 +1691,13 @@ function exitRuSubmissions() {
     const navHeaders = document.getElementById('ruNavigationHeaders');
     if (navHeaders) navHeaders.style.display = 'block';
 
+    // Мягко сворачиваем внутренности субъектов перед выходом
     document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
     });
+    // Мягко сворачиваем внутренности округов перед выходом
     document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
@@ -1758,7 +1760,7 @@ function switchView(viewId) {
         
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
         
-        // Всегда принудительно зажигаем корневое меню (Зону А) и гасим Зоны Б и В
+        // СБРОС И КОРРЕКЦИЯ: Принудительно зажигаем корневое меню (Зону А) и намертво гасим Зоны Б и В
         document.getElementById('ruNavigationHeaders').style.display = 'block';
         document.getElementById('ruMainMenuZone').style.display = 'block';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
@@ -1777,7 +1779,7 @@ function switchView(viewId) {
         const btnOkr = document.getElementById('btnOkr');
         const btnCap = document.getElementById('btnCap');
         if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
-        if (btnCap) btnCap.setProperty('background-color', '#f1f3f5', 'important');
+        if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
 
         if (buffer) buffer.style.display = 'block';
     } else if (viewId === 'quiz-flags') {
