@@ -2011,12 +2011,12 @@ function runSearch() {
             return;
         }
 
-        // Проверяем, является ли текущий блок навигационной кнопкой-заголовком Зоны А
+        // 🌟 ИЗОЛИРУЕМ ИДЕАЛЬНО ПЛАШКИ ПЕРВОГО УРОВНЯ (ГЛАВНЫЕ КНОПКИ МЕНЮ)
         if (block.id === 'block-ru-sub-header' || block.id === 'block-ru-okr-header') {
             if (q === '') {
-                block.style.display = 'block';
+                block.style.display = 'block'; // Возвращаем плашки меню, если поиск пуст
             } else {
-                block.style.display = 'none';
+                block.style.display = 'none';  // Убираем их во время поиска результатов
             }
             return;
         }
@@ -2047,26 +2047,37 @@ function runSearch() {
             block.style.display = 'none';
         } else {
             if (isRussiaDbActive && q !== '') {
+                // 🌟 РЕЖИМ АКТИВНОГО ПОИСКА: Зажигаем все таблицы с совпадениями на одном общем экране
                 block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
                 
-                const subZone = document.getElementById('ruSubmissionsZone');
-                const okrZone = document.getElementById('ruOkrugsZone');
-                const capContainer = document.getElementById('ruCapitalsContainer');
-                const subjectsContainer = document.getElementById('ruSubjectsContainer');
-                const okrugsContainer = document.getElementById('ruOkrugsContainer');
-                
-                if (subZone) subZone.style.display = 'block';
-                if (okrZone) okrZone.style.display = 'block';
-                if (capContainer) capContainer.style.display = 'block';
-                if (subjectsContainer) subjectsContainer.style.display = 'block';
-                if (okrugsContainer) okrugsContainer.style.display = 'block';
+                document.getElementById('ruSubmissionsZone').style.display = 'block';
+                document.getElementById('ruOkrugsZone').style.display = 'block';
+                document.getElementById('ruCapitalsContainer').style.display = 'block';
+                document.getElementById('ruSubjectsContainer').style.display = 'block';
+                document.getElementById('ruOkrugsContainer').style.display = 'block';
             } else if (isRussiaDbActive && q === '') {
-                // Возвращаем нативное состояние блоков при сбросе
+                // 🌟 РЕЖИМ ТОТАЛЬНОГО СБРОСА ПОИСКА: Сворачиваем и прячем все внутренние аккордеоны субъектов/округов
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
+                
+                // Скрываем все внутренние таблицы-гармошки регионов, чтобы убрать "бред" и кашу
+                if (block.id !== 'block-ru-capital-alphabet') {
+                    block.style.display = 'none';
+                }
+                
+                // 🌟 СТРОГО ВОССТАНАВЛИВАЕМ КОРЕНЬ: Гарантируем одновременный вывод всех 3 нативных разделов России
+                document.getElementById('ruMainMenuZone').style.display = 'block';
+                document.getElementById('ruSubmissionsZone').style.display = 'none';
+                document.getElementById('ruOkrugsZone').style.display = 'none';
+                
+                // Насильно возвращаем 3-й раздел (Административные центры) на законное место в свернутом виде
+                const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
+                if (capAlphabetBlock) capAlphabetBlock.style.display = 'block';
+                document.getElementById('ruCapitalsContainer').style.display = 'block';
             } else {
+                // Стандартное поведение для вкладки стран мира
                 block.style.display = 'block';
                 if (q !== '') {
                     block.classList.remove('collapsed');
