@@ -1859,11 +1859,14 @@ function exitRuSubmissions() {
 }
 
 function switchView(viewId) {
-    // 🌟 АВТО-ОЧИСТКА ПОИСКА ПРИ СМЕНЕ ВКЛАДОК
+    // 🌟 АВТО-ОЧИСТКА И ОБНУЛЕНИЕ СОСТОЯНИЯ ПОИСКА
     const searchInput = document.getElementById('searchInput');
     const clearBtn = document.getElementById('clearSearchBtn');
     if (searchInput) searchInput.value = '';
     if (clearBtn) clearBtn.style.display = 'none';
+    
+    // Принудительно вызываем функцию поиска, чтобы она вернула все скрытые таблицы обратно в DOM
+    runSearch();
 
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
@@ -2010,11 +2013,9 @@ function runSearch() {
 
         // Проверяем, является ли текущий блок навигационной кнопкой-заголовком Зоны А
         if (block.id === 'block-ru-sub-header' || block.id === 'block-ru-okr-header') {
-            // При пустом поиске возвращаем заголовки меню на место
             if (q === '') {
                 block.style.display = 'block';
             } else {
-                // Во время активного поиска прячем главные кнопки меню, чтобы выводить только таблицы с результатами
                 block.style.display = 'none';
             }
             return;
@@ -2031,7 +2032,6 @@ function runSearch() {
             const name = r.getAttribute('data-name') || '';
             const cap = r.getAttribute('data-capital') || '';
             
-            // Сквозной поиск: строка совпадает, если запрос есть в названии региона ИЛИ в названии центра/города
             if (name.includes(q) || cap.includes(q)) {
                 r.classList.remove('hidden');
                 visibleCount++;
@@ -2046,14 +2046,11 @@ function runSearch() {
         if (visibleCount === 0 && q !== '') {
             block.style.display = 'none';
         } else {
-            // 🌟 УМНОЕ ОТОБРАЖЕНИЕ: Если мы в Базе России и идет поиск (q !== ''),
-            // мы принудительно выводим скрытые Зоны Б и В на экран, чтобы показать совпадения
             if (isRussiaDbActive && q !== '') {
                 block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
                 
-                // Автоматически временно зажигаем контейнеры-подложки, чтобы браузер их отрисовал
                 const subZone = document.getElementById('ruSubmissionsZone');
                 const okrZone = document.getElementById('ruOkrugsZone');
                 const capContainer = document.getElementById('ruCapitalsContainer');
@@ -2066,14 +2063,10 @@ function runSearch() {
                 if (subjectsContainer) subjectsContainer.style.display = 'block';
                 if (okrugsContainer) okrugsContainer.style.display = 'block';
             } else if (isRussiaDbActive && q === '') {
-                // 🌟 СБРОС ПОИСКА: Если строку стерли, мягко возвращаем нативный интерфейс РФ на первый уровень меню
+                // Возвращаем нативное состояние блоков при сбросе
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
-                
-                // Вызываем встроенную нативную функцию выхода, которая вернет красивое меню Зоны А
-                exitRuSubmissions();
             } else {
-                // Стандартное поведение для вкладки стран мира
                 block.style.display = 'block';
                 if (q !== '') {
                     block.classList.remove('collapsed');
