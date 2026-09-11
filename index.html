@@ -30,12 +30,11 @@
             color: var(--text-color);
             margin: 0;
             padding: 20px;
+            padding-top: 165px;
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            /* 🌟 МЯГКАЯ ПОДУШКА: отодвигает списки ровно под высоту зафиксированной шапки */
-            padding-top: 175px !important; 
         }
         .fixed-header {
             position: fixed;
@@ -45,15 +44,8 @@
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            
-            /* 🍏 БОКОВЫЕ ПОЛЯ И НИЗ ИДЮТ ОТДЕЛЬНО: */
-            padding-left: 16px;
-            padding-right: 16px;
-            padding-bottom: 4px;
-            
-            /* 🌟 ЖЕЛЕЗНЫЙ ЩИТ ДЛЯ IOS: Смартфон сам поймет, где челка iPhone и отодвинет меню вниз */
-            padding-top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
-            border-bottom: 1px solid var(--border-color); /* Аккуратная разделительная черта */
+            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
+            padding: 8px 16px 4px 16px; 
         }
         .header-content {
             max-width: 1000px;
