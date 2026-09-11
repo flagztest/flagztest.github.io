@@ -1859,6 +1859,12 @@ function exitRuSubmissions() {
 }
 
 function switchView(viewId) {
+    // 🌟 АВТО-ОЧИСТКА ПОИСКА ПРИ СМЕНЕ ВКЛАДОК
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
@@ -1899,7 +1905,6 @@ function switchView(viewId) {
         if (worldBuffer) worldBuffer.style.display = 'block';
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
         
-        // 🌟 СБРОС СКРОЛЛА ДЛЯ БАЗЫ СТРАН: обнуляем прокрутку, камера летит на самый верх к Европе
         window.scrollTo(0, 0);
     } else if (viewId === 'ru-db') {
         window.scrollTo(0, 0);
