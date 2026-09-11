@@ -2451,8 +2451,6 @@ function generateRussiaSubjectsTables() {
     }
 }
 
-// Запускаем автоматический рендеринг при старте скрипта
-generateRussiaSubjectsTables();
 
 function toggleBlock(id) {
     const block = document.getElementById(id);
@@ -2650,9 +2648,10 @@ function generateRussiaOkrugsTables() {
     }
 }
 
-// 🌟 ОЖИВЛЯЕМ ОКРУГА И ЦЕНТРЫ: запускаем их сборку строго после того,
+// 🌟 ОЖИВЛЯЕМ ВСЮ БАЗУ РОССИИ: запускаем сборку таблиц строго после того,
 // как браузер полностью прочитал всю страницу и создал HTML-контейнеры.
 window.addEventListener('DOMContentLoaded', () => {
+    generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
