@@ -1987,21 +1987,31 @@ function runSearch() {
         clearBtn.style.display = 'none';
     }
 
-    // 🌟 ОПРЕДЕЛЯЕМ ТЕКУЩИЙ РЕЖИМ РАБОТЫ: Страны мира или База России
-    // Проверяем, активна ли сейчас кнопка-вкладка "База России"
+    // ОПРЕДЕЛЯЕМ ТЕКУЩИЙ РЕЖИМ РАБОТЫ: Страны мира или База России
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
     document.querySelectorAll('.continent-block').forEach(block => {
-        // Проверяем, принадлежит ли этот блок разделу России (его ID начинается с 'block-ru-')
         const isRussiaBlock = block.id.startsWith('block-ru-');
         
-        // 🌟 СТРОГОЕ РАЗДЕЛЕНИЕ: Если мы ищем по России, полностью игнорируем блоки стран мира (и наоборот)
+        // Жесткое разделение вкладок: в поиске стран скрываем Россию, в поиске России скрываем страны
         if (isRussiaDbActive && !isRussiaBlock) {
             block.style.display = 'none';
             return;
         }
         if (!isRussiaDbActive && isRussiaBlock) {
             block.style.display = 'none';
+            return;
+        }
+
+        // Проверяем, является ли текущий блок навигационной кнопкой-заголовком Зоны А
+        if (block.id === 'block-ru-sub-header' || block.id === 'block-ru-okr-header') {
+            // При пустом поиске возвращаем заголовки меню на место
+            if (q === '') {
+                block.style.display = 'block';
+            } else {
+                // Во время активного поиска прячем главные кнопки меню, чтобы выводить только таблицы с результатами
+                block.style.display = 'none';
+            }
             return;
         }
 
@@ -2013,9 +2023,11 @@ function runSearch() {
         let visibleCount = 0;
         
         rows.forEach(r => {
-            const name = r.getAttribute('data-name');
-            const cap = r.getAttribute('data-capital');
-            if (name && (name.includes(q) || cap.includes(q))) {
+            const name = r.getAttribute('data-name') || '';
+            const cap = r.getAttribute('data-capital') || '';
+            
+            // Сквозной поиск: строка совпадает, если запрос есть в названии региона ИЛИ в названии центра/города
+            if (name.includes(q) || cap.includes(q)) {
                 r.classList.remove('hidden');
                 visibleCount++;
             } else {
@@ -2029,19 +2041,46 @@ function runSearch() {
         if (visibleCount === 0 && q !== '') {
             block.style.display = 'none';
         } else {
-            block.style.display = 'block';
-            
-            if (q !== '') {
+            // 🌟 УМНОЕ ОТОБРАЖЕНИЕ: Если мы в Базе России и идет поиск (q !== ''),
+            // мы принудительно выводим скрытые Зоны Б и В на экран, чтобы показать совпадения
+            if (isRussiaDbActive && q !== '') {
+                block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
-            } else {
+                
+                // Автоматически временно зажигаем контейнеры-подложки, чтобы браузер их отрисовал
+                const subZone = document.getElementById('ruSubmissionsZone');
+                const okrZone = document.getElementById('ruOkrugsZone');
+                const capContainer = document.getElementById('ruCapitalsContainer');
+                const subjectsContainer = document.getElementById('ruSubjectsContainer');
+                const okrugsContainer = document.getElementById('ruOkrugsContainer');
+                
+                if (subZone) subZone.style.display = 'block';
+                if (okrZone) okrZone.style.display = 'block';
+                if (capContainer) capContainer.style.display = 'block';
+                if (subjectsContainer) subjectsContainer.style.display = 'block';
+                if (okrugsContainer) okrugsContainer.style.display = 'block';
+            } else if (isRussiaDbActive && q === '') {
+                // 🌟 СБРОС ПОИСКА: Если строку стерли, мягко возвращаем нативный интерфейс РФ на первый уровень меню
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
+                
+                // Вызываем встроенную нативную функцию выхода, которая вернет красивое меню Зоны А
+                exitRuSubmissions();
+            } else {
+                // Стандартное поведение для вкладки стран мира
+                block.style.display = 'block';
+                if (q !== '') {
+                    block.classList.remove('collapsed');
+                    if (content) content.style.display = 'block';
+                } else {
+                    block.classList.add('collapsed');
+                    if (content) content.style.display = 'none';
+                }
             }
         }
     });
 }
-
 
 function clearSearch() {
     const searchInput = document.getElementById('searchInput');
