@@ -1859,14 +1859,11 @@ function exitRuSubmissions() {
 }
 
 function switchView(viewId) {
-    // 🌟 АВТО-ОЧИСТКА И ОБНУЛЕНИЕ СОСТОЯНИЯ ПОИСКА
+    // АВТО-ОЧИСТКА И ОБНУЛЕНИЕ СОСТОЯНИЯ ПОИСКА
     const searchInput = document.getElementById('searchInput');
     const clearBtn = document.getElementById('clearSearchBtn');
     if (searchInput) searchInput.value = '';
     if (clearBtn) clearBtn.style.display = 'none';
-    
-    // Принудительно вызываем функцию поиска, чтобы она вернула все скрытые таблицы обратно в DOM
-    runSearch();
 
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
@@ -1953,6 +1950,9 @@ function switchView(viewId) {
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
     }
+
+    // 🌟 ВЫЗЫВАЕМ ПОИСК В САМОМ КОНЦЕ: теперь вкладка России уже активна и runSearch отработает корректно!
+    runSearch();
 }
 
 let allCollapsed = true; // Сделали true на старте, так как всё свернуто
@@ -2011,7 +2011,7 @@ function runSearch() {
             return;
         }
 
-        // 🌟 ИЗОЛИРУЕМ ИДЕАЛЬНО ПЛАШКИ ПЕРВОГО УРОВНЯ (ГЛАВНЫЕ КНОПКИ МЕНЮ)
+        // 🌟 ИЗОЛИРУЕМ ПЛАШКИ ПЕРВОГО УРОВНЯ (ГЛАВНЫЕ КНОПКИ МЕНЮ)
         if (block.id === 'block-ru-sub-header' || block.id === 'block-ru-okr-header') {
             if (q === '') {
                 block.style.display = 'block'; // Возвращаем плашки меню, если поиск пуст
@@ -2058,21 +2058,21 @@ function runSearch() {
                 document.getElementById('ruSubjectsContainer').style.display = 'block';
                 document.getElementById('ruOkrugsContainer').style.display = 'block';
             } else if (isRussiaDbActive && q === '') {
-                // 🌟 РЕЖИМ ТОТАЛЬНОГО СБРОСА ПОИСКА: Сворачиваем и прячем все внутренние аккордеоны субъектов/округов
+                // 🌟 РЕЖИМ ТОТАЛЬНОГО СБРОСА ПОИСКА: Сворачиваем контент внутри аккордеонов регионов
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
                 
-                // Скрываем все внутренние таблицы-гармошки регионов, чтобы убрать "бред" и кашу
+                // Скрываем все внутренние таблицы-гармошки регионов, чтобы убрать кашу
                 if (block.id !== 'block-ru-capital-alphabet') {
                     block.style.display = 'none';
                 }
                 
-                // 🌟 СТРОГО ВОССТАНАВЛИВАЕМ КОРЕНЬ: Гарантируем одновременный вывод всех 3 нативных разделов России
+                // 🌟 ВОССТАНАВЛИВАЕМ КОРЕНЬ: Возвращаем Главное меню (Зону А) и гасим Зоны Б и В
                 document.getElementById('ruMainMenuZone').style.display = 'block';
                 document.getElementById('ruSubmissionsZone').style.display = 'none';
                 document.getElementById('ruOkrugsZone').style.display = 'none';
                 
-                // Насильно возвращаем 3-й раздел (Административные центры) на законное место в свернутом виде
+                // Насильно возвращаем Административные центры на законное место в свернутом виде
                 const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
                 if (capAlphabetBlock) capAlphabetBlock.style.display = 'block';
                 document.getElementById('ruCapitalsContainer').style.display = 'block';
