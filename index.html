@@ -29,25 +29,12 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 0 12px; /* Убрали жесткий padding-top, перенесли его в логику слоев */
-            overflow-x: hidden;
-            /* 🌟 МОБИЛЬНЫЙ МОРФИЗМ: Заставляем iPhone крутить списки отдельно от шапки */
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            box-sizing: border-box;
+            padding: 20px;
+            padding-top: 165px;
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            width: 100%;
-            /* 🌟 СЛОЙ ПРОКРУТКИ: списки будут крутиться здесь, не утягивая за собой кнопки меню */
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Возвращаем фирменный плавный скролл Apple */
-            padding-top: 175px; /* Мягкая подушка безопасности под высоту шапки */
-            padding-bottom: 40px;
-            box-sizing: border-box;
         }
         .fixed-header {
             position: fixed;
@@ -57,24 +44,18 @@
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            
-            /* 🍏 БОКОВЫЕ ПОЛЯ И НИЗ ИДЮТ ОТДЕЛЬНО: */
-            padding-left: 16px;
-            padding-right: 16px;
-            padding-bottom: 4px;
-            
-            /* 🌟 ЖЕЛЕЗНЫЙ ЩИТ ДЛЯ IOS БОЛЬШЕ НЕ ПЕРЕБИВАЕТСЯ: */
-            /* СТАТУС-БАР ЩИТ: Смартфон сам поймет, где челка iPhone и отодвинет меню вниз */
-            padding-top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
-            border-bottom: 1px solid var(--border-color); /* Аккуратная разделительная черта */
+            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
+            padding: 8px 16px 4px 16px; 
         }
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
+            /* 🌟 Прижали инпут ближе к кнопкам меню для идеального баланса */
             gap: 4px; 
         }
+
 
         .nav-tabs {
             display: flex;
@@ -1878,7 +1859,7 @@ function exitRuSubmissions() {
 }
 
 function switchView(viewId) {
-    // 🌟 АВТО-ОЧИСТКА И ОБНУЛЕНИЕ СОСТОЯНИЯ ПОИСКА ПРИ СМЕНЕ ВКЛАДОК
+    // АВТО-ОЧИСТКА И ОБНУЛЕНИЕ СОСТОЯНИЯ ПОИСКА
     const searchInput = document.getElementById('searchInput');
     const clearBtn = document.getElementById('clearSearchBtn');
     if (searchInput) searchInput.value = '';
@@ -1898,39 +1879,79 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('dbControls').style.display = 'none';
     
-    const regControls = document.getElementById('regionsControls');
-    if (regControls) regControls.style.display = 'none';
+    // Скрываем абсолютно все зоны и контейнеры России по умолчанию
+    document.getElementById('ruNavigationHeaders').style.display = 'none';
+    document.getElementById('ruMainMenuZone').style.display = 'none';
+    document.getElementById('ruSubmissionsZone').style.display = 'none';
+    document.getElementById('ruOkrugsZone').style.display = 'none';
+    document.getElementById('ruOkrugsContainer').style.display = 'none';
+    document.getElementById('ruCapitalsContainer').style.display = 'none';
+    
+    const buffer = document.getElementById('ruPaddingBuffer');
+    if (buffer) buffer.style.display = 'none';
+    
+    const worldBuffer = document.getElementById('worldPaddingBuffer');
+    if (worldBuffer) worldBuffer.style.display = 'none';
     
     flagScore = 0; flagRound = 1;
     capScore = 0; capRound = 1;
     countryScore = 0; countryRound = 1;
     
-    // Получаем доступ к контейнеру скролла, чтобы сбрасывать его наверх при смене игры
-    const container = document.querySelector('.container');
-    if (container) container.scrollTop = 0;
-    
     if (viewId === 'db') {
         document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
         document.getElementById('dbView').classList.add('active');
         document.getElementById('dbControls').style.display = 'flex';
-    } else if (viewId === 'quiz-flags') {
+        
+        if (worldBuffer) worldBuffer.style.display = 'block';
+        document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
+        
+        window.scrollTo(0, 0);
+    } else if (viewId === 'ru-db') {
+        window.scrollTo(0, 0);
+
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('dbView').classList.add('active'); 
+        document.getElementById('dbControls').style.display = 'flex';
+        
+        document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
+        
+        // Всегда принудительно зажигаем корневое меню (Зону А) и гасим Зоны Б и В
+        document.getElementById('ruNavigationHeaders').style.display = 'block';
+        document.getElementById('ruMainMenuZone').style.display = 'block'; 
+        document.getElementById('ruSubmissionsZone').style.display = 'none';
+        document.getElementById('ruOkrugsZone').style.display = 'none';
+        
+        // Мягко сворачиваем все внутренние аккордеоны субъектов и округов при переключении
+        document.querySelectorAll('#ruSubjectsContainer .continent-block, #ruOkrugsContainer .continent-block').forEach(b => {
+            b.classList.add('collapsed');
+            const content = b.querySelector('.continent-content');
+            if (content) content.style.display = 'none';
+        });
+        
+        const capContainer = document.getElementById('ruCapitalsContainer');
+        if (capContainer) capContainer.style.display = 'block';
+        
+        const btnOkr = document.getElementById('btnOkr');
+        const btnCap = document.getElementById('btnCap');
+        if (btnOkr) btnOkr.style.setProperty('background-color', '#f1f3f5', 'important');
+        if (btnCap) btnCap.style.setProperty('background-color', '#f1f3f5', 'important');
+
+        if (buffer) buffer.style.display = 'block';
+    } else if (viewId === 'quiz-flags') {
+        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
         document.getElementById('quizFlagsView').classList.add('active');
         loadQuizFlagRound();
     } else if (viewId === 'quiz-capitals') {
-        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
         document.getElementById('quizCapitalsView').classList.add('active');
         loadQuizCapitalRound();
     } else if (viewId === 'quiz-countries') {
-        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
+        document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
         document.getElementById('quizCountriesView').classList.add('active');
         loadQuizCountryRound();
-    } else if (viewId === 'quiz-regions') {
-        document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
-        document.getElementById('quizRegionsView').classList.add('active');
-        if (regControls) regControls.style.display = 'flex';
     }
 
+    // 🌟 ВЫЗЫВАЕМ ПОИСК В САМОМ КОНЦЕ: теперь вкладка России уже активна и runSearch отработает корректно!
     runSearch();
 }
 
@@ -1965,38 +1986,52 @@ function toggleAllContinents() {
 
 function runSearch() {
     const searchInput = document.getElementById('searchInput');
-    const regionsSearchInput = document.getElementById('regionsSearchInput');
     const clearBtn = document.getElementById('clearSearchBtn');
-    const clearRegionsBtn = document.getElementById('clearRegionsSearchBtn');
+    const q = searchInput.value.toLowerCase().trim();
     
-    // Проверяем, какая вкладка активна: Стран мира или Базы России
-    const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(5)').classList.contains('active');
-    
-    // Берем поисковый запрос из правильного инпута в зависимости от вкладки
-    let q = "";
-    if (isRussiaDbActive && regionsSearchInput) {
-        q = regionsSearchInput.value.toLowerCase().trim();
-        if (clearRegionsBtn) clearRegionsBtn.style.display = regionsSearchInput.value.length > 0 ? 'block' : 'none';
-    } else if (searchInput) {
-        q = searchInput.value.toLowerCase().trim();
-        if (clearBtn) clearBtn.style.display = searchInput.value.length > 0 ? 'block' : 'none';
+    if (searchInput.value.length > 0) {
+        clearBtn.style.display = 'block';
+    } else {
+        clearBtn.style.display = 'none';
     }
 
-    // 🌍 ЛОГИКА ДЛЯ ТАБЛИЦ СТРАН МИРА
-    document.querySelectorAll('#tablesContainer .continent-block').forEach(block => {
-        if (isRussiaDbActive) {
+    // ОПРЕДЕЛЯЕМ ТЕКУЩИЙ РЕЖИМ РАБОТЫ: Страны мира или База России
+    const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
+
+    document.querySelectorAll('.continent-block').forEach(block => {
+        const isRussiaBlock = block.id.startsWith('block-ru-');
+        
+        // Жесткое разделение вкладок: в поиске стран скрываем Россию, в поиске России скрываем страны
+        if (isRussiaDbActive && !isRussiaBlock) {
             block.style.display = 'none';
             return;
         }
-        block.style.display = 'block';
-        
+        if (!isRussiaDbActive && isRussiaBlock) {
+            block.style.display = 'none';
+            return;
+        }
+
+        // 🌟 ИЗОЛИРУЕМ ПЛАШКИ ПЕРВОГО УРОВНЯ (ГЛАВНЫЕ КНОПКИ МЕНЮ)
+        if (block.id === 'block-ru-sub-header' || block.id === 'block-ru-okr-header') {
+            if (q === '') {
+                block.style.display = 'block'; // Возвращаем плашки меню, если поиск пуст
+            } else {
+                block.style.display = 'none';  // Убираем их во время поиска результатов
+            }
+            return;
+        }
+
         const rows = block.querySelectorAll('tbody tr');
-        const content = block.querySelector('.continent-content');
+        const content = block.querySelector('.continent-content'); 
+        
+        if (rows.length === 0) return;
+
         let visibleCount = 0;
         
         rows.forEach(r => {
             const name = r.getAttribute('data-name') || '';
             const cap = r.getAttribute('data-capital') || '';
+            
             if (name.includes(q) || cap.includes(q)) {
                 r.classList.remove('hidden');
                 visibleCount++;
@@ -2011,90 +2046,49 @@ function runSearch() {
         if (visibleCount === 0 && q !== '') {
             block.style.display = 'none';
         } else {
-            if (q !== '') {
+            if (isRussiaDbActive && q !== '') {
+                // 🌟 РЕЖИМ АКТИВНОГО ПОИСКА: Зажигаем все таблицы с совпадениями на одном общем экране
+                block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
-            } else {
+                
+                document.getElementById('ruSubmissionsZone').style.display = 'block';
+                document.getElementById('ruOkrugsZone').style.display = 'block';
+                document.getElementById('ruCapitalsContainer').style.display = 'block';
+                document.getElementById('ruSubjectsContainer').style.display = 'block';
+                document.getElementById('ruOkrugsContainer').style.display = 'block';
+            } else if (isRussiaDbActive && q === '') {
+                // 🌟 РЕЖИМ ТОТАЛЬНОГО СБРОСА ПОИСКА: Сворачиваем контент внутри аккордеонов регионов
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
+                
+                // Скрываем все внутренние таблицы-гармошки регионов, чтобы убрать кашу
+                if (block.id !== 'block-ru-capital-alphabet') {
+                    block.style.display = 'none';
+                }
+                
+                // 🌟 ВОССТАНАВЛИВАЕМ КОРЕНЬ: Возвращаем Главное меню (Зону А) и гасим Зоны Б и В
+                document.getElementById('ruMainMenuZone').style.display = 'block';
+                document.getElementById('ruSubmissionsZone').style.display = 'none';
+                document.getElementById('ruOkrugsZone').style.display = 'none';
+                
+                // Насильно возвращаем Административные центры на законное место в свернутом виде
+                const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
+                if (capAlphabetBlock) capAlphabetBlock.style.display = 'block';
+                document.getElementById('ruCapitalsContainer').style.display = 'block';
+            } else {
+                // Стандартное поведение для вкладки стран мира
+                block.style.display = 'block';
+                if (q !== '') {
+                    block.classList.remove('collapsed');
+                    if (content) content.style.display = 'block';
+                } else {
+                    block.classList.add('collapsed');
+                    if (content) content.style.display = 'none';
+                }
             }
         }
     });
-
-    // 🇷🇺 ЛОГИКА ДЛЯ НОВОЙ БАЗЫ РОССИИ (types и districts)
-    if (isRussiaDbActive) {
-        const typesBlock = document.getElementById('block-russia-types');
-        const districtsBlock = document.getElementById('block-russia-districts');
-        
-        // Массив всех внутренних под-аккордеонов России
-        const subBlocks = document.querySelectorAll('.sub-continent-block');
-        
-        if (q !== '') {
-            // РЕЖИМ АКТИВНОГО ПОИСКА ПО РОССИИ: принудительно раскрываем всё
-            if (typesBlock) {
-                typesBlock.style.display = 'block';
-                typesBlock.classList.remove('collapsed');
-                const typesContent = typesBlock.querySelector('.continent-content');
-                if (typesContent) typesContent.style.display = 'block';
-            }
-            if (districtsBlock) {
-                districtsBlock.style.display = 'block';
-                districtsBlock.classList.remove('collapsed');
-                const districtsContent = districtsBlock.querySelector('.continent-content');
-                if (districtsContent) districtsContent.style.display = 'block';
-            }
-            
-            subBlocks.forEach(b => {
-                b.style.display = 'block';
-                b.classList.remove('collapsed');
-                const subContent = b.querySelector('.continent-content');
-                if (subContent) subContent.style.display = 'block';
-                
-                // Фильтруем строки внутри каждого под-блока России
-                const rows = b.querySelectorAll('tbody tr');
-                let visibleCount = 0;
-                rows.forEach(r => {
-                    const name = r.getAttribute('data-name') || '';
-                    const cap = r.getAttribute('data-capital') || '';
-                    if (name.includes(q) || cap.includes(q)) {
-                        r.classList.remove('hidden');
-                        visibleCount++;
-                    } else {
-                        r.classList.add('hidden');
-                    }
-                });
-                
-                // Если внутри под-блока нет совпадений, скрываем его полностью
-                if (visibleCount === 0) {
-                    b.style.display = 'none';
-                }
-            });
-        } else {
-            // РЕЖИМ СБРОСА ПОИСКА ПО РОССИИ: аккуратно возвращаем строго закрытые начальные разделы
-            if (typesBlock) {
-                typesBlock.style.display = 'block';
-                typesBlock.classList.add('collapsed');
-                const typesContent = typesBlock.querySelector('.continent-content');
-                if (typesContent) typesContent.style.display = 'none';
-            }
-            if (districtsBlock) {
-                districtsBlock.style.display = 'block';
-                districtsBlock.classList.add('collapsed');
-                const districtsContent = districtsBlock.querySelector('.continent-content');
-                if (districtsContent) districtsContent.style.display = 'none';
-            }
-            
-            subBlocks.forEach(b => {
-                b.style.display = 'block';
-                b.classList.add('collapsed');
-                const subContent = b.querySelector('.continent-content');
-                if (subContent) subContent.style.display = 'none';
-                
-                // Показываем обратно все строки
-                b.querySelectorAll('tbody tr').forEach(r => r.classList.remove('hidden'));
-            });
-        }
-    }
 }
 
 function clearSearch() {
@@ -2671,16 +2665,6 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
-});
-
-// 🍏 БЛОКИРОВКА СКРОЛЛА ШАПКИ НА IPHONE (Защита от уползания меню)
-document.addEventListener('DOMContentLoaded', () => {
-    const header = document.querySelector('.fixed-header');
-    if (header) {
-        header.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-    }
 });
 
 </script>
