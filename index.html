@@ -1981,7 +1981,7 @@ function runSearch() {
 
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
-    // ЗАПОМИНАЕМ: Какой блок был открыт пользователем ДО начала поиска
+    // 🌟 ШАГ 1: Находим, какой конкретно блок сейчас развернут пользователем
     const activeBlockBeforeSearch = document.querySelector('.continent-block:not(.collapsed)');
 
     document.querySelectorAll('.continent-block').forEach(block => {
@@ -2007,16 +2007,28 @@ function runSearch() {
             return;
         }
 
-        // Изоляция поиска внутри выбранного подраздела на вкладке России
-        if (isRussiaDbActive && q !== '') {
-            const isInSubjectsContainer = block.closest('#ruSubjectsContainer') !== null;
-            const isInOkrugsContainer = block.closest('#ruOkrugsContainer') !== null;
+        const isInSubjectsContainer = block.closest('#ruSubjectsContainer') !== null;
+        const isInOkrugsContainer = block.closest('#ruOkrugsContainer') !== null;
+        const isInCapitalsContainer = block.closest('#ruCapitalsContainer') !== null || block.id === 'block-ru-capital-alphabet';
 
-            if (currentRuZone === 'subjects' && !isInSubjectsContainer) {
-                block.style.display = 'none';
-                return;
+        // 🌟 ШАГ 2: Жесткая изоляция подразделов во время фокуса и ввода в поиск
+        if (isRussiaDbActive) {
+            // Если мы зашли в Субъекты, разрешаем отображать ТОЛЬКО тот блок, который открыт. Чужие блоки не вылезут сверху!
+            if (currentRuZone === 'subjects') {
+                if (!isInSubjectsContainer || (activeBlockBeforeSearch && activeBlockBeforeSearch.id !== block.id)) {
+                    block.style.display = 'none';
+                    return;
+                }
             }
-            if (currentRuZone === 'okrugs' && !isInOkrugsContainer) {
+            // Если мы зашли в Федеральные Округа, изолируем текущий открытый округ
+            if (currentRuZone === 'okrugs') {
+                if (!isInOkrugsContainer || (activeBlockBeforeSearch && activeBlockBeforeSearch.id !== block.id)) {
+                    block.style.display = 'none';
+                    return;
+                }
+            }
+            // Если мы в главном меню России, ищем только по Административным центрам
+            if (currentRuZone === 'main' && !isInCapitalsContainer) {
                 block.style.display = 'none';
                 return;
             }
@@ -2048,7 +2060,7 @@ function runSearch() {
             block.style.display = 'none';
         } else {
             if (q !== '') {
-                // АКТИВНЫЙ ПОИСК
+                // АКТИВНЫЙ ПОИСК (Когда вводится текст)
                 block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
@@ -2061,24 +2073,25 @@ function runSearch() {
                         document.getElementById('ruOkrugsZone').style.display = 'block';
                         document.getElementById('ruOkrugsContainer').style.display = 'block';
                     } else if (currentRuZone === 'main') {
-                        document.getElementById('ruSubmissionsZone').style.display = 'block';
-                        document.getElementById('ruSubjectsContainer').style.display = 'block';
-                        document.getElementById('ruOkrugsZone').style.display = 'block';
-                        document.getElementById('ruOkrugsContainer').style.display = 'block';
                         document.getElementById('ruCapitalsContainer').style.display = 'block';
                     }
                 }
             } else {
-                // ТОТАЛЬНЫЙ СБРОС ПОИСКА К ИСХОДНОМУ РАЗДЕЛУ (строка ввода опустела)
+                // 🌟 ШАГ 3: Умный сброс или пустой фокус (Строка ввода пустая)
                 block.style.display = 'block'; 
                 
-                // Исправление: Не схлопываем плашку принудительно, если она БЫЛА открыта пользователем изначально
+                // Если этот блок был развернут пользователем — удерживаем его открытым намертво
                 if (activeBlockBeforeSearch && activeBlockBeforeSearch.id === block.id) {
                     block.classList.remove('collapsed');
                     if (content) content.style.display = 'block';
                 } else {
-                    block.classList.add('collapsed'); 
-                    if (content) content.style.display = 'none';
+                    // Все остальные блоки (скрытые изначально) убираем с экрана, чтобы они не выталкивали верстку
+                    if (isRussiaDbActive && (currentRuZone === 'subjects' || currentRuZone === 'okrugs')) {
+                        block.style.display = 'none';
+                    } else {
+                        block.classList.add('collapsed'); 
+                        if (content) content.style.display = 'none';
+                    }
                 }
                 
                 if (isRussiaDbActive) {
@@ -2086,19 +2099,17 @@ function runSearch() {
                         document.getElementById('ruMainMenuZone').style.display = 'none';
                         document.getElementById('ruSubmissionsZone').style.display = 'block';
                         document.getElementById('ruOkrugsZone').style.display = 'none';
-                        if (!block.closest('#ruSubjectsContainer')) block.style.display = 'none';
+                        document.getElementById('ruCapitalsContainer').style.display = 'none';
                     } else if (currentRuZone === 'okrugs') {
                         document.getElementById('ruMainMenuZone').style.display = 'none';
                         document.getElementById('ruSubmissionsZone').style.display = 'none';
                         document.getElementById('ruOkrugsZone').style.display = 'block';
                         document.getElementById('ruOkrugsContainer').style.display = 'block';
-                        if (!block.closest('#ruOkrugsContainer')) block.style.display = 'none';
+                        document.getElementById('ruCapitalsContainer').style.display = 'none';
                     } else {
                         document.getElementById('ruMainMenuZone').style.display = 'block';
                         document.getElementById('ruSubmissionsZone').style.display = 'none';
                         document.getElementById('ruOkrugsZone').style.display = 'none';
-                        
-                        if (block.id !== 'block-ru-capital-alphabet') block.style.display = 'none';
                         document.getElementById('ruCapitalsContainer').style.display = 'block';
                     }
                 } else {
@@ -2110,16 +2121,14 @@ function runSearch() {
         }
     });
 
-    // Автоматическая корректировка скролла: если при поиске/сбросе экран улетел, возвращаем заголовок на место
-    if (q === '' && activeBlockBeforeSearch) {
-        setTimeout(() => {
-            const offset = 120;
-            const offsetPosition = activeBlockBeforeSearch.offsetTop - offset;
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        }, 30);
+    // 🌟 ШАГ 4: Железная фиксация камеры на заголовке активного блока без микро-тряски экрана
+    if (activeBlockBeforeSearch) {
+        const offset = 120;
+        const offsetPosition = activeBlockBeforeSearch.offsetTop - offset;
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'auto' // 'auto' предотвращает дерганье скролла во время набора текста
+        });
     }
 }
 
