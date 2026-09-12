@@ -68,17 +68,15 @@
             background: none;
             border: none;
             font-size: 15px;
-            font-weight: 600;
-            /* 🌟 ОБЫЧНОЕ СОСТОЯНИЕ: цвет букв в точности как варианты ответов */
+            /* 🌟 ОДИНАКОВЫЙ ВЕС И РОДНОЙ ЦВЕТ: буквы больше не пляшут и не моргают */
+            font-weight: 700 !important; 
             color: #495057 !important; 
             cursor: pointer;
-            transition: all 0.2s;
             border-radius: 4px;
         }
         .tab-btn.active {
-            /* 🌟 НАЖАТОЕ СОСТОЯНИЕ: сверхжирный графит, копейка в копейку как вопросы в квизах */
-            color: #495057 !important;          
-            font-weight: 800 !important;
+            font-weight: 700 !important; 
+            color: #495057 !important; 
             background-color: #e9ecef !important; 
         }
 
@@ -409,17 +407,15 @@
      /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
      .tab-btn {
          width: 100% !important;
-         padding: 6px 0px !important; /* Намертво зануляем боковые поля, убирая раздувание Safari! */
-         font-size: 15px !important;  /* ВАШ КРУПНЫЙ ШРИФТ ОСТАЁТСЯ НЕИЗМЕННЫМ */
-         font-weight: 600 !important;
+         padding: 6px 0px !important; 
+         font-size: 15px !important;  
+         font-weight: 700 !important;
          text-align: center !important;
-         white-space: nowrap !important; /* СТРОГИЙ ЗАПРЕТ НА ПЕРЕНОС СЛОВ */
+         white-space: nowrap !important; 
          overflow: visible !important;
          box-sizing: border-box !important;
      }
-     /* 🌟 ЖЕЛЕЗНАЯ МОБИЛЬНАЯ ПОДСВЕТКА: сверхжирность 800 при нажатии на телефоне */
      .tab-btn.active {
-         font-weight: 800 !important;
          color: #495057 !important;
      }
 
