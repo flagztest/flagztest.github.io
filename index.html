@@ -1980,7 +1980,6 @@ function runSearch() {
     const isMainMenuVisible = document.getElementById('ruMainMenuZone').style.display === 'block' || document.getElementById('ruMainMenuZone').style.display === '';
     const isSubjectsZoneVisible = document.getElementById('ruSubmissionsZone').style.display === 'block';
     const isOkrugsZoneVisible = document.getElementById('ruOkrugsZone').style.display === 'block';
-    const isCapitalsAccordionOpen = !document.getElementById('block-ru-capital-alphabet')?.classList.contains('collapsed');
 
     document.querySelectorAll('.continent-block').forEach(block => {
         const isRussiaBlock = block.id.startsWith('block-ru-');
@@ -2009,18 +2008,25 @@ function runSearch() {
         if (isRussiaDbActive && q !== '') {
             const isSubjectBlock = block.id.startsWith('block-ru-subject-');
             const isOkrugBlock = block.id.startsWith('block-ru-okrug-');
+            const isCapitalBlock = block.id === 'block-ru-capital-alphabet';
 
-            // Если пользователь ушел вглубь "Субъектов", скрываем Округа и Центры из поиска
+            // Если мы зашли в раздел "Субъекты России", ищем только в них
             if (isSubjectsZoneVisible && !isSubjectBlock) {
                 block.style.display = 'none';
                 return;
             }
-            // Если пользователь ушел вглубь "Округов", скрываем Субъекты и Центры из поиска
+            // Если мы зашли в раздел "Федеральные округа", ищем только в них
             if (isOkrugsZoneVisible && !isOkrugBlock) {
                 block.style.display = 'none';
                 return;
             }
-            // На главном экране с 3 кнопками никаких ограничений нет — поиск бьет по всем базам сразу!
+            // Если мы на главном экране (3 кнопки) — пробиваем Субъекты, Округа и Центры одновременно!
+            // Но чтобы аккордеоны субъектов/округов не вылезали на главном экране кашей, мы скрываем их,
+            // оставляя для вывода на главном экране только алфавитный список Административных центров.
+            if (isMainMenuVisible && !isCapitalBlock) {
+                block.style.display = 'none';
+                return;
+            }
         }
 
         const rows = block.querySelectorAll('tbody tr');
