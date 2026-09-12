@@ -717,22 +717,22 @@
     </style>
 </head>
 <body>
-<!-- 🎛️ SVG-ФИЛЬТР ДЛЯ ИДЕАЛЬНОГО ВЫРЕЗАНИЯ ЗЕЛЕНОГО ЦВЕТА (ХРОМАКЕЙ ДЛЯ СМАРТФОНОВ) -->
+<!-- 🎛️ ОБНОВЛЕННЫЙ СВЕРХТОЧНЫЙ ХРОМАКЕЙ (ВЫЖИГАЕТ ЗЕЛЕНЫЙ ФОН НА СМАРТФОНАХ БЕЗ ОСТАТКА) -->
 <svg width="0" height="0" style="position:absolute; z-index:-1;">
     <defs>
-        <filter id="chromakey">
-            <!-- Переводим зеленый цвет видео в полную прозрачность (Alpha-канал) -->
+        <filter id="chromakey" color-interpolation-filters="sRGB">
+            <!-- Тонкая математическая матрица: полностью изолирует зеленый канал (#4fa231) и превращает его в прозрачность -->
             <feColorMatrix type="matrix" values="
-                1   0   0   0   0
-                0   1   0   0   0
-                0   0   1   0   0
-               -2   3  -2   1  -0.1
+                1     0     0     0     0
+                0     1     0     0     0
+                0     0     1     0     0
+               -3.5   4.5  -3.5   1    -0.05
             "/>
         </filter>
     </defs>
 </svg>
 
-<!-- 🦖 АНИМИРОВАННАЯ ХРОМАКЕЙ-ЗАСТАВКА С ГОДЗИЛЛОЙ БЕЗ ЛОГОТИПА И ФОНА -->
+<!-- 🦖 АНИМИРОВАННАЯ ЗАСТАВКА: БЕЗ ОБРЕЗКИ ХВОСТА И ФЛАГА -->
 <div id="splashScreen" style="
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -744,29 +744,29 @@
     z-index: 10000;
     transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
 ">
-    <!-- Контейнер безопасности: обрезает всё, что выходит за рамки 240px (убирает водяной знак) -->
+    <!-- Контейнер с «умной» маской: clip-path срезает только правый верхний угол (где логотип) -->
+    <!-- Сам контейнер теперь гибкий (360px на 360px), что позволяет Годзилле полностью поместиться в экран -->
     <div style="
-        width: 240px;
-        height: 240px;
+        width: 90vw;
+        max-width: 360px;
+        aspect-ratio: 1 / 1;
         position: relative;
-        overflow: hidden; /* Жестко прячет логотип за краями */
         display: flex;
         align-items: center;
         justify-content: center;
+        /* Магия маскирования: срезает прямоугольник 30% ширины и 12% высоты строго в правом верхнем углу */
+        clip-path: polygon(0% 0%, 70% 0%, 70% 12%, 100% 12%, 100% 100%, 0% 100%);
+        -webkit-clip-path: polygon(0% 0%, 70% 0%, 70% 12%, 100% 12%, 100% 100%, 0% 100%);
     ">
-        <!-- Видео: искусственно увеличено и приподнято, чтобы DeeVid AI улетел выше зоны видимости -->
-        <!-- Атрибуты autoplay loop muted playsinline гарантируют запуск на iOS Safari и Android Chrome -->
+        <!-- Видео теперь центрировано на 100% без искусственных сдвигов и сильного зума -->
         <video id="godzillaVideo" autoplay loop muted playsinline style="
-            position: absolute;
-            width: 125%;   /* Увеличиваем масштаб видео */
-            height: 125%;  
-            top: -12%;     /* Сдвигаем вверх: прячем логотип в правом верхнем углу */
-            left: -12.5%;  /* Выравниваем Годзиллу ровно по центру */
+            width: 100%;
+            height: 100%;
             object-fit: contain;
-            filter: url(#chromakey); /* Подключаем наш мобильный SVG-хромакей */
-            -webkit-filter: url(#chromakey); /* Поддержка старых версий iOS Safari */
+            filter: url(#chromakey);
+            -webkit-filter: url(#chromakey);
+            transform: translateZ(0); /* Включает аппаратное ускорение на смартфонах для сглаживания пикселей */
         ">
-            <!-- Ссылка на файл видео в вашем репозитории -->
             <source src="godzilla.mp4" type="video/mp4">
         </video>
     </div>
