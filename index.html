@@ -24,17 +24,51 @@
             --panel-bg: #ffffff;         
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* 🌟 iOS БЛОКИРОВКА: запрещаем браузеру прятать адресную строку */
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            padding-top: 165px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--panel-bg);
+            z-index: 1000;
+            padding: 8px 16px 4px 16px;
+            box-sizing: border-box;
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 165px 20px 20px 20px; /* Поле по умолчанию для Базы стран */
+            overflow-y: auto; /* Включаем внутренний скролл контента */
+            -webkit-overflow-scrolling: touch; /* Плавный инерционный ход на iPhone */
+        }
+        
+        /* 🌟 НАШ ХАК ДЛЯ БАЗЫ РОССИИ: когда активна РФ, прижимаем меню вплотную к поиску! */
+        body.ru-db-active .container {
+            padding-top: 100px !important;
+        }
+
+        @media (max-width: 600px) {
+            .fixed-header {
+                padding: 6px 12px !important;
+            }
+            .container {
+                padding: 115px 4px 20px 4px !important;
+            }
+            /* Мягкое мобильное прижатие кнопок меню РФ строго под инпут */
+            body.ru-db-active .container {
+                padding-top: 76px !important;
+            }
         }
         .fixed-header {
             position: fixed;
@@ -438,8 +472,6 @@
      }
      body {
          padding: 10px 4px !important;
-         /* 🌟 ПРИЖИМАЕМ ЕВРОПУ К ШАПКЕ ПРИ СТАРТЕ САЙТА: */
-         padding-top: 120px !important; 
      }
 
      .controls-row {
@@ -842,7 +874,7 @@
     </div>
 </div>
 
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="document.querySelector('.container').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
 <!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
@@ -1795,7 +1827,7 @@ function enterRuSubmissions(type) {
         document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
             b.style.display = 'block';
         });
-        window.scrollTo(0, 0);
+        document.querySelector('.container').scrollTo(0, 0);
     } else if (type === 'okrugs') {
         currentRuZone = 'okrugs'; // 🌟 САЙТ ЗАПОМНИЛ: теперь поиск ищет ТОЛЬКО в Округах
         document.getElementById('ruMainMenuZone').style.display = 'none';
@@ -1807,7 +1839,7 @@ function enterRuSubmissions(type) {
         document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
             b.style.display = 'block';
         });
-        window.scrollTo(0, 0);
+        document.querySelector('.container').scrollTo(0, 0);
     }
 }
 
@@ -1834,7 +1866,7 @@ function exitRuSubmissions() {
     document.getElementById('ruMainMenuZone').style.display = 'block';
     
     currentRuZone = 'main'; // 🌟 САЙТ ЗАПОМНИЛ: вы вышли в Главное меню России
-    window.scrollTo(0, 0);
+    document.querySelector('.container').scrollTo(0, 0);
 }
 
 function switchView(viewId) {
@@ -1844,7 +1876,14 @@ function switchView(viewId) {
     if (searchInput) searchInput.value = '';
     if (clearBtn) clearBtn.style.display = 'none';
     
-    currentRuZone = 'main'; // 🌟 САЙТ СБРОСИЛ ПАМЯТЬ ЗОНЫ ПРИ ПЕРЕХОДЕ НА ДРУГИЕ ВКЛАДКИ
+    currentRuZone = 'main'; 
+
+    // 🌟 УМНОЕ ПРИЖАТИЕ: Включаем плотный отступ для России, выключаем для остальных табов
+    if (viewId === 'ru-db') {
+        document.body.classList.add('ru-db-active');
+    } else {
+        document.body.classList.remove('ru-db-active');
+    }
 
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
@@ -1886,9 +1925,9 @@ function switchView(viewId) {
         if (worldBuffer) worldBuffer.style.display = 'block';
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
         
-        window.scrollTo(0, 0);
+        document.querySelector('.container').scrollTo(0, 0);
     } else if (viewId === 'ru-db') {
-        window.scrollTo(0, 0);
+        document.querySelector('.container').scrollTo(0, 0);
 
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
         document.getElementById('dbView').classList.add('active'); 
@@ -2110,17 +2149,20 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    window.scrollTo({top: 0, behavior: 'smooth'}); // Плавный возврат к началу текущего раздела дисплея
+    document.querySelector('.container').scrollTo({top: 0, behavior: 'smooth'});
     searchInput.focus();
 }
 
 document.getElementById('searchInput').addEventListener('input', runSearch);
 
-window.addEventListener('scroll', () => {
-    const btn = document.getElementById('scrollTopBtn');
-    if (window.scrollY > 300) btn.style.display = 'flex';
-    else btn.style.display = 'none';
-});
+const appContainer = document.querySelector('.container');
+if (appContainer) {
+    appContainer.addEventListener('scroll', () => {
+        const btn = document.getElementById('scrollTopBtn');
+        if (appContainer.scrollTop > 300) btn.style.display = 'flex';
+        else btn.style.display = 'none';
+    });
+}
 
 function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
@@ -2485,56 +2527,48 @@ function toggleBlock(id) {
     
     block.classList.toggle('collapsed');
     const content = block.querySelector('.continent-content');
+    const container = document.querySelector('.container');
+    if (!container) return;
     
     if (content) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
             setTimeout(() => {
-                const offset = 120;
-                
-                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
+                const offset = window.innerWidth <= 600 ? 70 : 120;
                 const isRussia = id.startsWith('block-ru-');
                 
                 if (isRussia) {
-                    // 🇷🇺 В Базе России плавно возвращаем фокус строго к «Республикам»
                     const republicsBlock = document.getElementById('block-ru-subject-Республики');
                     if (republicsBlock && id !== 'block-ru-subject-Республики') {
                         const offsetPosition = republicsBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        container.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                         return;
                     }
                 } else {
-                    // 🌍 В Базе стран мира находим «Европу» по её точному элементу
                     const europeBlock = document.getElementById('block-Европа');
-                    
-                    // Если закрывают любой нижний континент (Азию, Африку...),
-                    // мы плавно катим экран строго к координате Европы, сохраняя идеальную анимацию!
                     if (europeBlock && id !== 'block-Европа') {
                         const offsetPosition = europeBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        container.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                         return;
                     }
                 }
                 
-                // Защитное удержание камеры, если схлопнули самую первую плашку текущего списка
                 const offsetPosition = block.offsetTop - offset;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                container.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }, 10);
             return;
         } else {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
         setTimeout(() => {
-            const offset = 120;
+            const offset = window.innerWidth <= 600 ? 70 : 120;
             const offsetPosition = block.offsetTop - offset;
-            const diff = Math.abs(window.scrollY - offsetPosition);
+            const diff = Math.abs(container.scrollTop - offsetPosition);
 
             if (diff > 2) {
-                window.scrollTo({
+                container.scrollTo({
                     top: offsetPosition,
                     behavior: 'smooth'
                 });
