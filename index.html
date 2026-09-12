@@ -2020,8 +2020,8 @@ function runSearch() {
                 block.style.display = 'none';
                 return;
             }
-            // 3. Если мы на главном экране (3 кнопки) — заставляем поиск пробивать ВСЕ ТРИ БАЗЫ одновременно!
-            // Блок скроется только в том случае, если он НЕ относится ни к субъектам, ни к округам, ни к центрам.
+            // Если мы на главном экране (3 кнопки) — разрешаем поиск по всей базе. 
+            // Таблицы Субъектов и Округов на данном этапе скрывать НЕ нужно!
             if (isMainMenuVisible && !isSubjectBlock && !isOkrugBlock && !isCapitalBlock) {
                 block.style.display = 'none';
                 return;
@@ -2058,19 +2058,17 @@ function runSearch() {
                 const isOkrugBlock = block.id.startsWith('block-ru-okrug-');
                 const isCapitalBlock = block.id === 'block-ru-capital-alphabet';
 
-                // 🌟 ЗАЩИТНЫЙ ФИЛЬТР ПРЕДСТАВЛЕНИЯ:
-                // Если мы на главном экране, разрешаем открывать ТОЛЬКО Административные центры!
-                if (isMainMenuVisible && !isCapitalBlock) {
+                // 🌟 УМНЫЙ КОНТЕКСТНЫЙ ФИЛЬТР ЭКРАНОВ:
+                // 1. Если зашли внутрь Субъектов — гасим Округа и Центры
+                if (isSubjectsZoneVisible && !isSubjectBlock) {
                     block.style.display = 'none';
                 } 
-                // Если зашли в Субъекты, разрешаем открывать ТОЛЬКО Субъекты
-                else if (isSubjectsZoneVisible && !isSubjectBlock) {
-                    block.style.display = 'none';
-                } 
-                // Если зашли в Округа, разрешаем открывать ТОЛЬКО Округа
+                // 2. Если зашли внутрь Округов — гасим Субъекты и Центры
                 else if (isOkrugsZoneVisible && !isOkrugBlock) {
                     block.style.display = 'none';
                 } 
+                // 3. На главном экране (где 3 кнопки) — разрешаем открывать ВСЕ ТРИ БАЗЫ одновременно!
+                // Блок скроется только если он пустой (это отработает автоматика чуть ниже). 
                 // В остальных случаях безопасно зажигаем блок на экране
                 else {
                     block.style.display = 'block';
@@ -2078,13 +2076,18 @@ function runSearch() {
                     if (content) content.style.display = 'block';
                 }
 
-                // Не даем поиску самовольно открывать скрытые родительские экраны
-                if (isSubjectsZoneVisible) document.getElementById('ruSubjectsContainer').style.display = 'block';
-                if (isOkrugsZoneVisible) document.getElementById('ruOkrugsContainer').style.display = 'block';
-                
-                // Не даем поиску самовольно открывать скрытые родительские экраны
-                if (isSubjectsZoneVisible) document.getElementById('ruSubjectsContainer').style.display = 'block';
-                if (isOkrugsZoneVisible) document.getElementById('ruOkrugsContainer').style.display = 'block';
+                 // Распахиваем родительские зоны на главном экране, чтобы увидеть все карточки результатов
+                if (isMainMenuVisible) {
+                    document.getElementById('ruNavigationHeaders').style.display = 'block';
+                    document.getElementById('ruSubmissionsZone').style.display = 'block';
+                    document.getElementById('ruSubjectsContainer').style.display = 'block';
+                    document.getElementById('ruOkrugsZone').style.display = 'block';
+                    document.getElementById('ruOkrugsContainer').style.display = 'block';
+                    document.getElementById('ruCapitalsContainer').style.display = 'block';
+                } else {
+                    if (isSubjectsZoneVisible) document.getElementById('ruSubjectsContainer').style.display = 'block';
+                    if (isOkrugsZoneVisible) document.getElementById('ruOkrugsContainer').style.display = 'block';
+                }
             } else if (isRussiaDbActive && q === '') {
                 // РЕЖИМ СБРОСА ПОИСКА
                 block.classList.add('collapsed');
