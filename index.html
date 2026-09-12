@@ -865,6 +865,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 1600); // 🌟 УВЕЛИЧИЛИ ВРЕМЯ ПОКАЗА: теперь Годзилла гордо стоит на экране 1.6 секунды
 });
 
+// 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
+let currentRuZone = 'main';
+
 const specialFlags = {
     "prid": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Transnistria_%28state%29.svg",
     "abh": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Flag_of_the_Republic_of_Abkhazia.svg",
@@ -1780,12 +1783,11 @@ function createContinentBlock(continent, countries) {
 }
 
 function enterRuSubmissions(type) {
-    // Принудительно зажигаем общую родительскую навигационную коробку России со старта кликов
     const navHeaders = document.getElementById('ruNavigationHeaders');
     if (navHeaders) navHeaders.style.display = 'block';
 
     if (type === 'subjects') {
-        // ЭФФЕКТ СУБЪЕКТОВ: прячем главное меню, зажигаем Зону Б (6 Субъектов)
+        currentRuZone = 'subjects'; // 🌟 САЙТ ЗАПОМНИЛ: теперь поиск ищет ТОЛЬКО в Субъектах
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'block';
         document.getElementById('ruOkrugsZone').style.display = 'none';
@@ -1795,12 +1797,11 @@ function enterRuSubmissions(type) {
         });
         window.scrollTo(0, 0);
     } else if (type === 'okrugs') {
-        // ЭФФЕКТ ОКРУГОВ: прячем главное меню, зажигаем Зону В (8 Округов)
+        currentRuZone = 'okrugs'; // 🌟 САЙТ ЗАПОМНИЛ: теперь поиск ищет ТОЛЬКО в Округах
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
         
-        // 🌟 ИСПРАВЛЕНИЕ: принудительно показываем сам контейнер с таблицами округов
         document.getElementById('ruOkrugsContainer').style.display = 'block';
         
         document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
@@ -1829,10 +1830,10 @@ function exitRuSubmissions() {
     document.getElementById('ruOkrugsZone').style.display = 'none';
     document.getElementById('ruOkrugsContainer').style.display = 'none';
     
-    // Возвращаем на место алфавитную таблицу центров при выходе на первый уровень
     document.getElementById('ruCapitalsContainer').style.display = 'block';
     document.getElementById('ruMainMenuZone').style.display = 'block';
     
+    currentRuZone = 'main'; // 🌟 САЙТ ЗАПОМНИЛ: вы вышли в Главное меню России
     window.scrollTo(0, 0);
 }
 
@@ -1842,6 +1843,8 @@ function switchView(viewId) {
     const clearBtn = document.getElementById('clearSearchBtn');
     if (searchInput) searchInput.value = '';
     if (clearBtn) clearBtn.style.display = 'none';
+    
+    currentRuZone = 'main'; // 🌟 САЙТ СБРОСИЛ ПАМЯТЬ ЗОНЫ ПРИ ПЕРЕХОДЕ НА ДРУГИЕ ВКЛАДКИ
 
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
@@ -1973,13 +1976,11 @@ function runSearch() {
         clearBtn.style.display = 'none';
     }
 
-    // ОПРЕДЕЛЯЕМ ТЕКУЩИЙ РЕЖИМ РАБОТЫ: Страны мира или База России
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
     document.querySelectorAll('.continent-block').forEach(block => {
         const isRussiaBlock = block.id.startsWith('block-ru-');
         
-        // Жесткое разделение вкладок: в поиске стран скрываем Россию, в поиске России скрываем страны
         if (isRussiaDbActive && !isRussiaBlock) {
             block.style.display = 'none';
             return;
@@ -1989,14 +1990,33 @@ function runSearch() {
             return;
         }
 
-        // 🌟 ИЗОЛИРУЕМ ПЛАШКИ ПЕРВОГО УРОВНЯ (ГЛАВНЫЕ КНОПКИ МЕНЮ)
         if (block.id === 'block-ru-sub-header' || block.id === 'block-ru-okr-header') {
             if (q === '') {
-                block.style.display = 'block'; // Возвращаем плашки меню, если поиск пуст
+                block.style.display = 'block'; 
             } else {
-                block.style.display = 'none';  // Убираем их во время поиска результатов
+                block.style.display = 'none';  
             }
             return;
+        }
+
+        // 🌟 ИСПРАВЛЕНИЕ: Жёстко изолируем поиск только внутри активной зоны России
+        if (isRussiaDbActive && q !== '') {
+            const isInSubjectsContainer = block.closest('#ruSubjectsContainer') !== null;
+            const isInOkrugsContainer = block.closest('#ruOkrugsContainer') !== null;
+            const isAlphabetCapitals = block.id === 'block-ru-capital-alphabet';
+
+            if (currentRuZone === 'subjects' && !isInSubjectsContainer) {
+                block.style.display = 'none';
+                return;
+            }
+            if (currentRuZone === 'okrugs' && !isInOkrugsContainer) {
+                block.style.display = 'none';
+                return;
+            }
+            if (currentRuZone === 'main' && !isAlphabetCapitals) {
+                block.style.display = 'none';
+                return;
+            }
         }
 
         const rows = block.querySelectorAll('tbody tr');
@@ -2025,42 +2045,52 @@ function runSearch() {
             block.style.display = 'none';
         } else {
             if (isRussiaDbActive && q !== '') {
-                // 🌟 РЕЖИМ АКТИВНОГО ПОИСКА: Зажигаем все таблицы с совпадениями на одном общем экране
                 block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
                 
-                document.getElementById('ruSubmissionsZone').style.display = 'block';
-                document.getElementById('ruOkrugsZone').style.display = 'block';
-                document.getElementById('ruCapitalsContainer').style.display = 'block';
-                document.getElementById('ruSubjectsContainer').style.display = 'block';
-                document.getElementById('ruOkrugsContainer').style.display = 'block';
+                if (currentRuZone === 'subjects') {
+                    document.getElementById('ruSubmissionsZone').style.display = 'block';
+                    document.getElementById('ruSubjectsContainer').style.display = 'block';
+                } else if (currentRuZone === 'okrugs') {
+                    document.getElementById('ruOkrugsZone').style.display = 'block';
+                    document.getElementById('ruOkrugsContainer').style.display = 'block';
+                } else if (currentRuZone === 'main') {
+                    document.getElementById('ruCapitalsContainer').style.display = 'block';
+                }
             } else if (isRussiaDbActive && q === '') {
-                // 🌟 РЕЖИМ ТОТАЛЬНОГО СБРОСА ПОИСКА: Сворачиваем контент внутри аккордеонов регионов
+                // 🌟 УМНЫЙ ВОЗВРАТ ПРИ СБРОСЕ: Восстанавливаем состояние именно той зоны, где начали поиск
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
                 
-                // Скрываем все внутренние таблицы-гармошки регионов, чтобы убрать кашу
-                if (block.id !== 'block-ru-capital-alphabet') {
-                    block.style.display = 'none';
+                if (currentRuZone === 'subjects') {
+                    document.getElementById('ruMainMenuZone').style.display = 'none';
+                    document.getElementById('ruSubmissionsZone').style.display = 'block';
+                    document.getElementById('ruOkrugsZone').style.display = 'none';
+                    if (block.closest('#ruSubjectsContainer')) block.style.display = 'block';
+                } else if (currentRuZone === 'okrugs') {
+                    document.getElementById('ruMainMenuZone').style.display = 'none';
+                    document.getElementById('ruSubmissionsZone').style.display = 'none';
+                    document.getElementById('ruOkrugsZone').style.display = 'block';
+                    document.getElementById('ruOkrugsContainer').style.display = 'block';
+                    if (block.closest('#ruOkrugsContainer')) block.style.display = 'block';
+                } else {
+                    document.getElementById('ruMainMenuZone').style.display = 'block';
+                    document.getElementById('ruSubmissionsZone').style.display = 'none';
+                    document.getElementById('ruOkrugsZone').style.display = 'none';
+                    
+                    const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
+                    if (capAlphabetBlock) capAlphabetBlock.style.display = 'block';
+                    document.getElementById('ruCapitalsContainer').style.display = 'block';
                 }
-                
-                // 🌟 ВОССТАНАВЛИВАЕМ КОРЕНЬ: Возвращаем Главное меню (Зону А) и гасим Зоны Б и В
-                document.getElementById('ruMainMenuZone').style.display = 'block';
-                document.getElementById('ruSubmissionsZone').style.display = 'none';
-                document.getElementById('ruOkrugsZone').style.display = 'none';
-                
-                // Насильно возвращаем Административные центры на законное место в свернутом виде
-                const capAlphabetBlock = document.getElementById('block-ru-capital-alphabet');
-                if (capAlphabetBlock) capAlphabetBlock.style.display = 'block';
-                document.getElementById('ruCapitalsContainer').style.display = 'block';
             } else {
-                // Стандартное поведение для вкладки стран мира
                 block.style.display = 'block';
                 if (q !== '') {
                     block.classList.remove('collapsed');
                     if (content) content.style.display = 'block';
                 } else {
+                    document.getElementById('toggleAllBtn').textContent = "Развернуть всё";
+                    allCollapsed = true;
                     block.classList.add('collapsed');
                     if (content) content.style.display = 'none';
                 }
@@ -2073,6 +2103,7 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
+    window.scrollTo({top: 0, behavior: 'smooth'}); // Бархатный возврат экрана наверх к исходному разделу
     searchInput.focus();
 }
 
