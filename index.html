@@ -1787,7 +1787,7 @@ function enterRuSubmissions(type) {
     if (navHeaders) navHeaders.style.display = 'block';
 
     if (type === 'subjects') {
-        currentRuZone = 'subjects'; // 🌟 САЙТ ЗАПОМНИЛ: теперь поиск ищет ТОЛЬКО в Субъектах
+        currentRuZone = 'subjects'; // Сайт запомнил выбор
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'block';
         document.getElementById('ruOkrugsZone').style.display = 'none';
@@ -1797,7 +1797,7 @@ function enterRuSubmissions(type) {
         });
         window.scrollTo(0, 0);
     } else if (type === 'okrugs') {
-        currentRuZone = 'okrugs'; // 🌟 САЙТ ЗАПОМНИЛ: теперь поиск ищет ТОЛЬКО в Округах
+        currentRuZone = 'okrugs'; // Сайт запомнил выбор
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -1809,6 +1809,9 @@ function enterRuSubmissions(type) {
         });
         window.scrollTo(0, 0);
     }
+    
+    // 🌟 ЗАПУСКАЕМ НАШЕГО РЕГУЛИРОВЩИКА:
+    runSearch();
 }
 
 function exitRuSubmissions() {
@@ -2072,27 +2075,33 @@ function runSearch() {
                 block.classList.add('collapsed'); // Железно сворачиваем плашку
                 if (content) content.style.display = 'none'; // Намертво скрываем внутреннюю таблицу
                 
-                if (isRussiaDbActive) {
-                    if (currentRuZone === 'subjects') {
-                        document.getElementById('ruMainMenuZone').style.display = 'none';
-                        document.getElementById('ruSubmissionsZone').style.display = 'block';
-                        document.getElementById('ruOkrugsZone').style.display = 'none';
-                        if (!block.closest('#ruSubjectsContainer')) block.style.display = 'none';
-                    } else if (currentRuZone === 'okrugs') {
-                        document.getElementById('ruMainMenuZone').style.display = 'none';
-                        document.getElementById('ruSubmissionsZone').style.display = 'none';
-                        document.getElementById('ruOkrugsZone').style.display = 'block';
-                        document.getElementById('ruOkrugsContainer').style.display = 'block';
-                        if (!block.closest('#ruOkrugsContainer')) block.style.display = 'none';
-                    } else {
-                        // Если сбросили поиск на главной — возвращаем 3 кнопки первого уровня меню
-                        document.getElementById('ruMainMenuZone').style.display = 'block';
-                        document.getElementById('ruSubmissionsZone').style.display = 'none';
-                        document.getElementById('ruOkrugsZone').style.display = 'none';
-                        
-                        if (block.id !== 'block-ru-capital-alphabet') block.style.display = 'none';
-                        document.getElementById('ruCapitalsContainer').style.display = 'block';
-                    }
+if (isRussiaDbActive) {
+    if (currentRuZone === 'subjects') {
+        // Жестко изолируем экран Субъектов: прячем главное меню, округа и города
+        document.getElementById('ruMainMenuZone').style.display = 'none';
+        document.getElementById('ruSubmissionsZone').style.display = 'block';
+        document.getElementById('ruSubjectsContainer').style.display = 'block'; 
+        document.getElementById('ruOkrugsZone').style.display = 'none';
+        document.getElementById('ruCapitalsContainer').style.display = 'none'; // 🌟 ПРЯЧЕМ ХВОСТ ИЗ ГОРОДОВ!
+        if (!block.closest('#ruSubjectsContainer')) block.style.display = 'none';
+    } else if (currentRuZone === 'okrugs') {
+        // Жестко изолируем экран Округов: прячем главное меню, субъекты и города
+        document.getElementById('ruMainMenuZone').style.display = 'none';
+        document.getElementById('ruSubmissionsZone').style.display = 'none';
+        document.getElementById('ruOkrugsZone').style.display = 'block';
+        document.getElementById('ruOkrugsContainer').style.display = 'block'; 
+        document.getElementById('ruCapitalsContainer').style.display = 'none'; // 🌟 ПРЯЧЕМ ХВОСТ ИЗ ГОРОДОВ!
+        if (!block.closest('#ruOkrugsContainer')) block.style.display = 'none';
+    } else {
+        // Если мы находимся в Главном меню РФ (Зона А) — показываем только кнопки и города
+        document.getElementById('ruMainMenuZone').style.display = 'block';
+        document.getElementById('ruSubmissionsZone').style.display = 'none';
+        document.getElementById('ruOkrugsZone').style.display = 'none';
+        
+        if (block.id !== 'block-ru-capital-alphabet') block.style.display = 'none';
+        document.getElementById('ruCapitalsContainer').style.display = 'block';
+    }
+}
                 } else {
                     // СБРОС СТРАН МИРА: сбрасываем счетчик стран в плашке до исходного и переводим флаг в true
                     allCollapsed = true;
