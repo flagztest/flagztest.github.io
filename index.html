@@ -2122,7 +2122,18 @@ function clearSearch() {
     searchInput.focus();
 }
 
-document.getElementById('searchInput').addEventListener('input', runSearch);
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    runSearch();
+    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Если пользователь стёр текст до конца, плавно катим экран в самый верх
+    if (e.target.value.trim() === '') {
+        setTimeout(() => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }, 50); // Микропауза 50мс, чтобы таблицы успели скрыться, а экран не дёргался
+    }
+});
 
 window.addEventListener('scroll', () => {
     const btn = document.getElementById('scrollTopBtn');
