@@ -73,13 +73,16 @@
             color: #495057 !important; 
             cursor: pointer;
             border-radius: 4px;
+            /* 🌟 УБИРАЕМ СЕРОЕ МИГАНИЕ ПРИ НАЖАТИИ НА СМАРТФОНАХ: */
+            -webkit-tap-highlight-color: transparent !important;
+            outline: none !important;
         }
         .tab-btn.active {
             font-weight: 700 !important; 
             color: #495057 !important; 
-            background-color: #e9ecef !important; 
+            /* 🌟 ЦВЕТ КАК НА СКРИНШОТЕ: точный благородный оттенок серой активной вкладки */
+            background-color: #e2e7ec !important; 
         }
-
 
         .controls-row {
             display: flex;
