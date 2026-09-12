@@ -717,7 +717,22 @@
     </style>
 </head>
 <body>
-<!-- 🦖 КИНЕМАТОГРАФИЧНАЯ ЗАСТАВКА (SPLASH SCREEN) С ЧИСТОЙ КАРТИНКОЙ ГОДЗИЛЛЫ -->
+<!-- 🎛️ SVG-ФИЛЬТР ДЛЯ ИДЕАЛЬНОГО ВЫРЕЗАНИЯ ЗЕЛЕНОГО ЦВЕТА (ХРОМАКЕЙ ДЛЯ СМАРТФОНОВ) -->
+<svg width="0" height="0" style="position:absolute; z-index:-1;">
+    <defs>
+        <filter id="chromakey">
+            <!-- Переводим зеленый цвет видео в полную прозрачность (Alpha-канал) -->
+            <feColorMatrix type="matrix" values="
+                1   0   0   0   0
+                0   1   0   0   0
+                0   0   1   0   0
+               -2   3  -2   1  -0.1
+            "/>
+        </filter>
+    </defs>
+</svg>
+
+<!-- 🦖 АНИМИРОВАННАЯ ХРОМАКЕЙ-ЗАСТАВКА С ГОДЗИЛЛОЙ БЕЗ ЛОГОТИПА И ФОНА -->
 <div id="splashScreen" style="
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -729,11 +744,32 @@
     z-index: 10000;
     transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
 ">
-    <img src="favicon.png?v=godzilla_clear" alt="Loading..." style="
-        width: 220px;
-        height: 220px;
-        object-fit: contain !important;
+    <!-- Контейнер безопасности: обрезает всё, что выходит за рамки 240px (убирает водяной знак) -->
+    <div style="
+        width: 240px;
+        height: 240px;
+        position: relative;
+        overflow: hidden; /* Жестко прячет логотип за краями */
+        display: flex;
+        align-items: center;
+        justify-content: center;
     ">
+        <!-- Видео: искусственно увеличено и приподнято, чтобы DeeVid AI улетел выше зоны видимости -->
+        <!-- Атрибуты autoplay loop muted playsinline гарантируют запуск на iOS Safari и Android Chrome -->
+        <video id="godzillaVideo" autoplay loop muted playsinline style="
+            position: absolute;
+            width: 125%;   /* Увеличиваем масштаб видео */
+            height: 125%;  
+            top: -12%;     /* Сдвигаем вверх: прячем логотип в правом верхнем углу */
+            left: -12.5%;  /* Выравниваем Годзиллу ровно по центру */
+            object-fit: contain;
+            filter: url(#chromakey); /* Подключаем наш мобильный SVG-хромакей */
+            -webkit-filter: url(#chromakey); /* Поддержка старых версий iOS Safari */
+        ">
+            <!-- Ссылка на файл видео в вашем репозитории -->
+            <source src="godzilla.mp4" type="video/mp4">
+        </video>
+    </div>
 </div>
 
 <div class="fixed-header">
@@ -850,15 +886,18 @@
 <script>
 // 🌟 АВТОМАТИЧЕСКОЕ ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ ЗАСТАВКИ (КИНЕМАТОГРАФИЧНЫЙ ТАЙМЕР)
 window.addEventListener('DOMContentLoaded', () => {
+    // Включаем принудительный старт видео для капризных мобильных браузеров
+    const v = document.getElementById('godzillaVideo');
+    if (v) { v.play().catch(() => {}); }
+
     setTimeout(() => {
         const splash = document.getElementById('splashScreen');
         if (splash) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
-            /* 🌟 Увеличили задержку до 1200ms, чтобы деструкция из DOM совпала с новой длинной анимацией CSS */
             setTimeout(() => splash.remove(), 1200); 
         }
-    }, 1600); // 🌟 УВЕЛИЧИЛИ ВРЕМЯ ПОКАЗА: теперь Годзилла гордо стоит на экране 1.6 секунды
+    }, 3000); // 3000 миллисекунд (3 секунды) Годзилла будет анимироваться на экране
 });
 
 // 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
