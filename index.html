@@ -718,12 +718,6 @@
          display: block;
      }
  
-@media (max-width: 600px) {
-
-}
-
-
-
     </style>
 </head>
 <body>
@@ -1746,7 +1740,7 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <a href="https://google.com{encodeURIComponent(c.name)}" 
+                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.name)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
@@ -1754,7 +1748,7 @@ function createContinentBlock(continent, countries) {
                     ${subText}
                 </td>
                 <td>
-                    <a href="https://google.com{encodeURIComponent(c.capital)}" 
+                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.capital)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         ${c.capital}
