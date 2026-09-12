@@ -2118,20 +2118,23 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    window.scrollTo({top: 0, behavior: 'smooth'}); // Плавный возврат к началу текущего раздела дисплея
+    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Ждем 320мс, пока полностью завершится CSS-анимация сжатия таблиц, и плавно катим наверх
+    setTimeout(() => {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }, 320);
     searchInput.focus();
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
     runSearch();
-    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Если пользователь стёр текст до конца, плавно катим экран в самый верх
+    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Если пользователь стёр текст до конца, ждем окончания анимации сжатия и плавно катим наверх
     if (e.target.value.trim() === '') {
         setTimeout(() => {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
-        }, 50); // Микропауза 50мс, чтобы таблицы успели скрыться, а экран не дёргался
+        }, 320);
     }
 });
 
