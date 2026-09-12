@@ -75,17 +75,6 @@
                 height: 112px; /* Идеальная мобильная высота spacer под строку поиска */
             }
         }
-        .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--panel-bg);
-            box-shadow: none !important;      
-            z-index: 1000;
-            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
-            padding: 8px 16px 4px 16px; 
-        }
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -94,7 +83,6 @@
             /* 🌟 Прижали инпут ближе к кнопкам меню для идеального баланса */
             gap: 4px; 
         }
-
 
         .nav-tabs {
             display: flex;
@@ -1898,11 +1886,6 @@ function switchView(viewId) {
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
-// ... дальше ваш стандартный код switchView идет без изменений
-
-    document.querySelectorAll('.continent-block').forEach(b => {
-        b.classList.add('collapsed');
-        const content = b.querySelector('.continent-content');
         if (content) content.style.display = 'none';
     });
     
@@ -1940,9 +1923,9 @@ function switchView(viewId) {
         if (worldBuffer) worldBuffer.style.display = 'block';
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
         
-        window.scrollTo(0, 0); // 🌟 ВОЗВРАЩАЕМ КЛАССИЧЕСКИЙ СКРОЛЛ ОКНА
+        window.scrollTo(0, 0); // 🌟 Нативный оконный скролл
     } else if (viewId === 'ru-db') {
-        window.scrollTo(0, 0); // 🌟 ВОЗВРАЩАЕМ КЛАССИЧЕСКИЙ СКРОЛЛ ОКНА
+        window.scrollTo(0, 0); // 🌟 Нативный оконный скролл
 
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
         document.getElementById('dbView').classList.add('active');
@@ -1956,7 +1939,7 @@ function switchView(viewId) {
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'none';
         
-        // 🌟 ИСПРАВЛЕНИЕ: Так как контейнер теперь внизу, зажигаем его видимость при входе в таб
+        // Зажигаем видимость контейнера Административных центров
         document.getElementById('ruCapitalsContainer').style.display = 'block';
         
         // Мягко сворачиваем все внутренние аккордеоны субъектов и округов при переключении
@@ -1989,7 +1972,6 @@ function switchView(viewId) {
         loadQuizCountryRound();
     }
 
-    // 🌟 ВЫЗЫВАЕМ ПОИСК В САМОМ КОНЦЕ: теперь вкладка России уже активна и runSearch отработает корректно!
     runSearch();
 }
 
