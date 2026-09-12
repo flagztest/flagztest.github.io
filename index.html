@@ -397,36 +397,40 @@
         }
 @media (max-width: 600px) {
      /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок пиксель в пиксель по ширине поиска */
-.nav-tabs {
-    border-bottom: none !important; 
-    padding-bottom: 0px !important;
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important; /* Изменили 4 на 5 */
-    width: 100% !important; 
-    gap: 4px !important;    
-    box-sizing: border-box !important;
-}
+     /* 🌟 СЕТКА ШАПКИ: Намертво блокирует изменение ширины ячеек при переключении жирности букв */
+     .nav-tabs {
+         border-bottom: none !important; 
+         padding-bottom: 0px !important;
+         display: grid !important;
+         /* minmax(0, 1fr) заставляет браузер держать 5 строго одинаковых колонок пиксель в пиксель: */
+         grid-template-columns: repeat(5, minmax(0, 1fr)) !important; 
+         width: 100% !important; 
+         gap: 4px !important;    
+         box-sizing: border-box !important;
+     }
      
-      /* КНОПКИ: Изначально аккуратные, чуть тоньше, чтобы шапка «дышала» */
+     /* КНОПКИ: Шрифт крупный (15px), в стиле плашек #495057, без мигания при тапе */
      .tab-btn {
          width: 100% !important;
-         padding: 6px 2px !important; 
-         font-size: 14px !important;  
-         /* 🌟 УБИРАЕМ СВЕРХЖИРНОСТЬ ДЛЯ НЕАКТИВНЫХ КНОПОК: */
-         font-weight: 500 !important; /* Делает их аккуратными и тоньше */
-         color: #495057 !important; 
+         padding: 8px 2px !important; /* Увеличили вертикальное поле для сочности */
+         font-size: 15px !important;  /* Вернули тот самый сочный крупный шрифт со скриншота */
+         font-weight: 500 !important; 
+         color: #495057 !important;   /* Графитовый цвет текста в стиле континентов */
          text-align: center !important;
          white-space: normal !important; 
+         word-break: normal !important;
          box-sizing: border-box !important;
-         -webkit-tap-highlight-color: transparent !important; /* Защита от мигания */
+         -webkit-tap-highlight-color: transparent !important; /* Намертво гасит серую вспышку */
+         outline: none !important;
+         border-radius: 4px !important;
      }
 
-     /* АКТИВНАЯ КНОПКА: Красиво выделяется объемом */
+     /* АКТИВНАЯ КНОПКА: Тональность один в один как у плашек континентов на скрине */
      .tab-btn.active {
-         color: #212529 !important; /* Чуть темнее текст для максимального контраста */
-         /* 🌟 ВОЗВРАЩАЕМ ЭФФЕКТ ЖИРНОСТИ ПРИ ВЫДЕЛЕНИИ: */
-         font-weight: 800 !important; /* Активная кнопка становится сочной и плотной */
-         background-color: #e2e7ec !important; /* Тот самый цвет сегмента со скрина */
+         color: #495057 !important;   /* Цвет букв остается родным, без каши */
+         font-weight: 800 !important; /* Крупное плотное выделение */
+         /* 🌟 ЦВЕТ В СТИЛЕ КОНТИНЕНТОВ И СУБЪЕКТОВ (#f1f3f5): */
+         background-color: #f1f3f5 !important; 
      }
 
      .clear-search-btn {
