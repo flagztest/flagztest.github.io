@@ -1981,6 +1981,9 @@ function runSearch() {
 
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
+    // ЗАПОМИНАЕМ: Какой блок был открыт пользователем ДО начала поиска
+    const activeBlockBeforeSearch = document.querySelector('.continent-block:not(.collapsed)');
+
     document.querySelectorAll('.continent-block').forEach(block => {
         const isRussiaBlock = block.id.startsWith('block-ru-');
         
@@ -2028,9 +2031,9 @@ function runSearch() {
         
         rows.forEach(r => {
             const name = r.getAttribute('data-name') || '';
-            const cap = r.getAttribute('data-capital') || '';
+            const capital = r.getAttribute('data-capital') || '';
             
-            if (name.includes(q) || cap.includes(q)) {
+            if (name.includes(q) || capital.includes(q)) {
                 r.classList.remove('hidden');
                 visibleCount++;
             } else {
@@ -2045,7 +2048,7 @@ function runSearch() {
             block.style.display = 'none';
         } else {
             if (q !== '') {
-                // АКТИВНЫЙ ПОИСК (ДЛЯ ОБЕИХ ВКЛАДОК)
+                // АКТИВНЫЙ ПОИСК
                 block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
@@ -2058,7 +2061,6 @@ function runSearch() {
                         document.getElementById('ruOkrugsZone').style.display = 'block';
                         document.getElementById('ruOkrugsContainer').style.display = 'block';
                     } else if (currentRuZone === 'main') {
-                        // СКВОЗНОЙ ПОИСК С ГЛАВНОЙ РФ: включаем отображение абсолютно всех зон
                         document.getElementById('ruSubmissionsZone').style.display = 'block';
                         document.getElementById('ruSubjectsContainer').style.display = 'block';
                         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -2067,10 +2069,17 @@ function runSearch() {
                     }
                 }
             } else {
-                // ТОТАЛЬНЫЙ СБРОС ПОИСКА К ИСХОДНОМУ РАЗДЕЛУ (q === '')
-                block.style.display = 'block'; // Возвращаем видимость всем блокам на активном табе
-                block.classList.add('collapsed'); // Железно сворачиваем плашку
-                if (content) content.style.display = 'none'; // Намертво скрываем внутреннюю таблицу
+                // ТОТАЛЬНЫЙ СБРОС ПОИСКА К ИСХОДНОМУ РАЗДЕЛУ (строка ввода опустела)
+                block.style.display = 'block'; 
+                
+                // Исправление: Не схлопываем плашку принудительно, если она БЫЛА открыта пользователем изначально
+                if (activeBlockBeforeSearch && activeBlockBeforeSearch.id === block.id) {
+                    block.classList.remove('collapsed');
+                    if (content) content.style.display = 'block';
+                } else {
+                    block.classList.add('collapsed'); 
+                    if (content) content.style.display = 'none';
+                }
                 
                 if (isRussiaDbActive) {
                     if (currentRuZone === 'subjects') {
@@ -2085,7 +2094,6 @@ function runSearch() {
                         document.getElementById('ruOkrugsContainer').style.display = 'block';
                         if (!block.closest('#ruOkrugsContainer')) block.style.display = 'none';
                     } else {
-                        // Если сбросили поиск на главной — возвращаем 3 кнопки первого уровня меню
                         document.getElementById('ruMainMenuZone').style.display = 'block';
                         document.getElementById('ruSubmissionsZone').style.display = 'none';
                         document.getElementById('ruOkrugsZone').style.display = 'none';
@@ -2094,17 +2102,26 @@ function runSearch() {
                         document.getElementById('ruCapitalsContainer').style.display = 'block';
                     }
                 } else {
-                    // СБРОС СТРАН МИРА: сбрасываем счетчик стран в плашке до исходного и переводим флаг в true
                     allCollapsed = true;
-                    // Восстанавливаем корректную цифру общего количества стран в названии каждого континента
                     const initialCount = block.querySelectorAll('tbody tr').length;
                     if (badge) badge.textContent = initialCount;
                 }
             }
         }
     });
-}
 
+    // Автоматическая корректировка скролла: если при поиске/сбросе экран улетел, возвращаем заголовок на место
+    if (q === '' && activeBlockBeforeSearch) {
+        setTimeout(() => {
+            const offset = 120;
+            const offsetPosition = activeBlockBeforeSearch.offsetTop - offset;
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }, 30);
+    }
+}
 
 function clearSearch() {
     const searchInput = document.getElementById('searchInput');
