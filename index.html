@@ -1981,7 +1981,7 @@ function runSearch() {
 
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
-    // 🌟 ШАГ 1: Находим, какой конкретно блок сейчас развернут пользователем
+    // Находим, какой конкретно блок сейчас развернут пользователем
     const activeBlockBeforeSearch = document.querySelector('.continent-block:not(.collapsed)');
 
     document.querySelectorAll('.continent-block').forEach(block => {
@@ -2011,23 +2011,20 @@ function runSearch() {
         const isInOkrugsContainer = block.closest('#ruOkrugsContainer') !== null;
         const isInCapitalsContainer = block.closest('#ruCapitalsContainer') !== null || block.id === 'block-ru-capital-alphabet';
 
-        // 🌟 ШАГ 2: Жесткая изоляция подразделов во время фокуса и ввода в поиск
+        // 🌟 ИЗОЛЯЦИЯ: Если пользователь находится внутри подраздела, чужие разделы не имеют права просыпаться
         if (isRussiaDbActive) {
-            // Если мы зашли в Субъекты, разрешаем отображать ТОЛЬКО тот блок, который открыт. Чужие блоки не вылезут сверху!
             if (currentRuZone === 'subjects') {
-                if (!isInSubjectsContainer || (activeBlockBeforeSearch && activeBlockBeforeSearch.id !== block.id)) {
+                if (!isInSubjectsContainer || (q === '' && activeBlockBeforeSearch && activeBlockBeforeSearch.id !== block.id)) {
                     block.style.display = 'none';
                     return;
                 }
             }
-            // Если мы зашли в Федеральные Округа, изолируем текущий открытый округ
             if (currentRuZone === 'okrugs') {
-                if (!isInOkrugsContainer || (activeBlockBeforeSearch && activeBlockBeforeSearch.id !== block.id)) {
+                if (!isInOkrugsContainer || (q === '' && activeBlockBeforeSearch && activeBlockBeforeSearch.id !== block.id)) {
                     block.style.display = 'none';
                     return;
                 }
             }
-            // Если мы в главном меню России, ищем только по Административным центрам
             if (currentRuZone === 'main' && !isInCapitalsContainer) {
                 block.style.display = 'none';
                 return;
@@ -2060,7 +2057,7 @@ function runSearch() {
             block.style.display = 'none';
         } else {
             if (q !== '') {
-                // АКТИВНЫЙ ПОИСК (Когда вводится текст)
+                // АКТИВНЫЙ ПОИСК (когда введен текст)
                 block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
@@ -2077,21 +2074,17 @@ function runSearch() {
                     }
                 }
             } else {
-                // 🌟 ШАГ 3: Умный сброс или пустой фокус (Строка ввода пустая)
+                // 🌟 КЛИК НА ПОИСК ИЛИ ПУСТОЙ ВВОД (Текст не введён)
+                // Возвращаем видимость блокам текущей зоны
                 block.style.display = 'block'; 
                 
-                // Если этот блок был развернут пользователем — удерживаем его открытым намертво
                 if (activeBlockBeforeSearch && activeBlockBeforeSearch.id === block.id) {
                     block.classList.remove('collapsed');
                     if (content) content.style.display = 'block';
                 } else {
-                    // Все остальные блоки (скрытые изначально) убираем с экрана, чтобы они не выталкивали верстку
-                    if (isRussiaDbActive && (currentRuZone === 'subjects' || currentRuZone === 'okrugs')) {
-                        block.style.display = 'none';
-                    } else {
-                        block.classList.add('collapsed'); 
-                        if (content) content.style.display = 'none';
-                    }
+                    // Скрытые блоки текущей зоны аккуратно сворачиваем, но не прячем родительские контейнеры
+                    block.classList.add('collapsed'); 
+                    if (content) content.style.display = 'none';
                 }
                 
                 if (isRussiaDbActive) {
@@ -2121,13 +2114,14 @@ function runSearch() {
         }
     });
 
-    // 🌟 ШАГ 4: Железная фиксация камеры на заголовке активного блока без микро-тряски экрана
-    if (activeBlockBeforeSearch) {
+    // 🌟 ИСПРАВЛЕНИЕ: Корректируем камеру ТОЛЬКО если пользователь РЕАЛЬНО вводит поисковый запрос (q !== '')
+    // При обычном нажатии на пустую строку поиска этот блок полностью игнорируется, устраняя уползание списка!
+    if (q !== '' && activeBlockBeforeSearch) {
         const offset = 120;
         const offsetPosition = activeBlockBeforeSearch.offsetTop - offset;
         window.scrollTo({
             top: offsetPosition,
-            behavior: 'auto' // 'auto' предотвращает дерганье скролла во время набора текста
+            behavior: 'auto'
         });
     }
 }
