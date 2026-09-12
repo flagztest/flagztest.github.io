@@ -24,56 +24,28 @@
             --panel-bg: #ffffff;         
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            min-height: 100%;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* Разрешаем браузеру Safari нативно обрабатывать жест pull-to-refresh для обновления */
-            overscroll-behavior-y: auto; 
+            margin: 0;
+            padding: 20px;
+            padding-top: 165px;
         }
-        
-        /* 🌟 НАДЁЖНЫЙ ФИКС ШАПКИ НА IOS: используем sticky вместо fixed. Теперь Safari не сможет сдвинуть шапку под часы! */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
         .fixed-header {
-            position: -webkit-sticky;
-            position: sticky;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             background-color: var(--panel-bg);
+            box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px;
-            box-sizing: border-box;
-            border-bottom: 1px solid transparent;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px 20px 20px;
-            box-sizing: border-box;
-        }
-
-        /* 🌟 ЮВЕЛИРНЫЙ ПУСТОЙ БУФЕР: Расталкивает контент ровно на высоту шапки */
-        /* За счет этого Европа и Субъекты России будут стоять на абсолютно одинаковой высоте пиксель в пиксель */
-        .header-spacer {
-            height: 165px; 
-            width: 100%;
-            display: block;
-        }
-
-        @media (max-width: 600px) {
-            .fixed-header {
-                padding: 6px 12px !important;
-            }
-            .container {
-                padding: 0 4px 20px 4px !important;
-            }
-            .header-spacer {
-                height: 112px; /* Идеальная мобильная высота spacer под строку поиска */
-            }
+            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
+            padding: 8px 16px 4px 16px; 
         }
         .header-content {
             max-width: 1000px;
@@ -83,6 +55,7 @@
             /* 🌟 Прижали инпут ближе к кнопкам меню для идеального баланса */
             gap: 4px; 
         }
+
 
         .nav-tabs {
             display: flex;
@@ -465,6 +438,8 @@
      }
      body {
          padding: 10px 4px !important;
+         /* 🌟 ПРИЖИМАЕМ ЕВРОПУ К ШАПКЕ ПРИ СТАРТЕ САЙТА: */
+         padding-top: 120px !important; 
      }
 
      .controls-row {
@@ -784,9 +759,6 @@
 </div>
 
 <div class="container">
-    <!-- 🌟 ОФИЦИАЛЬНАЯ РАСПОРКА: держит одинаковую высоту для Мира и России пиксель в пиксель -->
-    <div class="header-spacer"></div>
-
     <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
     <div id="dbView" class="view-section active">
         
@@ -1815,7 +1787,7 @@ function enterRuSubmissions(type) {
     if (navHeaders) navHeaders.style.display = 'block';
 
     if (type === 'subjects') {
-        currentRuZone = 'subjects'; 
+        currentRuZone = 'subjects'; // 🌟 САЙТ ЗАПОМНИЛ: теперь поиск ищет ТОЛЬКО в Субъектах
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'block';
         document.getElementById('ruOkrugsZone').style.display = 'none';
@@ -1823,9 +1795,9 @@ function enterRuSubmissions(type) {
         document.querySelectorAll('#ruSubjectsContainer .continent-block').forEach(b => {
             b.style.display = 'block';
         });
-        window.scrollTo(0, 0); // 🌟 ВОЗВРАЩАЕМ КЛАССИЧЕСКИЙ СКРОЛЛ ОКНА
+        window.scrollTo(0, 0);
     } else if (type === 'okrugs') {
-        currentRuZone = 'okrugs'; 
+        currentRuZone = 'okrugs'; // 🌟 САЙТ ЗАПОМНИЛ: теперь поиск ищет ТОЛЬКО в Округах
         document.getElementById('ruMainMenuZone').style.display = 'none';
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -1835,7 +1807,7 @@ function enterRuSubmissions(type) {
         document.querySelectorAll('#ruOkrugsContainer .continent-block').forEach(b => {
             b.style.display = 'block';
         });
-        window.scrollTo(0, 0); // 🌟 ВОЗВРАЩАЕМ КЛАССИЧЕСКИЙ СКРОЛЛ ОКНА
+        window.scrollTo(0, 0);
     }
 }
 
@@ -1861,8 +1833,8 @@ function exitRuSubmissions() {
     document.getElementById('ruCapitalsContainer').style.display = 'block';
     document.getElementById('ruMainMenuZone').style.display = 'block';
     
-    currentRuZone = 'main'; 
-    window.scrollTo(0, 0); // 🌟 ВОЗВРАЩАЕМ КЛАССИЧЕСКИЙ СКРОЛЛ ОКНА В САМЫЙ КОНЕЦ
+    currentRuZone = 'main'; // 🌟 САЙТ ЗАПОМНИЛ: вы вышли в Главное меню России
+    window.scrollTo(0, 0);
 }
 
 function switchView(viewId) {
@@ -1872,7 +1844,7 @@ function switchView(viewId) {
     if (searchInput) searchInput.value = '';
     if (clearBtn) clearBtn.style.display = 'none';
     
-    currentRuZone = 'main'; 
+    currentRuZone = 'main'; // 🌟 САЙТ СБРОСИЛ ПАМЯТЬ ЗОНЫ ПРИ ПЕРЕХОДЕ НА ДРУГИЕ ВКЛАДКИ
 
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
@@ -1914,12 +1886,12 @@ function switchView(viewId) {
         if (worldBuffer) worldBuffer.style.display = 'block';
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
         
-        window.scrollTo(0, 0); 
+        window.scrollTo(0, 0);
     } else if (viewId === 'ru-db') {
-        window.scrollTo(0, 0); 
+        window.scrollTo(0, 0);
 
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-        document.getElementById('dbView').classList.add('active');
+        document.getElementById('dbView').classList.add('active'); 
         document.getElementById('dbControls').style.display = 'flex';
         
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'none');
@@ -1930,7 +1902,7 @@ function switchView(viewId) {
         document.getElementById('ruSubmissionsZone').style.display = 'none';
         document.getElementById('ruOkrugsZone').style.display = 'none';
         
-        // Зажигаем видимость контейнера Административных центров
+        // 🌟 ИСПРАВЛЕНИЕ: Так как контейнер теперь внизу, зажигаем его видимость при входе в таб
         document.getElementById('ruCapitalsContainer').style.display = 'block';
         
         // Мягко сворачиваем все внутренние аккордеоны субъектов и округов при переключении
@@ -1963,6 +1935,7 @@ function switchView(viewId) {
         loadQuizCountryRound();
     }
 
+    // 🌟 ВЫЗЫВАЕМ ПОИСК В САМОМ КОНЦЕ: теперь вкладка России уже активна и runSearch отработает корректно!
     runSearch();
 }
 
@@ -2137,7 +2110,7 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    window.scrollTo({top: 0, behavior: 'smooth'}); // Возвращаем глобальный скролл окна
+    window.scrollTo({top: 0, behavior: 'smooth'}); // Плавный возврат к началу текущего раздела дисплея
     searchInput.focus();
 }
 
@@ -2517,11 +2490,15 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
+            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
             setTimeout(() => {
-                const offset = window.innerWidth <= 600 ? 115 : 170;
+                const offset = 120;
+                
+                // Проверяем, в каком разделе мы находимся (Россия или Страны мира)
                 const isRussia = id.startsWith('block-ru-');
                 
                 if (isRussia) {
+                    // 🇷🇺 В Базе России плавно возвращаем фокус строго к «Республикам»
                     const republicsBlock = document.getElementById('block-ru-subject-Республики');
                     if (republicsBlock && id !== 'block-ru-subject-Республики') {
                         const offsetPosition = republicsBlock.offsetTop - offset;
@@ -2529,7 +2506,11 @@ function toggleBlock(id) {
                         return;
                     }
                 } else {
+                    // 🌍 В Базе стран мира находим «Европу» по её точному элементу
                     const europeBlock = document.getElementById('block-Европа');
+                    
+                    // Если закрывают любой нижний континент (Азию, Африку...),
+                    // мы плавно катим экран строго к координате Европы, сохраняя идеальную анимацию!
                     if (europeBlock && id !== 'block-Европа') {
                         const offsetPosition = europeBlock.offsetTop - offset;
                         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -2537,6 +2518,7 @@ function toggleBlock(id) {
                     }
                 }
                 
+                // Защитное удержание камеры, если схлопнули самую первую плашку текущего списка
                 const offsetPosition = block.offsetTop - offset;
                 window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }, 10);
@@ -2545,8 +2527,9 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
+        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
         setTimeout(() => {
-            const offset = window.innerWidth <= 600 ? 115 : 170;
+            const offset = 120;
             const offsetPosition = block.offsetTop - offset;
             const diff = Math.abs(window.scrollY - offsetPosition);
 
