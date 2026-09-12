@@ -64,33 +64,22 @@
             padding-bottom: 5px;
         }
         .tab-btn {
-            padding: 8px 0px; /* Убираем боковые раздувания */
+            padding: 8px 16px;
             background: none;
             border: none;
             font-size: 15px;
-            /* 🌟 ОРИГИНАЛЬНЫЙ ИЗЯЩНЫЙ ВЕСТ ТЕКСТА НА СТАРТЕ: */
-            font-weight: 600 !important; 
+            /* 🌟 ОДИНАКОВЫЙ ВЕС И РОДНОЙ ЦВЕТ: буквы больше не пляшут и не моргают */
+            font-weight: 700 !important; 
             color: #495057 !important; 
             cursor: pointer;
             border-radius: 4px;
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap !important;
-            letter-spacing: 0px; /* Стандартный интервал букв */
-            /* 🌟 ТОТАЛЬНЫЙ БЛОК МИГАНИЯ И ЛЮБЫХ ВСПЫШЕК SAFARI: */
-            -webkit-tap-highlight-color: transparent !important; 
-            tap-highlight-color: transparent !important;
         }
-
         .tab-btn.active {
-            /* 🌟 УТОЛЩЕНИЕ БЕЗ СДВИГОВ: делаем шрифт жирным, но слегка сжимаем интервал между буквами, чтобы слово не расширялось */
-            font-weight: 800 !important; 
+            font-weight: 700 !important; 
             color: #495057 !important; 
             background-color: #e9ecef !important; 
-            letter-spacing: -0.4px; 
         }
+
 
         .controls-row {
             display: flex;
@@ -404,43 +393,29 @@
             color: rgba(0, 0, 0, 0.6) !important; /* При наведении становится чуть отчетливее */
         }
 @media (max-width: 600px) {
-     /* 🌟 ВКЛЮЧАЕМ НАТИВНЫЙ СВАЙП-СКРОЛЛ ДЛЯ ТЕЛЕФОНОВ: */
-     .nav-tabs {
-         border-bottom: none !important; 
-         padding-bottom: 4px !important;
-         display: flex !important; /* Убираем жесткий grid, даем кнопкам встать в ряд */
-         overflow-x: auto !important; /* Разрешаем горизонтальную прокрутку пальцем */
-         scroll-behavior: smooth !important;
-         -webkit-overflow-scrolling: touch !important; /* Идеально плавный инерционный скролл в Safari */
-         width: 100% !important; 
-         gap: 8px !important; /* Комфортный зазор между плашками */
-         box-sizing: border-box !important;
-     }
+     /* 🌟 СЕТКА ШАПКИ: Растягиваем каркас кнопок пиксель в пиксель по ширине поиска */
+.nav-tabs {
+    border-bottom: none !important; 
+    padding-bottom: 0px !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important; /* Изменили 4 на 5 */
+    width: 100% !important; 
+    gap: 4px !important;    
+    box-sizing: border-box !important;
+}
      
-     /* Прячем некрасивую системную полосу скроллбара, чтобы шапка выглядела кристально чистой */
-     .nav-tabs::-webkit-scrollbar {
-         display: none !important;
-         width: 0 !important;
-         height: 0 !important;
-     }
-     
-     /* КНОПКИ: Больше не сжимаются, сохраняют сочный крупный шрифт и стоят монолитно */
+     /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
      .tab-btn {
-         flex: 0 0 auto !important; /* Строгий запрет на сплющивание слов браузером! */
-         width: auto !important; /* Кнопка занимает ровно столько места, сколько нужно её тексту */
-         padding: 6px 14px !important; /* Даем красивые боковые поля для тапа пальцем */
-         font-size: 14px !important;  
-         font-weight: 600 !important; /* Красивый базовый вес */
+         width: 100% !important;
+         padding: 6px 0px !important; 
+         font-size: 15px !important;  
+         font-weight: 700 !important;
          text-align: center !important;
-         white-space: nowrap !important; /* Железный запрет на перенос слов на новую строку */
+         white-space: nowrap !important; 
          overflow: visible !important;
          box-sizing: border-box !important;
-         -webkit-tap-highlight-color: transparent !important;
-         tap-highlight-color: transparent !important;
      }
-     
      .tab-btn.active {
-         font-weight: 800 !important; /* Полная сочная жирность при активации */
          color: #495057 !important;
      }
 
@@ -761,6 +736,8 @@
     ">
 </div>
 
+<div class="fixed-header">
+    <div class="header-content">
 <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
     <button class="tab-btn" onclick="switchView('ru-db')">🇷🇺<br>База<br>России</button>
@@ -768,7 +745,6 @@
     <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
     <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
 </div>
-
           <div class="controls-row" id="dbControls">
             <div class="search-box">
             <input type="text" id="searchInput" placeholder="Поиск...">
