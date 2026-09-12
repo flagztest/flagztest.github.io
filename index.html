@@ -2009,7 +2009,6 @@ function runSearch() {
         if (isRussiaDbActive && q !== '') {
             const isSubjectBlock = block.id.startsWith('block-ru-subject-');
             const isOkrugBlock = block.id.startsWith('block-ru-okrug-');
-            const isCapitalBlock = block.id === 'block-ru-capital-alphabet';
 
             // Если пользователь ушел вглубь "Субъектов", скрываем Округа и Центры из поиска
             if (isSubjectsZoneVisible && !isSubjectBlock) {
@@ -2021,11 +2020,7 @@ function runSearch() {
                 block.style.display = 'none';
                 return;
             }
-            // Если пользователь на главном экране раскрыл "Центры", ищет только по ним (опционально)
-            if (isMainMenuVisible && isCapitalsAccordionOpen && !isCapitalBlock) {
-                block.style.display = 'none';
-                return;
-            }
+            // На главном экране с 3 кнопками никаких ограничений нет — поиск бьет по всем базам сразу!
         }
 
         const rows = block.querySelectorAll('tbody tr');
