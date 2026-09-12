@@ -24,24 +24,21 @@
             --panel-bg: #ffffff;         
         }
 
-        html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background-color: var(--bg-color);
-        }
-        body {
+        html, body {
             margin: 0;
             padding: 0;
             min-height: 100%;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* 🌟 ВОЗВРАТ ОБНОВЛЕНИЯ: разрешаем нативный жест pull-to-refresh в Safari */
+            /* Разрешаем браузеру Safari нативно обрабатывать жест pull-to-refresh для обновления */
             overscroll-behavior-y: auto; 
         }
+        
+        /* 🌟 НАДЁЖНЫЙ ФИКС ШАПКИ НА IOS: используем sticky вместо fixed. Теперь Safari не сможет сдвинуть шапку под часы! */
         .fixed-header {
-            position: fixed;
+            position: -webkit-sticky;
+            position: sticky;
             top: 0;
             left: 0;
             right: 0;
@@ -49,22 +46,22 @@
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             box-sizing: border-box;
+            border-bottom: 1px solid transparent;
         }
+        
         .container {
             max-width: 1000px;
             margin: 0 auto;
+            padding: 0 20px 20px 20px;
             box-sizing: border-box;
-            padding: 165px 20px 20px 20px; /* Поле по умолчанию для Базы стран */
-            
-            /* 🌟 ИЗОЛЯЦИЯ СКРОЛЛА: контент скроллится нативно, но не тянет за собой всю страницу */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain; 
         }
-        
-        /* 🌟 НАШ ХАК ДЛЯ БАЗЫ РОССИИ: когда активна РФ, прижимаем меню вплотную к поиску! */
-        body.ru-db-active .container {
-            padding-top: 100px !important;
+
+        /* 🌟 ЮВЕЛИРНЫЙ ПУСТОЙ БУФЕР: Расталкивает контент ровно на высоту шапки */
+        /* За счет этого Европа и Субъекты России будут стоять на абсолютно одинаковой высоте пиксель в пиксель */
+        .header-spacer {
+            height: 165px; 
+            width: 100%;
+            display: block;
         }
 
         @media (max-width: 600px) {
@@ -72,11 +69,10 @@
                 padding: 6px 12px !important;
             }
             .container {
-                padding: 115px 4px 20px 4px !important;
+                padding: 0 4px 20px 4px !important;
             }
-            /* Мягкое мобильное прижатие кнопок меню РФ строго под инпут */
-            body.ru-db-active .container {
-                padding-top: 76px !important;
+            .header-spacer {
+                height: 112px; /* Идеальная мобильная высота spacer под строку поиска */
             }
         }
         .fixed-header {
@@ -800,6 +796,9 @@
 </div>
 
 <div class="container">
+    <!-- 🌟 ОФИЦИАЛЬНАЯ РАСПОРКА: держит одинаковую высоту для Мира и России пиксель в пиксель -->
+    <div class="header-spacer"></div>
+
     <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
     <div id="dbView" class="view-section active">
         
@@ -1887,12 +1886,19 @@ function switchView(viewId) {
     
     currentRuZone = 'main'; 
 
-    // 🌟 УМНОЕ ПРИЖАТИЕ: Включаем плотный отступ для России, выключаем для остальных табов
-    if (viewId === 'ru-db') {
-        document.body.classList.add('ru-db-active');
-    } else {
-        document.body.classList.remove('ru-db-active');
-    }
+function switchView(viewId) {
+    // АВТО-ОЧИСТКА И ОБНУЛЕНИЕ СОСТОЯНИЯ ПОИСКА
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    
+    currentRuZone = 'main'; 
+
+    document.querySelectorAll('.continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const content = b.querySelector('.continent-content');
+// ... дальше ваш стандартный код switchView идет без изменений
 
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
@@ -2539,7 +2545,7 @@ function toggleBlock(id) {
             content.style.display = 'none';
             
             setTimeout(() => {
-                const offset = 120;
+                const offset = window.innerWidth <= 600 ? 115 : 170;
                 const isRussia = id.startsWith('block-ru-');
                 
                 if (isRussia) {
@@ -2567,7 +2573,7 @@ function toggleBlock(id) {
         }
 
         setTimeout(() => {
-            const offset = 120;
+            const offset = window.innerWidth <= 600 ? 115 : 170;
             const offsetPosition = block.offsetTop - offset;
             const diff = Math.abs(window.scrollY - offsetPosition);
 
