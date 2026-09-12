@@ -407,19 +407,26 @@
     box-sizing: border-box !important;
 }
      
-     /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
+      /* КНОПКИ: Изначально аккуратные, чуть тоньше, чтобы шапка «дышала» */
      .tab-btn {
          width: 100% !important;
-         padding: 6px 0px !important; 
-         font-size: 15px !important;  
-         font-weight: 700 !important;
+         padding: 6px 2px !important; 
+         font-size: 14px !important;  
+         /* 🌟 УБИРАЕМ СВЕРХЖИРНОСТЬ ДЛЯ НЕАКТИВНЫХ КНОПОК: */
+         font-weight: 500 !important; /* Делает их аккуратными и тоньше */
+         color: #495057 !important; 
          text-align: center !important;
-         white-space: nowrap !important; 
-         overflow: visible !important;
+         white-space: normal !important; 
          box-sizing: border-box !important;
+         -webkit-tap-highlight-color: transparent !important; /* Защита от мигания */
      }
+
+     /* АКТИВНАЯ КНОПКА: Красиво выделяется объемом */
      .tab-btn.active {
-         color: #495057 !important;
+         color: #212529 !important; /* Чуть темнее текст для максимального контраста */
+         /* 🌟 ВОЗВРАЩАЕМ ЭФФЕКТ ЖИРНОСТИ ПРИ ВЫДЕЛЕНИИ: */
+         font-weight: 800 !important; /* Активная кнопка становится сочной и плотной */
+         background-color: #e2e7ec !important; /* Тот самый цвет сегмента со скрина */
      }
 
      .clear-search-btn {
