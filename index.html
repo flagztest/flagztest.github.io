@@ -1999,21 +1999,16 @@ function runSearch() {
             return;
         }
 
-        // 🌟 ИСПРАВЛЕНИЕ: Жёстко изолируем поиск только внутри активной зоны России
+        // 🌟 УМНАЯ ИЗОЛЯЦИЯ: На главной ищет везде, внутри разделов — только в выбранном
         if (isRussiaDbActive && q !== '') {
             const isInSubjectsContainer = block.closest('#ruSubjectsContainer') !== null;
             const isInOkrugsContainer = block.closest('#ruOkrugsContainer') !== null;
-            const isAlphabetCapitals = block.id === 'block-ru-capital-alphabet';
 
             if (currentRuZone === 'subjects' && !isInSubjectsContainer) {
                 block.style.display = 'none';
                 return;
             }
             if (currentRuZone === 'okrugs' && !isInOkrugsContainer) {
-                block.style.display = 'none';
-                return;
-            }
-            if (currentRuZone === 'main' && !isAlphabetCapitals) {
                 block.style.display = 'none';
                 return;
             }
@@ -2056,6 +2051,11 @@ function runSearch() {
                     document.getElementById('ruOkrugsZone').style.display = 'block';
                     document.getElementById('ruOkrugsContainer').style.display = 'block';
                 } else if (currentRuZone === 'main') {
+                    // Если мы на главной — зажигаем абсолютно все зоны для отображения сквозного результата
+                    document.getElementById('ruSubmissionsZone').style.display = 'block';
+                    document.getElementById('ruSubjectsContainer').style.display = 'block';
+                    document.getElementById('ruOkrugsZone').style.display = 'block';
+                    document.getElementById('ruOkrugsContainer').style.display = 'block';
                     document.getElementById('ruCapitalsContainer').style.display = 'block';
                 }
             } else if (isRussiaDbActive && q === '') {
