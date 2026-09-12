@@ -2054,10 +2054,33 @@ function runSearch() {
             block.style.display = 'none';
         } else {
             if (isRussiaDbActive && q !== '') {
-                // РЕЖИМ АКТИВНОГО ПОИСКА: Зажигаем только подходящие под контекст таблицы
-                block.style.display = 'block';
-                block.classList.remove('collapsed');
-                if (content) content.style.display = 'block';
+                const isSubjectBlock = block.id.startsWith('block-ru-subject-');
+                const isOkrugBlock = block.id.startsWith('block-ru-okrug-');
+                const isCapitalBlock = block.id === 'block-ru-capital-alphabet';
+
+                // 🌟 ЗАЩИТНЫЙ ФИЛЬТР ПРЕДСТАВЛЕНИЯ:
+                // Если мы на главном экране, разрешаем открывать ТОЛЬКО Административные центры!
+                if (isMainMenuVisible && !isCapitalBlock) {
+                    block.style.display = 'none';
+                } 
+                // Если зашли в Субъекты, разрешаем открывать ТОЛЬКО Субъекты
+                else if (isSubjectsZoneVisible && !isSubjectBlock) {
+                    block.style.display = 'none';
+                } 
+                // Если зашли в Округа, разрешаем открывать ТОЛЬКО Округа
+                else if (isOkrugsZoneVisible && !isOkrugBlock) {
+                    block.style.display = 'none';
+                } 
+                // В остальных случаях безопасно зажигаем блок на экране
+                else {
+                    block.style.display = 'block';
+                    block.classList.remove('collapsed');
+                    if (content) content.style.display = 'block';
+                }
+
+                // Не даем поиску самовольно открывать скрытые родительские экраны
+                if (isSubjectsZoneVisible) document.getElementById('ruSubjectsContainer').style.display = 'block';
+                if (isOkrugsZoneVisible) document.getElementById('ruOkrugsContainer').style.display = 'block';
                 
                 // Не даем поиску самовольно открывать скрытые родительские экраны
                 if (isSubjectsZoneVisible) document.getElementById('ruSubjectsContainer').style.display = 'block';
