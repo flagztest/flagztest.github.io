@@ -64,12 +64,12 @@
             padding-bottom: 5px;
         }
         .tab-btn {
-            padding: 8px 16px;
+            padding: 8px 4px; /* Немного сжали поля, чтобы кнопкам было просторно */
             background: none;
             border: none;
             font-size: 15px;
-            /* 🌟 ИСХОДНЫЙ ЛЕГКИЙ ВЕСТ ТЕКСТА: */
-            font-weight: 500 !important; 
+            /* 🌟 ОРИГИНАЛЬНЫЙ СТИЛЬ: неактивные кнопки изящные и тонкие */
+            font-weight: 600 !important; 
             color: #495057 !important; 
             cursor: pointer;
             border-radius: 4px;
@@ -77,28 +77,28 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            /* 🌟 ТОТАЛЬНАЯ ЗАЩИТА ОТ МИГАНИЯ И ВСПЫШЕК SAFARI: */
+            white-space: nowrap !important; /* Жесткий запрет на перенос слов в шапке */
+            /* 🌟 ТОТАЛЬНЫЙ БЛОК МИГАНИЯ И СЕРЫХ Мобильных ВСПЫШЕК: */
             -webkit-tap-highlight-color: transparent !important; 
             tap-highlight-color: transparent !important;
         }
         
-        /* 🌟 ХАК ФИКСИРОВАННОЙ РАСПОРКИ ДЛЯ КАЖДОЙ КНОПКИ ШАПКИ: */
+        /* 🌟 УМНАЯ МОНОЛИТНАЯ РАСПОРКА: берет только буквы из data-text без учета смайликов */
         .tab-btn::after {
             display: block;
             content: attr(data-text);
-            font-weight: 800;
+            font-weight: 800; /* Резервирует место под будущую жирность */
             height: 0;
             overflow: hidden;
             visibility: hidden;
         }
 
         .tab-btn.active {
-            /* 🌟 СВЕРХЖИРНОСТЬ ПРИ НАЖАТИИ: */
+            /* 🌟 ЖИРНОСТЬ ПРИ НАЖАТИИ: буквы утолщаются строго при активации */
             font-weight: 800 !important; 
             color: #495057 !important; 
             background-color: #e9ecef !important; 
         }
-
 
         .controls-row {
             display: flex;
@@ -423,12 +423,12 @@
     box-sizing: border-box !important;
 }
      
-      /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
+     /* КНОПКИ: Сохраняют сочный крупный шрифт, стоят в одну строку и не вылезают за экран */
      .tab-btn {
          width: 100% !important;
          padding: 6px 0px !important; 
          font-size: 15px !important;  
-         font-weight: 500 !important; /* Стартовый вес букв на мобильном */
+         font-weight: 600 !important; /* Стартовый легкий вес */
          text-align: center !important;
          white-space: nowrap !important; 
          overflow: visible !important;
@@ -437,7 +437,7 @@
          tap-highlight-color: transparent !important;
      }
      .tab-btn.active {
-         font-weight: 800 !important; /* Жирность при активации таба на телефоне */
+         font-weight: 800 !important; /* Жирность при нажатии на телефоне */
          color: #495057 !important;
      }
 
@@ -758,8 +758,6 @@
     ">
 </div>
 
-<div class="fixed-header">
-    <div class="header-content">
 <div class="nav-tabs">
     <button class="tab-btn active" data-text="База стран" onclick="switchView('db')">🌍<br>База<br>стран</button>
     <button class="tab-btn" data-text="База России" onclick="switchView('ru-db')">🇷🇺<br>База<br>России</button>
