@@ -1976,7 +1976,7 @@ function runSearch() {
     // ОПРЕДЕЛЯЕМ ТЕКУЩИЙ РЕЖИМ РАБОТЫ: Страны мира или База России
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
-    // 🌟 ОПРЕДЕЛЯЕМ, КАКОЙ ИМЕННО ЭКРАН РОССИИ СЕЙЧАС ВИДИТ ПОЛЬЗОВАТЕЛЬ
+    // 🌟 ОБЪЯВЛЯЕМ ОПРЕДЕЛЕНИЕ ЭКРАНОВ НАПРЯМУЮ ВНУТРИ ФУНКЦИИ
     const isMainMenuVisible = document.getElementById('ruMainMenuZone').style.display === 'block' || document.getElementById('ruMainMenuZone').style.display === '';
     const isSubjectsZoneVisible = document.getElementById('ruSubmissionsZone').style.display === 'block';
     const isOkrugsZoneVisible = document.getElementById('ruOkrugsZone').style.display === 'block';
@@ -2004,26 +2004,26 @@ function runSearch() {
             return;
         }
 
-        // 🌟 УМНАЯ СЕГМЕНТАЦИЯ БЛОКОВ РОССИИ ПРИ АКТИВНОМ ПОИСКЕ
+        // 🌟 УМНАЯ ИСПРАВЛЕННАЯ СЕГМЕНТАЦИЯ БЛОКОВ РОССИИ ПРИ АКТИВНОМ ПОИСКЕ
         if (isRussiaDbActive && q !== '') {
             const isSubjectBlock = block.id.startsWith('block-ru-subject-');
             const isOkrugBlock = block.id.startsWith('block-ru-okrug-');
             const isCapitalBlock = block.id === 'block-ru-capital-alphabet';
 
-            // Если мы зашли в раздел "Субъекты России", ищем только в них
+            // 1. Если мы зашли внутрь раздела "Субъекты России" (Зона Б) — ищем ТОЛЬКО в субъектах
             if (isSubjectsZoneVisible && !isSubjectBlock) {
                 block.style.display = 'none';
                 return;
             }
-            // Если мы зашли в раздел "Федеральные округа", ищем только в них
+            // 2. Если мы зашли внутрь раздела "Федеральные округа" (Зона В) — ищем ТОЛЬКО в округах
             if (isOkrugsZoneVisible && !isOkrugBlock) {
                 block.style.display = 'none';
                 return;
             }
-            // Если мы на главном экране (3 кнопки) — заставляем поиск пробивать ВСЕ ТРИ БАЗЫ одновременно!
+            // 3. Если мы на главном экране (3 кнопки) — заставляем поиск пробивать ВСЕ ТРИ БАЗЫ одновременно!
             // Блок скроется только в том случае, если он НЕ относится ни к субъектам, ни к округам, ни к центрам.
             if (isMainMenuVisible && !isSubjectBlock && !isOkrugBlock && !isCapitalBlock) {
-                block.style.setProperty('display', 'none');
+                block.style.display = 'none';
                 return;
             }
         }
