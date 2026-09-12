@@ -1247,7 +1247,7 @@ const subjectFlags = {
     "Свердловская область": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Flag_of_Sverdlovsk_Oblast.svg/1280px-Flag_of_Sverdlovsk_Oblast.svg.png",
     "Смоленская область": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_Smolensk_Oblast.svg/1280px-Flag_of_Smolensk_Oblast.svg.png",
     "Тамбовская область": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/Flag_of_Tambov_Oblast.svg/1280px-Flag_of_Tambov_Oblast.svg.png",
-    "Тверская область": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/Flag_of_Tambov_Oblast.svg/1280px-Flag_of_Tambov_Oblast.svg.png",
+    "Тверская область": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Flag_of_Tver_Oblast.svg/1280px-Flag_of_Tver_Oblast.svg.png",
     "Томская область": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Flag_of_Tomsk_Oblast.svg/1280px-Flag_of_Tomsk_Oblast.svg.png",
     "Тульская область": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Flag_of_Tula_Oblast_%28design%2C_Dark_color%29.svg/1280px-Flag_of_Tula_Oblast_%28design%2C_Dark_color%29.svg.png",
     "Тюменская область": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Flag_of_Tyumen_Oblast.svg",
@@ -1716,7 +1716,6 @@ function getFlagUrl(country) {
     /* Запасной ресурс удален, теперь на экране будут только оригиналы из Википедии */
 }
 
-let globalCounter = 1;
 const tablesContainer = document.getElementById('tablesContainer');
 
 // Сначала создаем блок Европы, чтобы он железно находился на первом месте сверху
@@ -1735,12 +1734,11 @@ function createContinentBlock(continent, countries) {
     block.id = `block-${continent.replace(/\s+/g, '-')}`;
     
     let rowsHtml = '';
-    let localCounter = 1;
     
-   countries.forEach(c => {
-    let flagSrc = getFlagUrl(c);
-    const subText = c.note ? ` <span style="font-size:12px; color:#6c757d; font-weight:normal;">${c.note}</span>` : '';
-    rowsHtml += `
+    countries.forEach(c => {
+        let flagSrc = getFlagUrl(c);
+        const subText = c.note ? ` <span style="font-size:12px; color:#6c757d; font-weight:normal;">${c.note}</span>` : '';
+        rowsHtml += `
             <tr data-name="${c.name.toLowerCase()}" data-capital="${c.capital.toLowerCase()}">
                 <td class="col-flag">
                    <div class="flag-wrapper">
@@ -1748,7 +1746,7 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name)}" 
+                    <a href="https://google.com{encodeURIComponent(c.name)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
@@ -1756,18 +1754,15 @@ function createContinentBlock(continent, countries) {
                     ${subText}
                 </td>
                 <td>
-           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.capital)}" 
+                    <a href="https://google.com{encodeURIComponent(c.capital)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
-                    ${c.capital}
-                 </a> 
+                        ${c.capital}
+                    </a> 
                 </td>
             </tr>`;
-        globalCounter++;
-        localCounter++;
-    });
+    }); // 🌟 Убрали из цикла строки globalCounter++ и localCounter++
 
-    
     block.innerHTML = `
         <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
             <span>${continent}</span>
@@ -1777,7 +1772,7 @@ function createContinentBlock(continent, countries) {
             <table>
                 <thead>
                     <tr>
-                        <th class="col-num">№</th>
+                        <!-- 🌟 Полностью удалили скрытый заголовок th class="col-num" -->
                         <th class="col-flag">Флаг</th>
                         <th>Страна</th>
                         <th>Столица</th>
