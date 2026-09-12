@@ -717,22 +717,9 @@
     </style>
 </head>
 <body>
-<!-- 🎛️ ОБНОВЛЕННЫЙ СВЕРХТОЧНЫЙ ХРОМАКЕЙ (ВЫЖИГАЕТ ЗЕЛЕНЫЙ ФОН НА СМАРТФОНАХ БЕЗ ОСТАТКА) -->
-<svg width="0" height="0" style="position:absolute; z-index:-1;">
-    <defs>
-        <filter id="chromakey" color-interpolation-filters="sRGB">
-            <!-- Тонкая математическая матрица: полностью изолирует зеленый канал (#4fa231) и превращает его в прозрачность -->
-            <feColorMatrix type="matrix" values="
-                1     0     0     0     0
-                0     1     0     0     0
-                0     0     1     0     0
-               -3.5   4.5  -3.5   1    -0.05
-            "/>
-        </filter>
-    </defs>
-</svg>
 
-<!-- 🦖 АНИМИРОВАННАЯ ЗАСТАВКА: БЕЗ ОБРЕЗКИ ХВОСТА И ФЛАГА -->
+
+<!-- 🦖 АНИМИРОВАННАЯ ЗАСТАВКА: МГНОВЕННЫЙ СТАРТ БЕЗ ОБРЕЗКИ ХВОСТА И ФЛАГА -->
 <div id="splashScreen" style="
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -744,32 +731,26 @@
     z-index: 10000;
     transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
 ">
-    <!-- Контейнер с «умной» маской: clip-path срезает только правый верхний угол (где логотип) -->
-    <!-- Сам контейнер теперь гибкий (360px на 360px), что позволяет Годзилле полностью поместиться в экран -->
-    <div style="
+    <!-- Встроенный стиль анимации дыхания (покачивание вверх-вниз на 8 пикселей) -->
+    <style>
+        @keyframes godzillaBreath {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .breathing-godzilla {
+            animation: godzillaBreath 2s ease-in-out infinite;
+        }
+    </style>
+
+    <!-- Ваша чистая PNG-картинка без фона. Сюда применится плавная CSS-анимация -->
+    <!-- 🌟 ОБЯЗАТЕЛЬНО загрузите вашу картинку в GitHub и назовите её именно godzilla.png -->
+    <img src="godzilla.png" alt="Loading..." class="breathing-godzilla" style="
         width: 90vw;
-        max-width: 360px;
-        aspect-ratio: 1 / 1;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        /* Магия маскирования: срезает прямоугольник 30% ширины и 12% высоты строго в правом верхнем углу */
-        clip-path: polygon(0% 0%, 70% 0%, 70% 12%, 100% 12%, 100% 100%, 0% 100%);
-        -webkit-clip-path: polygon(0% 0%, 70% 0%, 70% 12%, 100% 12%, 100% 100%, 0% 100%);
+        max-width: 320px;
+        height: auto;
+        object-fit: contain;
     ">
-        <!-- Видео теперь центрировано на 100% без искусственных сдвигов и сильного зума -->
-        <video id="godzillaVideo" autoplay loop muted playsinline style="
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: url(#chromakey);
-            -webkit-filter: url(#chromakey);
-            transform: translateZ(0); /* Включает аппаратное ускорение на смартфонах для сглаживания пикселей */
-        ">
-            <source src="godzilla.mp4" type="video/mp4">
-        </video>
-    </div>
 </div>
 
 <div class="fixed-header">
@@ -886,10 +867,6 @@
 <script>
 // 🌟 АВТОМАТИЧЕСКОЕ ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ ЗАСТАВКИ (КИНЕМАТОГРАФИЧНЫЙ ТАЙМЕР)
 window.addEventListener('DOMContentLoaded', () => {
-    // Включаем принудительный старт видео для капризных мобильных браузеров
-    const v = document.getElementById('godzillaVideo');
-    if (v) { v.play().catch(() => {}); }
-
     setTimeout(() => {
         const splash = document.getElementById('splashScreen');
         if (splash) {
@@ -897,7 +874,7 @@ window.addEventListener('DOMContentLoaded', () => {
             splash.style.visibility = 'hidden';
             setTimeout(() => splash.remove(), 1200); 
         }
-    }, 3000); // 3000 миллисекунд (3 секунды) Годзилла будет анимироваться на экране
+    }, 2500); // Через 2.5 секунды заставка растворится, открыв сайт
 });
 
 // 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
