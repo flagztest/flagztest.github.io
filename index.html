@@ -1874,15 +1874,6 @@ function switchView(viewId) {
     
     currentRuZone = 'main'; 
 
-function switchView(viewId) {
-    // АВТО-ОЧИСТКА И ОБНУЛЕНИЕ СОСТОЯНИЯ ПОИСКА
-    const searchInput = document.getElementById('searchInput');
-    const clearBtn = document.getElementById('clearSearchBtn');
-    if (searchInput) searchInput.value = '';
-    if (clearBtn) clearBtn.style.display = 'none';
-    
-    currentRuZone = 'main'; 
-
     document.querySelectorAll('.continent-block').forEach(b => {
         b.classList.add('collapsed');
         const content = b.querySelector('.continent-content');
@@ -1923,9 +1914,9 @@ function switchView(viewId) {
         if (worldBuffer) worldBuffer.style.display = 'block';
         document.querySelectorAll('#tablesContainer .continent-block').forEach(b => b.style.display = 'block');
         
-        window.scrollTo(0, 0); // 🌟 Нативный оконный скролл
+        window.scrollTo(0, 0); 
     } else if (viewId === 'ru-db') {
-        window.scrollTo(0, 0); // 🌟 Нативный оконный скролл
+        window.scrollTo(0, 0); 
 
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
         document.getElementById('dbView').classList.add('active');
