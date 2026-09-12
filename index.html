@@ -2065,9 +2065,9 @@ function runSearch() {
                 }
             } else {
                 // ТОТАЛЬНЫЙ СБРОС ПОИСКА К ИСХОДНОМУ РАЗДЕЛУ (q === '')
-                block.style.display = 'block'; // Принудительно возвращаем видимость абсолютно всем блокам на активном табе
-                block.classList.add('collapsed');
-                if (content) content.style.display = 'none';
+                block.style.display = 'block'; // Возвращаем видимость всем блокам на активном табе
+                block.classList.add('collapsed'); // Железно сворачиваем плашку
+                if (content) content.style.display = 'none'; // Намертво скрываем внутреннюю таблицу
                 
                 if (isRussiaDbActive) {
                     if (currentRuZone === 'subjects') {
@@ -2091,14 +2091,17 @@ function runSearch() {
                         document.getElementById('ruCapitalsContainer').style.display = 'block';
                     }
                 } else {
-                    // СБРОС СТРАН МИРА: возвращаем "Развернуть всё" и переводим все материки в свернутый вид
-                    document.getElementById('toggleAllBtn').textContent = "Развернуть всё";
+                    // СБРОС СТРАН МИРА: сбрасываем счетчик стран в плашке до исходного и переводим флаг в true
                     allCollapsed = true;
+                    // Восстанавливаем корректную цифру общего количества стран в названии каждого континента
+                    const initialCount = block.querySelectorAll('tbody tr').length;
+                    if (badge) badge.textContent = initialCount;
                 }
             }
         }
     });
 }
+
 
 function clearSearch() {
     const searchInput = document.getElementById('searchInput');
