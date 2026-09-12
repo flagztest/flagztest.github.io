@@ -1981,7 +1981,7 @@ function runSearch() {
     document.querySelectorAll('.continent-block').forEach(block => {
         const isRussiaBlock = block.id.startsWith('block-ru-');
         
-        // Жесткое разделение вкладок: на вкладке России скрываем мир, на вкладке мира скрываем Россию
+        // Разделение вкладок: на вкладке России скрываем мир, на вкладке мира скрываем Россию
         if (isRussiaDbActive && !isRussiaBlock) {
             block.style.display = 'none';
             return;
@@ -1991,7 +1991,7 @@ function runSearch() {
             return;
         }
 
-        // Логика для главных плашек меню России (Субъекты и Округа)
+        // Логика отображения главных кнопок меню России (Субъекты и Округа)
         if (block.id === 'block-ru-sub-header' || block.id === 'block-ru-okr-header') {
             if (isRussiaDbActive && q === '') {
                 block.style.display = 'block'; 
@@ -2001,7 +2001,7 @@ function runSearch() {
             return;
         }
 
-        // Изоляция поиска внутри активной зоны на вкладке России
+        // Изоляция поиска внутри выбранного подраздела на вкладке России
         if (isRussiaDbActive && q !== '') {
             const isInSubjectsContainer = block.closest('#ruSubjectsContainer') !== null;
             const isInOkrugsContainer = block.closest('#ruOkrugsContainer') !== null;
@@ -2042,7 +2042,7 @@ function runSearch() {
             block.style.display = 'none';
         } else {
             if (q !== '') {
-                // ОБЩАЯ ЛОГИКА ДЛЯ АКТИВНОГО ПОИСКА (ДЛЯ ОБЕИХ ВКЛАДОК)
+                // АКТИВНЫЙ ПОИСК (ДЛЯ ОБЕИХ ВКЛАДОК)
                 block.style.display = 'block';
                 block.classList.remove('collapsed');
                 if (content) content.style.display = 'block';
@@ -2055,6 +2055,7 @@ function runSearch() {
                         document.getElementById('ruOkrugsZone').style.display = 'block';
                         document.getElementById('ruOkrugsContainer').style.display = 'block';
                     } else if (currentRuZone === 'main') {
+                        // 🌟 СКВОЗНОЙ ПОИСК С ГЛАВНОЙ РФ: включаем отображение абсолютно всех зон
                         document.getElementById('ruSubmissionsZone').style.display = 'block';
                         document.getElementById('ruSubjectsContainer').style.display = 'block';
                         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -2063,8 +2064,8 @@ function runSearch() {
                     }
                 }
             } else {
-                // ОБЩАЯ ЛОГИКА ТОТАЛЬНОГО СБРОСА ПОИСКА (q === '')
-                block.style.display = 'block'; // Возвращаем абсолютно все блоки на свои вкладки
+                // ТОТАЛЬНЫЙ СБРОС ПОИСКА К ИСХОДНОМУ РАЗДЕЛУ (q === '')
+                block.style.display = 'block'; // Возвращаем скрытые блоки на свои вкладки
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
                 
@@ -2081,6 +2082,7 @@ function runSearch() {
                         document.getElementById('ruOkrugsContainer').style.display = 'block';
                         if (!block.closest('#ruOkrugsContainer')) block.style.display = 'none';
                     } else {
+                        // Если сбросили поиск на главной — возвращаем 3 кнопки первого уровня меню
                         document.getElementById('ruMainMenuZone').style.display = 'block';
                         document.getElementById('ruSubmissionsZone').style.display = 'none';
                         document.getElementById('ruOkrugsZone').style.display = 'none';
@@ -2089,7 +2091,7 @@ function runSearch() {
                         document.getElementById('ruCapitalsContainer').style.display = 'block';
                     }
                 } else {
-                    // На вкладке стран мира сбрасываем общее меню в исходное состояние
+                    // 🌟 СБРОС СТРАН МИРА: возвращаем "Развернуть всё" и переводим все материки в свернутый вид
                     document.getElementById('toggleAllBtn').textContent = "Развернуть всё";
                     allCollapsed = true;
                 }
@@ -2102,7 +2104,7 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    window.scrollTo({top: 0, behavior: 'smooth'}); // Бархатный возврат экрана наверх к исходному разделу
+    window.scrollTo({top: 0, behavior: 'smooth'}); // Плавный возврат к началу текущего раздела дисплея
     searchInput.focus();
 }
 
