@@ -2055,7 +2055,7 @@ function runSearch() {
                         document.getElementById('ruOkrugsZone').style.display = 'block';
                         document.getElementById('ruOkrugsContainer').style.display = 'block';
                     } else if (currentRuZone === 'main') {
-                        // 🌟 СКВОЗНОЙ ПОИСК С ГЛАВНОЙ РФ: включаем отображение абсолютно всех зон
+                        // СКВОЗНОЙ ПОИСК С ГЛАВНОЙ РФ: включаем отображение абсолютно всех зон
                         document.getElementById('ruSubmissionsZone').style.display = 'block';
                         document.getElementById('ruSubjectsContainer').style.display = 'block';
                         document.getElementById('ruOkrugsZone').style.display = 'block';
@@ -2065,7 +2065,7 @@ function runSearch() {
                 }
             } else {
                 // ТОТАЛЬНЫЙ СБРОС ПОИСКА К ИСХОДНОМУ РАЗДЕЛУ (q === '')
-                block.style.display = 'block'; // Возвращаем скрытые блоки на свои вкладки
+                block.style.display = 'block'; // Принудительно возвращаем видимость абсолютно всем блокам на активном табе
                 block.classList.add('collapsed');
                 if (content) content.style.display = 'none';
                 
@@ -2091,7 +2091,7 @@ function runSearch() {
                         document.getElementById('ruCapitalsContainer').style.display = 'block';
                     }
                 } else {
-                    // 🌟 СБРОС СТРАН МИРА: возвращаем "Развернуть всё" и переводим все материки в свернутый вид
+                    // СБРОС СТРАН МИРА: возвращаем "Развернуть всё" и переводим все материки в свернутый вид
                     document.getElementById('toggleAllBtn').textContent = "Развернуть всё";
                     allCollapsed = true;
                 }
