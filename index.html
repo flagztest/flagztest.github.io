@@ -1987,15 +1987,19 @@ function runSearch() {
     if (searchInput.value.length > 0) {
         clearBtn.style.display = 'block';
         
-        // 🌟 ШАГ ИСПРАВЛЕНИЯ: Если пользователь вводит текст, мгновенно выталкиваем результаты из-под шапки наверх!
-        // Делаем микро-задержку в 10мс, чтобы браузер сначала успел отфильтровать DOM-дерево
-        setTimeout(() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 10);
+        // 🍏 ЗАЩИТА SAFARI: Срабатывает строго один раз на первый символ (длина равна 1).
+        // Это мгновенно поднимает результаты, но оставляет жест Pull-to-Refresh абсолютно свободным!
+        if (searchInput.value.length === 1) {
+            setTimeout(() => {
+                const header = document.querySelector('.fixed-header');
+                if (header) {
+                    header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 10);
+        }
     } else {
         clearBtn.style.display = 'none';
     }
-
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
     document.querySelectorAll('.continent-block').forEach(block => {
