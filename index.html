@@ -37,15 +37,17 @@
             margin: 0 auto;
         }
         .fixed-header {
-            position: fixed;
+            position: sticky; /* Переводим в sticky-режим для безупречной изоляции в iOS */
             top: 0;
             left: 0;
             right: 0;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
             padding: 8px 16px 4px 16px; 
+            /* 🍏 ХАК ДЛЯ SAFARI: заставляем видеокарту телефона намертво запереть шапку на месте */
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
         .header-content {
             max-width: 1000px;
@@ -1985,14 +1987,6 @@ function runSearch() {
     
     if (searchInput.value.length > 0) {
         clearBtn.style.display = 'block';
-        
-        // 🍏 БРОНЕБОЙНЫЙ МЕТОД ДЛЯ SAFARI: Выталкиваем экран в ноль строго ОДИН РАЗ на первый символ.
-        // Шапка встанет монолитно, не отклеится при скролле и сохранит жест Pull-to-Refresh!
-        if (searchInput.value.length === 1) {
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 20); // Задержка 20мс дает iOS время на отрисовку клавиатуры
-        }
     } else {
         clearBtn.style.display = 'none';
     }
