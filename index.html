@@ -1978,7 +1978,6 @@ function toggleAllContinents() {
     }
 }
 
-
 function runSearch() {
     const searchInput = document.getElementById('searchInput');
     const clearBtn = document.getElementById('clearSearchBtn');
@@ -1987,15 +1986,12 @@ function runSearch() {
     if (searchInput.value.length > 0) {
         clearBtn.style.display = 'block';
         
-        // 🍏 ЗАЩИТА SAFARI: Срабатывает строго один раз на первый символ (длина равна 1).
-        // Это мгновенно поднимает результаты, но оставляет жест Pull-to-Refresh абсолютно свободным!
+        // 🍏 БРОНЕБОЙНЫЙ МЕТОД ДЛЯ SAFARI: Выталкиваем экран в ноль строго ОДИН РАЗ на первый символ.
+        // Шапка встанет монолитно, не отклеится при скролле и сохранит жест Pull-to-Refresh!
         if (searchInput.value.length === 1) {
             setTimeout(() => {
-                const header = document.querySelector('.fixed-header');
-                if (header) {
-                    header.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 10);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 20); // Задержка 20мс дает iOS время на отрисовку клавиатуры
         }
     } else {
         clearBtn.style.display = 'none';
