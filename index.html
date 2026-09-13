@@ -44,8 +44,9 @@
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
             padding: 8px 16px 4px 16px; 
+            /* 🍏 ЗАЩИТА СИСТЕМНОЙ СТРОКИ РФ: поджимает шапку строго по границе времени и заряда iOS */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
         .header-content {
             max-width: 1000px;
@@ -2010,15 +2011,10 @@ function runSearch() {
     
     if (searchInput.value.length > 0) {
         clearBtn.style.display = 'block';
-        
-        // 🌟 ШАГ ИСПРАВЛЕНИЯ: Если пользователь вводит текст, мгновенно выталкиваем результаты из-под шапки наверх!
-        // Делаем микро-задержку в 10мс, чтобы браузер сначала успел отфильтровать DOM-дерево
-        setTimeout(() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 10);
     } else {
         clearBtn.style.display = 'none';
     }
+
 
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
@@ -2742,6 +2738,24 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
+window.addEventListener('DOMContentLoaded', () => {
+    generateRussiaSubjectsTables();
+    generateRussiaOkrugsTables();
+    generateRussiaCapitalsTable();
+});
+
+// 🍏 КЛАВИАТУРНЫЙ ЩИТ ДЛЯ SAFARI:
+// Как только вы что-то набрали в поиске и касаетесь пальцем экрана, чтобы полистать списки или квизы,
+// код мгновенно убирает фокус и закрывает клавиатуру. Экран Safari моментально возвращается 
+// в идеальный ноль, шапка прыгает наверх к часам, а наезды и съезды полностью исчезают!
+window.addEventListener('touchmove', () => {
+    const input = document.getElementById('searchInput');
+    if (document.activeElement === input) {
+        input.blur();
+    }
+});
+
+</script>
 
 </script>
 
