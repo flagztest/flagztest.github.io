@@ -869,7 +869,7 @@
     </div>
 </div>
 
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
 <!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
@@ -2198,10 +2198,14 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     }
 });
 
-window.addEventListener('scroll', () => {
+// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР: следит за движением пальца внутри изолированного контейнера!
+document.getElementById('mainScrollContent').addEventListener('scroll', (e) => {
     const btn = document.getElementById('scrollTopBtn');
-    if (window.scrollY > 300) btn.style.display = 'flex';
-    else btn.style.display = 'none';
+    if (e.target.scrollTop > 300) {
+        btn.style.display = 'flex';
+    } else {
+        btn.style.display = 'none';
+    }
 });
 
 function shuffle(arr) {
