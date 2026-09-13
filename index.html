@@ -37,7 +37,7 @@
             margin: 0 auto;
         }
         .fixed-header {
-            position: sticky; /* Переводим в sticky-режим для безупречной изоляции в iOS */
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -45,9 +45,6 @@
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px; 
-            /* 🍏 ХАК ДЛЯ SAFARI: заставляем видеокарту телефона намертво запереть шапку на месте */
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
         }
         .header-content {
             max-width: 1000px;
@@ -2712,6 +2709,18 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
+
+// 🍏 СПАСАТЕЛЬНЫЙ ЩИТ SAFARI ДЛЯ КЛАВИАТУРЫ: принудительно возвращает шапку на место 
+// в верхний край экрана, когда пользователь дописывает текст или закрывает клавиатуру!
+document.getElementById('searchInput').addEventListener('blur', () => {
+    window.scrollTo(0, window.scrollY); // Микро-встряска координат лечит баг сдвига Safari
+});
+document.getElementById('searchInput').addEventListener('focus', () => {
+    setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 300); // Мягко поднимает результаты ровно в момент, когда клавиатура выкатилась
+});
+
 
 </script>
 
