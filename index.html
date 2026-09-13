@@ -29,24 +29,20 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 0;
-            /* 🍏 БРОНЯ ДЛЯ ЭКРАНА ДОМОЙ: Запираем высоту строго по стеклу смартфона */
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden !important;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
+            /* Даем идеальный отступ, чтобы контент изначально стоял строго под шапкой */
+            padding-top: 175px; 
         }
         
         .fixed-header {
-            /* Шапка теперь монолитно стоит первой в структуре, fixed больше не нужен! */
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px;
-            flex-shrink: 0;
-            /* Защита от системных тапов iOS по времени и батарее */
+            padding: 8px 16px 4px 16px; 
             padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
@@ -2767,6 +2763,16 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
+});
+// 🍏 КЛАВИАТУРНЫЙ ЩИТ ДЛЯ SAFARI:
+// Как только вы что-то набрали в поиске и касаетесь пальцем экрана, чтобы полистать списки или квизы,
+// код мгновенно убирает фокус и закрывает клавиатуру. Экран Safari моментально возвращается 
+// в идеальный ноль, шапка прыгает наверх к часам, а наезды и съезды полностью исчезают!
+window.addEventListener('touchmove', () => {
+    const input = document.getElementById('searchInput');
+    if (document.activeElement === input) {
+        input.blur();
+    }
 });
 
 </script>
