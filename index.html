@@ -875,6 +875,18 @@ window.addEventListener('DOMContentLoaded', () => {
 let currentRuZone = 'main';
 
 const specialFlags = {
+    "mt": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Flag_of_Malta.svg/1280px-Flag_of_Malta.svg.png",
+    "fo": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Flag_of_the_Faroe_Islands.svg",
+    "gl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_Greenland.svg/1280px-Flag_of_Greenland.svg.png",
+    "im": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Flag_of_the_Isle_of_Mann.svg/1280px-Flag_of_the_Isle_of_Mann.svg.png",
+    "cw": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Flag_of_Cura%C3%A7ao.svg/1280px-Flag_of_Cura%C3%A7ao.svg.png",
+    "aw": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Flag_of_Aruba.svg/1280px-Flag_of_Aruba.svg.png",
+    "sx": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Flag_of_Sint_Maarten.svg/1280px-Flag_of_Sint_Maarten.svg.png",
+    "pr": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Flag_of_Puerto_Rico.svg/1280px-Flag_of_Puerto_Rico.svg.png",
+    "hk": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Flag_of_Hong_Kong.svg/1280px-Flag_of_Hong_Kong.svg.png",
+    "mo": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Flag_of_Macau.svg/1280px-Flag_of_Macau.svg.png",
+    "nu": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Flag_of_Niue.svg/1280px-Flag_of_Niue.svg.png",
+    "ck": "https://upload.wikimedia.org/wikipedia/commons/3/35/Flag_of_the_Cook_Islands.svg",
     "prid": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Transnistria_%28state%29.svg",
     "abh": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Flag_of_the_Republic_of_Abkhazia.svg",
     "ossetia": "https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_South_Ossetia.svg",
@@ -1535,7 +1547,11 @@ const countriesData = {
         { name: "Швеция", capital: "Стокгольм", iso: "se", special: true },
         { name: "Эстония", capital: "Таллин", iso: "ee", special: true },
         { name: "Приднестровье", capital: "Тирасполь", iso: "prid", special: true, note: "(Непризнанное государство)" },
-        { name: "Косово", capital: "Приштина", iso: "xk", special: true, note: "(Частично признанное государство)" }
+        { name: "Косово", capital: "Приштина", iso: "xk", special: true, note: "(Частично признанное государство)" },
+        { name: "Мальта", capital: "Валлетта", iso: "mt", special: true },
+        { name: "Фарерские острова", capital: "Торсхавн", iso: "fo", special: true, note: "(Автономия Дании)" },
+        { name: "Гренландия", capital: "Нуук", iso: "gl", special: true, note: "(Автономия Дании)" },
+        { name: "Остров Мэн", capital: "Дуглас", iso: "im", special: true, note: "(Владение Великобритании)" }
     ],
     "Азия": [
         { name: "Азербайджан", capital: "Баку", iso: "az", special: true },
@@ -1589,7 +1605,9 @@ const countriesData = {
         { name: "Тайвань", capital: "Тайбэй", iso: "tw", special: true, note: "(Частично признанное государство)" },
         { name: "Абхазия", capital: "Сухум", iso: "abh", special: true, note: "(Частично признанное государство)" },
         { name: "Южная Осетия", capital: "Цхинвал", iso: "ossetia", special: true, note: "(Частично признанное государство)" },
-        { name: "Северный Кипр", capital: "Лефкоша", iso: "ncyprus", special: true, note: "(Частично признанное государство)" }     
+        { name: "Северный Кипр", capital: "Лефкоша", iso: "ncyprus", special: true, note: "(Частично признанное государство)" },
+        { name: "Гонконг", capital: "Гонконг", iso: "hk", special: true, note: "(САР Китая)" },
+        { name: "Макао", capital: "Макао", iso: "mo", special: true, note: "(САР Китая)" }     
     ],
     "Африка": [
         { name: "Алжир", capital: "Алжир", iso: "dz", special: true },
@@ -1672,7 +1690,10 @@ const countriesData = {
         { name: "Сент-Люсия", capital: "Кастри", iso: "lc", special: true },
         { name: "США", capital: "Вашингтон", iso: "us", special: true },
         { name: "Тринидад и Тобаго", capital: "Порт-оф-Спейн", iso: "tt", special: true },
-        { name: "Ямайка", capital: "Кингстон", iso: "jm", special: true }
+        { name: "Ямайка", capital: "Кингстон", iso: "jm", special: true },
+        { name: "Пуэрто-Рико", capital: "Сан-Хуан", iso: "pr", special: true, note: "(Территория США)" },
+        { name: "Аруба", capital: "Ораньестад", iso: "aw", special: true, note: "(Самоуправляемое государство)" },
+        { name: "Синт-Мартен", capital: "Филипсбург", iso: "sx", special: true, note: "(Самоуправляемое государство)" }
     ],
     "Южная Америка": [
         { name: "Аргентина", capital: "Буэнос-Айрес", iso: "ar", special: true },
@@ -1686,7 +1707,8 @@ const countriesData = {
         { name: "Суринам", capital: "Парамарибо", iso: "sr", special: true },
         { name: "Уругвай", capital: "Монтевидео", iso: "uy", special: true },
         { name: "Чили", capital: "Сантьяго", iso: "cl", special: true },
-        { name: "Эквадор", capital: "Кито", iso: "ec", special: true }
+        { name: "Эквадор", capital: "Кито", iso: "ec", special: true },
+        { name: "Кюрасао", capital: "Виллемстад", iso: "cw", special: true, note: "(Самоуправляемое государство)" }
     ],
     "Австралия и Океания": [
         { name: "Австралия", capital: "Канберра", iso: "au", special: true },
@@ -1702,7 +1724,9 @@ const countriesData = {
         { name: "Соломоновы Острова", capital: "Хониара", iso: "sb", special: true },
         { name: "Тонга", capital: "Нукуалофа", iso: "to", special: true },
         { name: "Тувалу", capital: "Фунафути", iso: "tv", special: true },
-        { name: "Фиджи", capital: "Сува", iso: "fj", special: true }
+        { name: "Фиджи", capital: "Сува", iso: "fj", special: true },
+        { name: "Ниуэ", capital: "Алофи", iso: "nu", special: true, note: "(В ассоциации с Новой Зеландией)" },
+        { name: "Острова Кука", capital: "Аваруа", iso: "ck", special: true, note: "(В ассоциации с Новой Зеландией)" }
     ]
 };
 
