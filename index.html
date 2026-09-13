@@ -1782,13 +1782,13 @@ function createContinentBlock(continent, countries) {
                     </a>
                     ${subText}
                 </td>
-                <td>
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.capital)}" 
-                       target="_blank" 
-                       style="color: inherit; text-decoration: none; cursor: pointer;">
-                        ${c.capital}
-                    </a> 
-                </td>
+<td>
+    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.capital === 'Сан-Хосе' ? 'Сан-Хосе, Коста-Рика' : c.capital)}" 
+       target="_blank" 
+       style="color: inherit; text-decoration: none; cursor: pointer;">
+        ${c.capital}
+    </a> 
+</td>
             </tr>`;
     }); // 🌟 Убрали из цикла строки globalCounter++ и localCounter++
 
