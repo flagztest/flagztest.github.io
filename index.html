@@ -30,10 +30,12 @@
             color: var(--text-color);
             margin: 0;
             padding: 20px;
-            /* Даем идеальный отступ, чтобы контент изначально стоял строго под шапкой */
-            padding-top: 175px; 
+            padding-top: 165px;
         }
-        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
         .fixed-header {
             position: fixed;
             top: 0;
@@ -42,32 +44,9 @@
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
+            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
             padding: 8px 16px 4px 16px; 
-            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
-
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            overflow: hidden;
-        }
-
-        /* 🌟 НОВЫЙ НЕЗАВИСИМЫЙ СЛОЙ СКРОЛЛА: изолирует пружину Safari от шапки сайта */
-        .scroll-wrapper {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
-            padding: 10px 4px 40px 4px;
-            box-sizing: border-box;
-        }
-
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -454,7 +433,9 @@
          gap: 2px !important; /* Прижали поиск к вкладкам */
      }
      body {
-         padding: 0 !important;
+         padding: 10px 4px !important;
+         /* 🌟 ПРИЖИМАЕМ ЕВРОПУ К ШАПКЕ ПРИ СТАРТЕ САЙТА: */
+         padding-top: 120px !important; 
      }
 
      .controls-row {
@@ -778,9 +759,8 @@
 </div>
 
 <div class="container">
-    <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ДОБАВИЛИ ИЗОЛИРУЮЩИЙ СЛОЙ -->
-        <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
-        <div id="dbView" class="view-section active">
+    <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
+    <div id="dbView" class="view-section active">
         
         <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ -->
         <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box; display: none;">
@@ -859,7 +839,6 @@
             <button id="nextCountryBtn" class="action-btn" style="display:none;" onclick="loadQuizCountryRound()">Следующий вопрос</button>
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
-         </div>
     </div>
 </div>
 
@@ -1686,7 +1665,7 @@ const countriesData = {
         { name: "ЮАР", capital: "Претория", iso: "za", special: true },
         { name: "Южный Судан", capital: "Джуба", iso: "ss", special: true },
         { name: "Сомалиленд", capital: "Харгейса", iso: "somaliland", special: true, note: "(Непризнанное государство)" },
-        { name: "САДР", capital: "Эль-Аюн", iso: "eh", special: true, note: "(Частично признанное государство)" }
+        { name: "САДР (Западная Сахара)", capital: "Эль-Аюн", iso: "eh", special: true, note: "(Частично признанное государство)" }
     ],
     "Северная Америка": [
         { name: "Антигуа и Барбуда", capital: "Сент-Джонс", iso: "ag", special: true },
@@ -2610,17 +2589,16 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под поиск!
+        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
         setTimeout(() => {
-            const scrollLayer = document.getElementById('mainScrollContent');
-            if (scrollLayer) {
-                const offset = 10; 
-                scrollLayer.scrollTo({
-                    top: block.offsetTop - offset,
-                    behavior: 'smooth'
-                });
+            const offset = 120;
+            const offsetPosition = block.offsetTop - offset;
+            const diff = Math.abs(window.scrollY - offsetPosition);
+
+            if (diff > 2) {
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }
-        }, 80); 
+        }, 60); 
     }
 }
 
@@ -2763,16 +2741,6 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
-});
-// 🍏 КЛАВИАТУРНЫЙ ЩИТ ДЛЯ SAFARI:
-// Как только вы что-то набрали в поиске и касаетесь пальцем экрана, чтобы полистать списки или квизы,
-// код мгновенно убирает фокус и закрывает клавиатуру. Экран Safari моментально возвращается 
-// в идеальный ноль, шапка прыгает наверх к часам, а наезды и съезды полностью исчезают!
-window.addEventListener('touchmove', () => {
-    const input = document.getElementById('searchInput');
-    if (document.activeElement === input) {
-        input.blur();
-    }
 });
 
 </script>
