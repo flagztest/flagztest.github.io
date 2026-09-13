@@ -29,37 +29,24 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 0;
-            /* 🍏 БРОНЯ SAFARI: Запираем высоту страницы строго по экрану, отключая общий скролл */
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
+            padding-top: 165px;
         }
-        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
         .fixed-header {
-            /* Шапка теперь просто стоит вверху флекс-контекста, fixed больше не нужен! */
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px;
-            flex-shrink: 0;
+            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
+            padding: 8px 16px 4px 16px; 
         }
-
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            /* 🍏 ИЗОЛЯЦИЯ СКРОЛЛА: списки крутятся строго внутри этого независимого контейнера */
-            flex-grow: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Бархатный и плавный скролл на Айфонах */
-            padding: 10px 4px;
-            box-sizing: border-box;
-        }
-
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -446,7 +433,9 @@
          gap: 2px !important; /* Прижали поиск к вкладкам */
      }
      body {
-         padding: 0 !important;
+         padding: 10px 4px !important;
+         /* 🌟 ПРИЖИМАЕМ ЕВРОПУ К ШАПКЕ ПРИ СТАРТЕ САЙТА: */
+         padding-top: 120px !important; 
      }
 
      .controls-row {
@@ -1989,6 +1978,7 @@ function toggleAllContinents() {
     }
 }
 
+
 function runSearch() {
     const searchInput = document.getElementById('searchInput');
     const clearBtn = document.getElementById('clearSearchBtn');
@@ -1996,9 +1986,16 @@ function runSearch() {
     
     if (searchInput.value.length > 0) {
         clearBtn.style.display = 'block';
+        
+        // 🌟 ШАГ ИСПРАВЛЕНИЯ: Если пользователь вводит текст, мгновенно выталкиваем результаты из-под шапки наверх!
+        // Делаем микро-задержку в 10мс, чтобы браузер сначала успел отфильтровать DOM-дерево
+        setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 10);
     } else {
         clearBtn.style.display = 'none';
     }
+
     const isRussiaDbActive = document.querySelector('.tab-btn:nth-child(2)').classList.contains('active');
 
     document.querySelectorAll('.continent-block').forEach(block => {
@@ -2721,7 +2718,6 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
-
 
 </script>
 
