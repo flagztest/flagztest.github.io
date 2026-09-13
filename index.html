@@ -30,10 +30,11 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 БРОНЯ ДЛЯ ЭКРАНА ДОМОЙ: Запираем высоту страницы строго по стеклу смартфона */
+            /* 🍏 АППАРАТНЫЙ ЩИТ ДЛЯ ЭКРАНА ДОМОЙ: Запираем высоту и запрещаем резиновый скролл */
             height: 100vh;
             width: 100vw;
-            overflow: hidden;
+            overflow: hidden !important;
+            overscroll-behavior: none !important; /* Намертво отключает оттяжку Pull-to-Refresh */
             display: flex;
             flex-direction: column;
         }
@@ -52,10 +53,10 @@
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            /* 🍏 ИЗОЛЯЦИЯ СКРОЛЛА: списки крутятся строго внутри этого независимого контейнера */
             flex-grow: 1;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Бархатный и плавный скролл на iOS */
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain !important; /* 🍏 Запрещает внутреннему скроллу передавать пружину на шапку */
             padding: 10px 4px;
             box-sizing: border-box;
         }
@@ -2599,16 +2600,18 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
+        // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под поиск!
         setTimeout(() => {
-            const offset = 120;
-            const offsetPosition = block.offsetTop - offset;
-            const diff = Math.abs(window.scrollY - offsetPosition);
-
-            if (diff > 2) {
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            const container = document.querySelector('.container');
+            if (container) {
+                // Высчитываем чистую позицию блока относительно внутреннего окна скролла
+                const offset = 10; 
+                container.scrollTo({
+                    top: block.offsetTop - offset,
+                    behavior: 'smooth'
+                });
             }
-        }, 60); 
+        }, 80); 
     }
 }
 
