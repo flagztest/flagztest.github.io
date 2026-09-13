@@ -852,8 +852,15 @@
 
 
 <script>
+// 🌟 ШАГ ИСПРАВЛЕНИЯ: Намертво отключаем мобильный кэш скролла браузера при жесткой перезагрузке страницы!
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual'; // Запрещаем Safari самостоятельно двигать экран после обновления
+}
+window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
+
 // 🌟 АВТОМАТИЧЕСКОЕ ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ ЗАСТАВКИ (КИНЕМАТОГРАФИЧНЫЙ ТАЙМЕР)
 window.addEventListener('DOMContentLoaded', () => {
+    window.scrollTo(0, 0); // Дублирующий защитный выстрел для старых версий iOS
     setTimeout(() => {
         const splash = document.getElementById('splashScreen');
         if (splash) {
