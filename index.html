@@ -30,36 +30,48 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 АППАРАТНЫЙ ЩИТ ДЛЯ ЭКРАНА ДОМОЙ: Запираем высоту и запрещаем резиновый скролл */
+            /* 🍏 БРОНЯ ДЛЯ ЭКРАНА ДОМОЙ: Запираем высоту строго по стеклу смартфона */
             height: 100vh;
             width: 100vw;
             overflow: hidden !important;
-            overscroll-behavior: none !important; /* Намертво отключает оттяжку Pull-to-Refresh */
             display: flex;
             flex-direction: column;
         }
         
         .fixed-header {
-            /* Шапка теперь монолитно стоит первой в структуре, ей больше не нужен fixed! */
+            /* Шапка теперь монолитно стоит первой в структуре, fixed больше не нужен! */
             position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
+            /* Защита от системных тапов iOS по времени и батарее */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
             flex-grow: 1;
+            overflow: hidden;
+        }
+
+        /* 🌟 НОВЫЙ НЕЗАВИСИМЫЙ СЛОЙ СКРОЛЛА: изолирует пружину Safari от шапки сайта */
+        .scroll-wrapper {
+            width: 100%;
+            height: 100%;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain !important; /* 🍏 Запрещает внутреннему скроллу передавать пружину на шапку */
-            padding: 10px 4px;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            padding: 10px 4px 40px 4px;
             box-sizing: border-box;
         }
+
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -770,8 +782,9 @@
 </div>
 
 <div class="container">
-    <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
-    <div id="dbView" class="view-section active">
+    <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ДОБАВИЛИ ИЗОЛИРУЮЩИЙ СЛОЙ -->
+        <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
+        <div id="dbView" class="view-section active">
         
         <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ -->
         <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box; display: none;">
@@ -850,6 +863,7 @@
             <button id="nextCountryBtn" class="action-btn" style="display:none;" onclick="loadQuizCountryRound()">Следующий вопрос</button>
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
+         </div>
     </div>
 </div>
 
@@ -2602,11 +2616,10 @@ function toggleBlock(id) {
 
         // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под поиск!
         setTimeout(() => {
-            const container = document.querySelector('.container');
-            if (container) {
-                // Высчитываем чистую позицию блока относительно внутреннего окна скролла
+            const scrollLayer = document.getElementById('mainScrollContent');
+            if (scrollLayer) {
                 const offset = 10; 
-                container.scrollTo({
+                scrollLayer.scrollTo({
                     top: block.offsetTop - offset,
                     behavior: 'smooth'
                 });
