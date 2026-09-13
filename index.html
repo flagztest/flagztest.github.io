@@ -45,7 +45,11 @@
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px; 
+            /* 🍏 СВЕРХЩИТ SAFARI: изолируем наложение шапки, запрещая iOS двигать её при вызове клавиатуры */
+            -webkit-backdrop-filter: blur(0px);
+            backdrop-filter: blur(0px);
         }
+
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -2710,16 +2714,16 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaCapitalsTable();
 });
 
-// 🍏 СПАСАТЕЛЬНЫЙ ЩИТ SAFARI ДЛЯ КЛАВИАТУРЫ: принудительно возвращает шапку на место 
-// в верхний край экрана, когда пользователь дописывает текст или закрывает клавиатуру!
-document.getElementById('searchInput').addEventListener('blur', () => {
-    window.scrollTo(0, window.scrollY); // Микро-встряска координат лечит баг сдвига Safari
+// 🍏 АВТО-ЗАКРЫТИЕ КЛАВИАТУРЫ ПРИ СКРОЛЛЕ ДЛЯ SAFARI:
+// Как только пользователь нашел что-то и начинает листать результаты пальцем, 
+// код мгновенно прячет клавиатуру. Экран и шапка сразу возвращаются в идеальный ноль,
+// а нативная оттяжка страницы вниз (Pull-to-Refresh) работает безупречно!
+window.addEventListener('touchmove', () => {
+    if (document.activeElement === document.getElementById('searchInput')) {
+        document.getElementById('searchInput').blur();
+    }
 });
-document.getElementById('searchInput').addEventListener('focus', () => {
-    setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 300); // Мягко поднимает результаты ровно в момент, когда клавиатура выкатилась
-});
+
 
 
 </script>
