@@ -32,24 +32,21 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 МОНОЛИТНАЯ СТРУКТУРА: Запираем высоту строго по границе видимого стекла */
-            height: 100dvh !important;
-            width: 100vw;
-            overflow: hidden !important;
-            display: flex;
-            flex-direction: column;
         }
         
         .fixed-header {
-            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий потолок сайта, она физически не может никуда уплыть */
-            position: relative;
+            /* 🍏 АППАРАТНАЯ ФИКСАЦИЯ: Шапка намертво приколочена к верху страницы */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px;
-            flex-shrink: 0;
-            /* Динамический безопасный отступ под челку iOS на экране Домой */
-            padding-top: calc(env(safe-area-inset-top) + 8px);
+            padding: 8px 16px 4px 16px; 
+            /* 🍏 БАРЬЕР ОТ НАЕЗДА: Даже если Safari обнулит env() при повороте, 
+               барьер в 44px удержит шапку строго под системной строкой времени iOS! */
+            padding-top: max(env(safe-area-inset-top), 44px);
         }
 
         .container {
@@ -58,21 +55,16 @@
             margin: 0 auto;
             padding: 0;
             box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1; 
-            overflow: hidden;
         }
-        /* 🌟 ИЗОЛИРОВАННЫЙ КОНТЕЙНЕР СКРОЛЛА С НУЛЕВЫМ НАБЕГОМ */
+
+        /* 🌟 НЕЗАВИСИМЫЙ КОНТЕЙНЕР СКРОЛЛА С ПЛОТНОЙ ПОДУШКОЙ БЕЗОПАСНОСТИ */
         .scroll-wrapper {
             width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
-            /* 🍏 ЧИСТЫЙ ОТСТУП: Контент теперь начинается идеально под меню без уползаний */
-            padding: 10px 4px 30px 4px;
             box-sizing: border-box;
+            /* 🍏 ИДЕАЛЬНЫЙ БАЛАНС: Контент таблиц начинается строго под строкой поиска */
+            padding: 165px 4px 40px 4px; 
         }
+
 
 
         .header-content {
