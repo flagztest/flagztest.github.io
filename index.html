@@ -38,7 +38,6 @@
         }
         
         .fixed-header {
-            /* 🍏 ЖЕЛЕЗНАЯ ПРИВЯЗКА К ЭКРАНУ: Шапка жестко зафиксирована у верхнего стекла Айфона */
             position: fixed;
             top: 0;
             left: 0;
@@ -47,8 +46,8 @@
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px; 
-            /* Ювелирный отступ под челку Айфона на экране Домой и авто-выравнивание индикаторов */
-            padding-top: calc(env(safe-area-inset-top) + 8px);
+            /* 🍏 ОКОНЧАТЕЛЬНЫЙ БАРЬЕР: Железно удерживает меню под полосой времени и заряда iOS */
+            padding-top: max(env(safe-area-inset-top), 50px) !important;
         }
 
         .container {
@@ -625,11 +624,11 @@
            box-shadow: none !important;
      }
 
-      /* КВИЗЫ: Положение на мобильном */
+     /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
-         /* Умный отрицательный маргин аккуратно компенсирует padding-top от body */
-         margin-top: -30px !important; 
-         padding-top: 0px !important;
+         /* 🍏 ИДЕАЛЬНЫЙ СПУСК: Опускает игру из-под шапки ровно на центр рабочей зоны */
+         padding-top: 120px !important;
+         margin-top: 0px !important; 
      }
      .quiz-panel {
          padding: 10px !important;
