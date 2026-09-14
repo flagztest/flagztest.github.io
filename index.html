@@ -32,43 +32,47 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 КЛАССИКА SAFARI: Возвращаем сайту стандартную сквозную прокрутку всей страницы */
-            padding-top: 175px; 
-            box-sizing: border-box;
+            /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
+            height: 100dvh !important;
+            width: 100vw;
+            overflow: hidden !important;
+            display: flex;
+            flex-direction: column;
         }
         
         .fixed-header {
-            /* 🍏 БРОНЕБОЙНЫЙ FIXED ДЛЯ SAFARI: Шапка жестко прибита к верхнему стеклу дисплея */
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            /* 🍏 АБСОЛЮТНАЯ СТАБИЛЬНОСТЬ: Шапка — это монолитный потолок сайта, она физически не способна уплыть на часы! */
+            position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px; 
-            /* 🍏 ЗАЩИТА СИСТЕМНОЙ СТРОКИ: Если Safari обнулит env() при повороте, 
-               железный барьер в 44px намертво удержат меню строго под часами iOS! */
-            padding-top: max(env(safe-area-inset-top), 44px) !important;
-            /* 🍏 АППАРАТНЫЙ ХАК ДЛЯ IOS: Заставляет видеочип телефона намертво запереть слой шапки на месте */
-            -webkit-backdrop-filter: blur(0px);
-            backdrop-filter: blur(0px);
+            padding: 8px 16px 4px 16px;
+            flex-shrink: 0;
+            /* Динамический безопасный отступ под челку и системную строчку времени iOS */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            /* Возвращаем аккуратные боковые отступы безопасности для мобильных плашек */
-            padding: 10px 12px;
+            padding: 0;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
+            flex-grow: 1; 
+            overflow: hidden;
         }
 
-        /* Полностью обнуляем скролл-враппер, так как страница теперь крутится целиком */
+        /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы внутри своего окна */
         .scroll-wrapper {
             width: 100%;
-            padding: 0;
-            margin: 0;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            padding: 10px 4px 40px 4px;
+            box-sizing: border-box;
         }
 
         .header-content {
@@ -2635,10 +2639,15 @@ function toggleBlock(id) {
 
         // РАСКРЫТИЕ: плавно выталкивает открытый блок ровно под поиск по координатам всей страницы!
         setTimeout(() => {
-            const offset = 120;
-            const offsetPosition = block.offsetTop - offset;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 60);  
+            const scrollLayer = document.getElementById('mainScrollContent');
+            if (scrollLayer) {
+                const offset = 10; 
+                scrollLayer.scrollTo({
+                    top: block.offsetTop - offset,
+                    behavior: 'smooth'
+                });
+            }
+        }, 80); 
     }
 }
 
