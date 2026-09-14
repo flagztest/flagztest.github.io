@@ -32,10 +32,13 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
+            /* 🍏 БАЛАНС SAFARI: Возвращаем сайту классическую сквозную прокрутку всей страницы */
+            padding-top: 175px; 
+            box-sizing: border-box;
         }
         
         .fixed-header {
-            /* 🍏 АППАРАТНАЯ ФИКСАЦИЯ: Шапка намертво приколочена к верху страницы */
+            /* 🍏 ЖЕЛЕЗНАЯ ПРИВЯЗКА К ЭКРАНУ: Шапка жестко зафиксирована у верхнего стекла Айфона */
             position: fixed;
             top: 0;
             left: 0;
@@ -44,18 +47,19 @@
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px; 
-            /* 🍏 БАРЬЕР ОТ НАЕЗДА: Даже если Safari обнулит env() при повороте, 
-               барьер в 44px удержит шапку строго под системной строкой времени iOS! */
-            padding-top: max(env(safe-area-inset-top), 44px);
+            /* Ювелирный отступ под челку Айфона на экране Домой и авто-выравнивание индикаторов */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 0;
+            /* 🍏 СИММЕТРИЯ: Возвращаем аккуратные боковые отступы безопасности для мобильных плашек */
+            padding: 10px 12px;
             box-sizing: border-box;
         }
+
 
         /* 🌟 НЕЗАВИСИМЫЙ КОНТЕЙНЕР СКРОЛЛА С ПЛОТНОЙ ПОДУШКОЙ БЕЗОПАСНОСТИ */
         .scroll-wrapper {
@@ -454,7 +458,10 @@
      }
      body {
          padding: 0 !important;
+         /* 🍏 ИДЕАЛЬНАЯ ПОДУШКА: Прижимает Европу и меню квизов ровно к нижнему краю шапки */
+         padding-top: 135px !important; 
      }
+
 
      .controls-row {
           gap: 8px !important;
@@ -618,10 +625,11 @@
            box-shadow: none !important;
      }
 
-     /* КВИЗЫ: Положение на мобильном */
+      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
-         padding-top: 15px !important;
-         margin-top: 0px !important; 
+         /* Умный отрицательный маргин аккуратно компенсирует padding-top от body */
+         margin-top: -30px !important; 
+         padding-top: 0px !important;
      }
      .quiz-panel {
          padding: 10px !important;
@@ -778,7 +786,6 @@
 </div>
 
 <div class="container">
-    <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ОТКРЫЛИ СЛОЙ СКРОЛЛА -->
         <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
         <div id="dbView" class="view-section active">
         
@@ -859,12 +866,10 @@
             <button id="nextCountryBtn" class="action-btn" style="display:none;" onclick="loadQuizCountryRound()">Следующий вопрос</button>
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
-            </div>
-        </div>
     </div>
 </div>
 
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
 <!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
