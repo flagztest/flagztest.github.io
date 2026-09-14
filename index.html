@@ -32,43 +32,48 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 БАЛАНС SAFARI: Возвращаем сайту классическую сквозную прокрутку всей страницы */
-            padding-top: 175px; 
-            box-sizing: border-box;
+            /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
+            height: 100dvh !important;
+            width: 100vw;
+            overflow: hidden !important;
+            display: flex;
+            flex-direction: column;
         }
         
         .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть */
+            position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px; 
-            /* 🍏 ОКОНЧАТЕЛЬНЫЙ БАРЬЕР: Железно удерживает меню под полосой времени и заряда iOS */
-            padding-top: max(env(safe-area-inset-top), 50px) !important;
+            padding: 8px 16px 4px 16px;
+            flex-shrink: 0;
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            /* 🍏 СИММЕТРИЯ: Возвращаем аккуратные боковые отступы безопасности для мобильных плашек */
-            padding: 10px 12px;
+            padding: 0;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
+            flex-grow: 1; 
+            overflow: hidden;
         }
 
-
-        /* 🌟 НЕЗАВИСИМЫЙ КОНТЕЙНЕР СКРОЛЛА С ПЛОТНОЙ ПОДУШКОЙ БЕЗОПАСНОСТИ */
+        /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
         .scroll-wrapper {
             width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            padding: 10px 4px 40px 4px;
             box-sizing: border-box;
-            /* 🍏 ИДЕАЛЬНЫЙ БАЛАНС: Контент таблиц начинается строго под строкой поиска */
-            padding: 165px 4px 40px 4px; 
         }
-
-
 
         .header-content {
             max-width: 1000px;
@@ -626,8 +631,7 @@
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
-         /* 🍏 ИДЕАЛЬНЫЙ СПУСК: Опускает игру из-под шапки ровно на центр рабочей зоны */
-         padding-top: 120px !important;
+         padding-top: 15px !important;
          margin-top: 0px !important; 
      }
      .quiz-panel {
@@ -785,6 +789,7 @@
 </div>
 
 <div class="container">
+    <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ОЖИВИЛИ СЛОЙ СКРОЛЛА -->
         <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
         <div id="dbView" class="view-section active">
         
