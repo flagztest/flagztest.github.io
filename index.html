@@ -740,15 +740,6 @@
      .ru-sub-section.active {
          display: block;
      }
-/* 🍏 ИИ-МОНИТОР ОРИЕНТАЦИИ: если телефон лёг горизонтально, блокируем контент */
-@media (orientation: landscape) and (max-width: 950px) {
-    #orientationShield {
-        display: flex !important;
-    }
-    body {
-        overflow: hidden !important;
-    }
-} 
     </style>
 </head>
 <body>
@@ -2798,16 +2789,35 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaCapitalsTable();
 });
 
-// 🍏 КЛАВИАТУРНЫЙ ЩИТ ДЛЯ SAFARI:
-// Как только вы что-то набрали в поиске и касаетесь пальцем экрана, чтобы полистать списки или квизы,
-// код мгновенно убирает фокус и закрывает клавиатуру. Экран Safari моментально возвращается 
-// в идеальный ноль, шапка прыгает наверх к часам, а наезды и съезды полностью исчезают!
 window.addEventListener('touchmove', () => {
     const input = document.getElementById('searchInput');
     if (document.activeElement === input) {
         input.blur();
     }
 });
+
+// 🍏 БРОНЕБОЙНЫЙ JS-ЩИТ ОТ ПЕРЕВОРОТА ЭКРАНА SAFARI
+function checkOrientation() {
+    const shield = document.getElementById('orientationShield');
+    if (!shield) return;
+    
+    // Проверяем: если телефон повернут набок (горизонтально)
+    if (window.innerWidth > window.innerHeight) {
+        shield.style.setProperty('display', 'flex', 'important');
+        document.body.style.setProperty('overflow', 'hidden', 'important');
+    } else {
+        // Если телефон стоит ровно вертикально
+        shield.style.setProperty('display', 'none', 'important');
+        document.body.style.setProperty('overflow', '', 'important');
+    }
+}
+
+// Запускаем проверку при загрузке, повороте и изменении размеров окна
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+window.addEventListener('load', checkOrientation);
+// Дополнительный защитный выстрел каждые полсекунды
+setInterval(checkOrientation, 500);
 
 </script>
 
