@@ -732,6 +732,16 @@
      .ru-sub-section.active {
          display: block;
      }
+/* 🍏 ПУЛЕНЕПРОБИВАЕМЫЙ CSS-ЩИТ ОТ ПЕРЕВОРОТА ЭКРАНА ДЛЯ IOS */
+@media screen and (orientation: landscape) and (max-device-width: 950px) and (pointer: coarse) {
+    #orientationShield {
+        display: flex !important;
+    }
+    body {
+        overflow: hidden !important;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -2787,29 +2797,6 @@ window.addEventListener('touchmove', () => {
         input.blur();
     }
 });
-
-// 🍏 БРОНЕБОЙНЫЙ JS-ЩИТ ОТ ПЕРЕВОРОТА ЭКРАНА SAFARI
-function checkOrientation() {
-    const shield = document.getElementById('orientationShield');
-    if (!shield) return;
-    
-    // Проверяем: если телефон повернут набок (горизонтально)
-    if (window.innerWidth > window.innerHeight) {
-        shield.style.setProperty('display', 'flex', 'important');
-        document.body.style.setProperty('overflow', 'hidden', 'important');
-    } else {
-        // Если телефон стоит ровно вертикально
-        shield.style.setProperty('display', 'none', 'important');
-        document.body.style.setProperty('overflow', '', 'important');
-    }
-}
-
-// Запускаем проверку при загрузке, повороте и изменении размеров окна
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
-window.addEventListener('load', checkOrientation);
-// Дополнительный защитный выстрел каждые полсекунды
-setInterval(checkOrientation, 500);
 
 </script>
 
