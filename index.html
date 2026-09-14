@@ -32,7 +32,7 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 СВЕРХЩИТ ДЛЯ IOS: Запираем высоту строго по динамическому окну Safari без наездов */
+            /* 🍏 МОНОЛИТНАЯ СТРУКТУРА: Запираем высоту строго по границе видимого стекла */
             height: 100dvh !important;
             width: 100vw;
             overflow: hidden !important;
@@ -41,17 +41,15 @@
         }
         
         .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий потолок сайта, она физически не может никуда уплыть */
+            position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px; 
-            /* 🍏 АНТИ-НАЕЗД НА ЧАСЫ: Если Safari сбросит env() в 0 при повороте, 
-               барьер в 44px намертво удержит шапку строго под системной строкой iOS! */
-            padding-top: max(env(safe-area-inset-top), 44px);
+            padding: 8px 16px 4px 16px;
+            flex-shrink: 0;
+            /* Динамический безопасный отступ под челку iOS на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
@@ -62,20 +60,20 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана */
             flex-grow: 1; 
             overflow: hidden;
         }
-
-        /* 🌟 ИЗОЛИРОВАННЫЙ КОНТЕЙНЕР СКРОЛЛА */
+        /* 🌟 ИЗОЛИРОВАННЫЙ КОНТЕЙНЕР СКРОЛЛА С НУЛЕВЫМ НАБЕГОМ */
         .scroll-wrapper {
             width: 100%;
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            /* 🍏 ЧИСТЫЙ ОТСТУП: Контент теперь начинается идеально под меню без уползаний */
             padding: 10px 4px 30px 4px;
             box-sizing: border-box;
         }
+
 
         .header-content {
             max-width: 1000px;
@@ -630,9 +628,8 @@
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
-         /* 🍏 Защитный отступ плавно спускает игру строго под фиксированную шапку */
-         padding-top: 40px !important;
-         margin-top: -40px !important; 
+         padding-top: 15px !important;
+         margin-top: 0px !important; 
      }
      .quiz-panel {
          padding: 10px !important;
