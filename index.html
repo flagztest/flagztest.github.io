@@ -41,15 +41,17 @@
         }
         
         .fixed-header {
-            /* Шапка монолитно стоит первой в flex-потоке, ей больше не нужен fixed! */
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px;
-            flex-shrink: 0;
-            /* Динамический отступ под челку Айфона на экране Домой и авто-выравнивание в Safari */
-            padding-top: calc(env(safe-area-inset-top) + 8px);
+            padding: 8px 16px 4px 16px; 
+            /* 🍏 АНТИ-НАЕЗД НА ЧАСЫ: Если Safari сбросит env() в 0 при повороте, 
+               барьер в 44px намертво удержит шапку строго под системной строкой iOS! */
+            padding-top: max(env(safe-area-inset-top), 44px);
         }
 
         .container {
