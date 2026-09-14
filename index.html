@@ -6,6 +6,8 @@
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
+    <!-- 🍏 БЛОКИРОВКА ПОВОРОТА ДЛЯ ЭКРАНА ДОМОЙ: всегда держит вертикальный режим portrait -->
+    <meta name="apple-mobile-web-app-orientations" content="portrait">
     <title>FlagZilla</title>
     
     <!-- 🌟 СУПЕР-ХВОСТИК _vMAX ДЛЯ ОБНОВЛЕНИЯ МАСШТАБА И СБРОСА СЕРОГО КВАДРАТА -->
@@ -738,7 +740,15 @@
      .ru-sub-section.active {
          display: block;
      }
- 
+/* 🍏 ИИ-МОНИТОР ОРИЕНТАЦИИ: если телефон лёг горизонтально, блокируем контент */
+@media (orientation: landscape) and (max-width: 950px) {
+    #orientationShield {
+        display: flex !important;
+    }
+    body {
+        overflow: hidden !important;
+    }
+} 
     </style>
 </head>
 <body>
@@ -877,6 +887,24 @@
     <img id="flagModalImg" class="flag-modal-img" src="" alt="Крупный флаг">
 </div>
 
+<!-- 📱 ПЛАШКА ЗАПРЕТА ГОРИЗОНТАЛЬНОГО РЕЖИМА -->
+<div id="orientationShield" style="
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: #ffffff;
+    z-index: 100000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+">
+    <div style="font-size: 50px; margin-bottom: 20px;">📱🔄</div>
+    <h2 style="font-weight: 800; color: #495057; margin: 0 0 10px 0;">Пожалуйста, переверните устройство</h2>
+    <p style="color: #6c757d; margin: 0; font-size: 15px; font-weight: 500;">Сайт FlagZilla разработан строго для вертикального использования.</p>
+</div>
 
 
 <script>
