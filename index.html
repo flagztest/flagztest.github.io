@@ -58,23 +58,6 @@
             box-sizing: border-box;
         }
 
-        /* Полностью обнуляем скролл-враппер, так как страница теперь крутится целиком */
-        .scroll-wrapper {
-            width: 100%;
-            padding: 0;
-            margin: 0;
-        }
-
-        /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
-        .scroll-wrapper {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
-            padding: 10px 4px 40px 4px;
-            box-sizing: border-box;
-        }
-
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -2202,7 +2185,7 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     }
 });
 
-// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР ДЛЯ КНОПКИ НАВЕРХ И УДЕРЖАНИЯ КООРДИНАТ ШАПКИ
+// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР ДЛЯ КНОПКИ НАВЕРХ
 window.addEventListener('scroll', () => {
     const btn = document.getElementById('scrollTopBtn');
     if (btn) {
@@ -2214,7 +2197,7 @@ window.addEventListener('scroll', () => {
 // 🍏 КЛАВИАТУРНЫЙ И СДВИГОВОЙ ЩИТ SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
 // Как только пользователь тапает по плашке континента или субъекта РФ, код перехватывает 
 // момент закрытия клавиатуры и принудительно фиксирует текущие координаты экрана.
-// Это нативно блокирует баг Visual Viewport в iOS: шапка застывает монолитной плитой строго под часами,
+// Это нативно блокирует баг Visual Viewport в iOS: шапка застынет монолитной плитой строго под часами,
 // а таблицы стран и квизы перестают обрезаться меню и прыгать вверх!
 document.addEventListener('click', (e) => {
     if (e.target.closest('.continent-header')) {
@@ -2222,7 +2205,7 @@ document.addEventListener('click', (e) => {
         if (document.activeElement === input) {
             input.blur();
         }
-        // Невидимая встряска в 0 пикселей принудительно возвращает fixed-шапку на место под часы
+        // Невидимая микро-коррекция в 0 пикселей принудительно возвращает fixed-шапку под часы
         setTimeout(() => {
             window.scrollTo(0, window.scrollY);
         }, 50);
