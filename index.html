@@ -180,9 +180,10 @@
             border-left: none !important;
             border-right: none !important;
             border-top: 1px solid var(--border-color);
-            /* 🌟 УБРАЛИ НИЖНЮЮ ЛИНЕЮ БЛОКА, ЧТОБЫ ИЗБАВИТЬСЯ ОТ ЗАДВОЕНИЯ ПОЛОС: */
             border-bottom: none !important; 
             box-shadow: none !important; 
+            /* 🍏 БАМПЕР IOS: Создаёт жесткий зазор сверху при нативном подлёте под шапку */
+            scroll-margin-top: 10px !important;
         }
 
 .continent-header {
@@ -2621,18 +2622,13 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-         // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под поиск!
+        // РАСКРЫТИЕ: Аппаратный метод iOS плавно и точно подтягивает плашку к нижней границе поиска!
         setTimeout(() => {
-            const scrollLayer = document.getElementById('mainScrollContent');
-            if (scrollLayer) {
-            // 🍏 ИДЕАЛЬНЫЙ СДВИГ: Увеличили отступ, чтобы блок останавливался ровно под рамкой поиска
-                const offset = 15; 
-                scrollLayer.scrollTo({
-                    top: block.offsetTop - offset,
-                    behavior: 'smooth'
-                });
-            }
-        }, 80);    
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 100);        
     }
 }
 
