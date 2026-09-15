@@ -2588,6 +2588,17 @@ function toggleBlock(id) {
         } else {
             content.style.display = 'block';
         }
+
+        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
+        setTimeout(() => {
+            const offset = 120;
+            const offsetPosition = block.offsetTop - offset;
+            const diff = Math.abs(window.scrollY - offsetPosition);
+
+            if (diff > 2) {
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+        }, 60); 
     }
 }
 
