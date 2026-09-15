@@ -36,7 +36,7 @@
             max-width: 1000px;
             margin: 0 auto;
         }
-         .fixed-header {
+        .fixed-header {
             position: fixed;
             top: 0;
             left: 0;
@@ -44,13 +44,8 @@
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
+            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
             padding: 8px 16px 4px 16px; 
-            /* 🍏 БАРЬЕР ОТ НАЕЗДА: Даже если Safari заглючит при автоповороте,
-               барьер в 44px удержит шапку строго под системной строкой времени iOS! */
-            padding-top: max(env(safe-area-inset-top), 44px) !important;
-            /* 🍏 АППАРАТНЫЙ ХАК ДЛЯ IOS: заставляет видеочип телефона запереть слой на месте */
-            -webkit-backdrop-filter: blur(0px);
-            backdrop-filter: blur(0px);
         }
         .header-content {
             max-width: 1000px;
@@ -585,9 +580,8 @@
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
-         /* 🍏 ИДЕАЛЬНЫЙ СПУСК: Опускает игру из-под шапки ровно на центр чистой рабочей зоны */
-         padding-top: 130px !important;
-         margin-top: 0px !important; 
+         padding-top: 0px !important;
+         margin-top: -40px !important; 
      }
      .quiz-panel {
          padding: 10px !important;
@@ -2013,9 +2007,15 @@ function runSearch() {
     const searchInput = document.getElementById('searchInput');
     const clearBtn = document.getElementById('clearSearchBtn');
     const q = searchInput.value.toLowerCase().trim();
-
+    
     if (searchInput.value.length > 0) {
         clearBtn.style.display = 'block';
+        
+        // 🌟 ШАГ ИСПРАВЛЕНИЯ: Если пользователь вводит текст, мгновенно выталкиваем результаты из-под шапки наверх!
+        // Делаем микро-задержку в 10мс, чтобы браузер сначала успел отфильтровать DOM-дерево
+        setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 10);
     } else {
         clearBtn.style.display = 'none';
     }
@@ -2589,16 +2589,14 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
+        // РАСКРЫТИЕ: плавно и аккуратно подтягивает открытый блок, намертво блокируя уползание шапки!
         setTimeout(() => {
-            const offset = 120;
-            const offsetPosition = block.offsetTop - offset;
-            const diff = Math.abs(window.scrollY - offsetPosition);
-
-            if (diff > 2) {
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-            }
-        }, 60); 
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'nearest'
+            });
+        }, 60);
     }
 }
 
@@ -2741,27 +2739,6 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
-});
-
-// 🍏 КЛАВИАТУРНЫЙ ЩИТ ДЛЯ SAFARI:
-window.addEventListener('touchmove', () => {
-    const input = document.getElementById('searchInput');
-    if (document.activeElement === input) {
-        input.blur();
-    }
-});
-
-// 🍏 ИИ-СТАБИЛИЗАТОР АВТОПОВОРОТА ДЛЯ IOS:
-// Как только телефон возвращается в вертикальное положение, код совершает мгновенную 
-// невидимую встряску в 1 пиксель. Это сбрасывает баг кэша Safari и намертво 
-// возвращает шапку на место строго ПОД системные часы и батарею!
-window.addEventListener('orientationchange', () => {
-    setTimeout(() => {
-        // Жесткое перепозиционирование заставляет Safari мгновенно сбросить зависший кэш челки
-        const currentPos = window.scrollY;
-        window.scrollTo(0, currentPos + 1);
-        window.scrollTo(0, currentPos);
-    }, 400); // Микро-задержка в 400мс дает iOS гарантированно завершить разворот экрана
 });
 
 </script>
