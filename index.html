@@ -2589,14 +2589,17 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно и аккуратно подтягивает открытый блок, намертво блокируя уползание шапки!
+        // РАСКРЫТИЕ: плавно подтягивает открытый блок, намертво блокируя уползание шапки за края экрана!
         setTimeout(() => {
-            block.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'nearest'
-            });
-        }, 60);
+            const offset = 120;
+            // 🍏 ПРЕДОХРАНИТЕЛЬ: Запрещает координатам уходить в минус, удерживая шапку на месте
+            const offsetPosition = Math.max(0, block.offsetTop - offset);
+            const diff = Math.abs(window.scrollY - offsetPosition);
+
+            if (diff > 2) {
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+        }, 60);  
     }
 }
 
