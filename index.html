@@ -24,19 +24,18 @@
             --panel-bg: #ffffff;         
         }
 
-        body {
+         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 БАЛАНС SAFARI: Возвращаем сайту классическую сквозную прокрутку всей страницы */
-            padding-top: 175px; 
+            /* 🍏 УВЕЛИЧИЛИ ПОДУШКУ: Теперь контент гарантированно начнётся ниже строки поиска */
+            padding-top: 185px !important; 
             box-sizing: border-box;
         }
-        
+
         .fixed-header {
-            /* 🍏 АППАРАТНАЯ ФИКСАЦИЯ: Шапка намертво приколочена к верху страницы */
             position: fixed;
             top: 0;
             left: 0;
@@ -45,7 +44,7 @@
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px; 
-            /* 🍏 БАРЬЕР ОТ НАЕЗДА: Барьер в 44px намертво удержит шапку строго под системной строкой времени iOS! */
+            /* 🍏 ЗАЩИТА ЧАСОВ IOS: Жёстко удерживает меню на своём месте на любых моделях iPhone */
             padding-top: max(env(safe-area-inset-top), 44px) !important;
         }
 
@@ -446,6 +445,8 @@
      }
       body {
          padding: 0 !important;
+         /* 🍏 МОБИЛЬНЫЙ БАЛАНС: удерживает первую плашку ровно под нижней границей поиска */
+         padding-top: 145px !important; 
      }
 
      .controls-row {
@@ -2619,9 +2620,10 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-         // РАСКРЫТИЕ: плавно выталкивает открытый блок ровно под поиск по координатам всей страницы!
+        // РАСКРЫТИЕ: плавно выталкивает открытый блок ровно под поиск по координатам всей страницы!
         setTimeout(() => {
-            const offset = 120;
+            // 🍏 ИДЕАЛЬНЫЙ СДВИГ В ПИКСЕЛЯХ: плашка остановится ровно под инпутом поиска, не пряча контент
+            const offset = 155;
             const offsetPosition = block.offsetTop - offset;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }, 60); 
