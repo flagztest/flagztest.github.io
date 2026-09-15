@@ -2202,7 +2202,7 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     }
 });
 
-// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР: следит за прокруткой всей страницы окна браузера
+// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР ДЛЯ КНОПКИ НАВЕРХ И УДЕРЖАНИЯ КООРДИНАТ ШАПКИ
 window.addEventListener('scroll', () => {
     const btn = document.getElementById('scrollTopBtn');
     if (btn) {
@@ -2210,8 +2210,24 @@ window.addEventListener('scroll', () => {
         else btn.style.display = 'none';
     }
 });
+
+// 🍏 КЛАВИАТУРНЫЙ И СДВИГОВОЙ ЩИТ SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
+// Как только пользователь тапает по плашке континента или субъекта РФ, код перехватывает 
+// момент закрытия клавиатуры и принудительно фиксирует текущие координаты экрана.
+// Это нативно блокирует баг Visual Viewport в iOS: шапка застывает монолитной плитой строго под часами,
+// а таблицы стран и квизы перестают обрезаться меню и прыгать вверх!
+document.addEventListener('click', (e) => {
+    if (e.target.closest('.continent-header')) {
+        const input = document.getElementById('searchInput');
+        if (document.activeElement === input) {
+            input.blur();
+        }
+        // Невидимая встряска в 0 пикселей принудительно возвращает fixed-шапку на место под часы
+        setTimeout(() => {
+            window.scrollTo(0, window.scrollY);
+        }, 50);
     }
-}, 100);
+});
 
 function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
