@@ -2589,17 +2589,17 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно подтягивает открытый блок, намертво блокируя уползание шапки за края экрана!
+        // РАСКРЫТИЕ: Мгновенно подтягивает открытый блок ровно под поиск. Запрет анимации намертво лечит баг Safari!
         setTimeout(() => {
-            const offset = 120;
-            // 🍏 ПРЕДОХРАНИТЕЛЬ: Запрещает координатам уходить в минус, удерживая шапку на месте
+            const offset = 125;
             const offsetPosition = Math.max(0, block.offsetTop - offset);
             const diff = Math.abs(window.scrollY - offsetPosition);
 
             if (diff > 2) {
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                // 🍏 ЖЕСТКИЙ БЛОК: поведение 'auto' запрещает Safari деформировать экран и ломать шапку!
+                window.scrollTo({ top: offsetPosition, behavior: 'auto' });
             }
-        }, 60);  
+        }, 40);   
     }
 }
 
