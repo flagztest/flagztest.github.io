@@ -29,29 +29,23 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            /* 🍏 УБРАЛИ КЛАВИАТУРНЫЙ КОНФЛИКТ: обнуляем глобальный padding-top */
-            padding: 0; 
+            padding: 20px;
+            padding-top: 165px;
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            /* Переносим отступ безопасности сюда, чтобы плашки стран не залезали под меню */
-            padding: 10px 12px;
-            box-sizing: border-box;
         }
         .fixed-header {
-            /* 🍏 ЧЕТКАЯ ФИКСАЦИЯ SAFARI: шапка становится липким и неуязвимым потолком сайта */
-            position: -webkit-sticky;
-            position: sticky;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
+            /* 🌟 ЮВЕЛИРНОЕ СЖАТИЕ: сверху 8px, по бокам 16px, снизу под поиском всего 4px! */
             padding: 8px 16px 4px 16px; 
-            /* Ювелирный отступ под челку Айфона на экране Домой */
-            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
         .header-content {
             max-width: 1000px;
@@ -724,33 +718,50 @@
 </head>
 <body>
 
+
 <!-- 🦖 АНИМИРОВАННАЯ ЗАСТАВКА: МГНОВЕННЫЙ СТАРТ -->
-<div id="splashScreen" style="...">
-    ...
+<div id="splashScreen" style="
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
+">
+    <!-- Магия mix-blend-mode мгновенно сотрет белый фон ролика, сделав его прозрачным на сайте! -->
+    <img src="godzilla.webp" alt="Loading..." style="
+        width: 90vw;
+        max-width: 320px;
+        height: auto;
+        object-fit: contain;
+        mix-blend-mode: multiply;">
 </div>
 
-<div class="container">
-    <!-- 🍏 ТЕПЕРЬ ШАПКА ЖИВЕТ ТУТ: она открывает структуру контейнера, являясь его монолитным верхом -->
-    <div class="fixed-header">
-        <div class="header-content">
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
-        <button class="tab-btn" onclick="switchView('ru-db')">🇷🇺<br>База<br>России</button>
-        <button class="tab-btn" onclick="switchView('quiz-flags')">🏴‍☠️<br>Квиз:<br>Флаги</button>
-        <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
-        <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
-    </div>
-              <div class="controls-row" id="dbControls">
-                <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Поиск...">
-                <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()">✖</button>
-                </div>
+<div class="fixed-header">
+    <div class="header-content">
+<div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
+    <button class="tab-btn" onclick="switchView('ru-db')">🇷🇺<br>База<br>России</button>
+    <button class="tab-btn" onclick="switchView('quiz-flags')">🏴‍☠️<br>Квиз:<br>Флаги</button>
+    <button class="tab-btn" onclick="switchView('quiz-capitals')">🏰<br>Квиз:<br>Столицы</button>
+    <button class="tab-btn" onclick="switchView('quiz-countries')">🗺️<br>Квиз:<br>Страны</button>
+</div>
+          <div class="controls-row" id="dbControls">
+            <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск...">
+            <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()">✖</button>
             </div>
         </div>
     </div>
+</div>
 
+<div class="container">
     <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
-    <div id="dbView" class="view-section active">        
+    <div id="dbView" class="view-section active">
+        
         <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ -->
         <div id="ruNavigationHeaders" style="width: 100%; box-sizing: border-box; display: none;">
             
@@ -2577,17 +2588,6 @@ function toggleBlock(id) {
         } else {
             content.style.display = 'block';
         }
-
-        // РАСКРЫТИЕ: плавно подтягивает открытый блок ровно под поиск
-        setTimeout(() => {
-            const offset = 120;
-            const offsetPosition = block.offsetTop - offset;
-            const diff = Math.abs(window.scrollY - offsetPosition);
-
-            if (diff > 2) {
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-            }
-        }, 60); 
     }
 }
 
