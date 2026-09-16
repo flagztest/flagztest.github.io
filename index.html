@@ -24,36 +24,52 @@
             --panel-bg: #ffffff;         
         }
 
-         body {
+        body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 УВЕЛИЧИЛИ ПОДУШКУ: Теперь контент гарантированно начнётся ниже строки поиска */
-            padding-top: 185px !important; 
-            box-sizing: border-box;
+            /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
+            height: 100dvh !important;
+            width: 100vw;
+            overflow: hidden !important;
+            display: flex;
+            flex-direction: column;
         }
-
+        
         .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
-            padding: 8px 16px 4px 16px; 
-            /* 🍏 ЗАЩИТА ЧАСОВ IOS: Жёстко удерживает меню на своём месте на любых моделях iPhone */
-            padding-top: max(env(safe-area-inset-top), 44px) !important;
+            padding: 8px 16px 4px 16px;
+            flex-shrink: 0;
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            /* Симметрия: возвращаем аккуратные боковые отступы безопасности для мобильных плашек */
-            padding: 10px 12px;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
+            flex-grow: 1; 
+            overflow: hidden;
+        }
+
+        /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
+        .scroll-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            padding: 10px 4px 40px 4px;
             box-sizing: border-box;
         }
 
@@ -164,10 +180,9 @@
             border-left: none !important;
             border-right: none !important;
             border-top: 1px solid var(--border-color);
+            /* 🌟 УБРАЛИ НИЖНЮЮ ЛИНЕЮ БЛОКА, ЧТОБЫ ИЗБАВИТЬСЯ ОТ ЗАДВОЕНИЯ ПОЛОС: */
             border-bottom: none !important; 
             box-shadow: none !important; 
-            /* 🍏 БАМПЕР IOS: Создаёт жесткий зазор сверху при нативном подлёте под шапку */
-            scroll-margin-top: 10px !important;
         }
 
 .continent-header {
@@ -445,8 +460,6 @@
      }
       body {
          padding: 0 !important;
-         /* 🍏 МОБИЛЬНЫЙ БАЛАНС: удерживает первую плашку ровно под нижней границей поиска */
-         padding-top: 145px !important; 
      }
 
      .controls-row {
@@ -586,11 +599,10 @@
            object-fit: fill !important; 
      }
 
-     /* КВИЗЫ: Положение на мобильном */
+      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
-         /* 🍏 ИДЕАЛЬНЫЙ СПУСК: Отрицательный маргин аккуратно компенсирует padding-top от body, выводя игру на центр экрана */
-         margin-top: -40px !important; 
-         padding-top: 0px !important;
+         padding-top: 15px !important;
+         margin-top: 0px !important; 
      }
 
      .quiz-panel {
@@ -769,7 +781,8 @@
 </div>
 
 <div class="container">
-    <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
+    <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ОТКРЫЛИ СЛОЙ СКРОЛЛА -->
+        <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
         <div id="dbView" class="view-section active">
         
         <!-- 🇷🇺 ИЗОЛИРОВАННЫЙ БЛОК НАВИГАЦИИ РОССИИ -->
@@ -849,10 +862,11 @@
             <button id="nextCountryBtn" class="action-btn" style="display:none;" onclick="loadQuizCountryRound()">Следующий вопрос</button>
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
-            </div>
+        </div>
+    </div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
 </div>
 
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
 <!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
@@ -2186,32 +2200,19 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     }
 });
 
-// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР ДЛЯ КНОПКИ НАВЕРХ
-window.addEventListener('scroll', () => {
-    const btn = document.getElementById('scrollTopBtn');
-    if (btn) {
-        if (window.scrollY > 300) btn.style.display = 'flex';
-        else btn.style.display = 'none';
+// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР: следит за движением пальца внутри изолированного контейнера!
+setTimeout(() => {
+    const scrollBox = document.getElementById('mainScrollContent');
+    if (scrollBox) {
+        scrollBox.addEventListener('scroll', (e) => {
+            const btn = document.getElementById('scrollTopBtn');
+            if (btn) {
+                if (e.target.scrollTop > 300) btn.style.display = 'flex';
+                else btn.style.display = 'none';
+            }
+        });
     }
-});
-
-// 🍏 КЛАВИАТУРНЫЙ И СДВИГОВОЙ ЩИТ SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
-// Как только пользователь тапает по плашке континента или субъекта РФ, код перехватывает 
-// момент закрытия клавиатуры и принудительно фиксирует текущие координаты экрана.
-// Это нативно блокирует баг Visual Viewport в iOS: шапка застынет монолитной плитой строго под часами,
-// а таблицы стран и квизы перестают обрезаться меню и прыгать вверх!
-document.addEventListener('click', (e) => {
-    if (e.target.closest('.continent-header')) {
-        const input = document.getElementById('searchInput');
-        if (document.activeElement === input) {
-            input.blur();
-        }
-        // Невидимая микро-коррекция в 0 пикселей принудительно возвращает fixed-шапку под часы
-        setTimeout(() => {
-            window.scrollTo(0, window.scrollY);
-        }, 50);
-    }
-});
+}, 100);
 
 function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
@@ -2620,13 +2621,17 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно выталкивает открытый блок ровно под поиск по координатам всей страницы!
+        // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под поиск!
         setTimeout(() => {
-            // 🍏 ИДЕАЛЬНЫЙ СДВИГ В ПИКСЕЛЯХ: плашка остановится ровно под инпутом поиска, не пряча контент
-            const offset = 155;
-            const offsetPosition = block.offsetTop - offset;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 60); 
+            const scrollLayer = document.getElementById('mainScrollContent');
+            if (scrollLayer) {
+                const offset = 10; 
+                scrollLayer.scrollTo({
+                    top: block.offsetTop - offset,
+                    behavior: 'smooth'
+                });
+            }
+        }, 80);  
     }
 }
 
