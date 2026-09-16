@@ -732,7 +732,17 @@
          letter-spacing: 0.3px !important;
 
 } /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
-
+/* 🍏 АППАРАТНЫЙ ПЕРЕХВАТ ПОВОРОТА ЭКРАНА:
+   Как только телефон переворачивают горизонтально (landscape), CSS мгновенно 
+   зажигает слой с Годзиллой, а при возвращении в вертикалку — чисто его прячет! */
+@media (orientation: landscape) {
+    #splashScreen {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: all !important;
+        transition: none !important; /* Убираем задержку, чтобы заставка включалась мгновенно */
+    }
+}
      /* Стиль для подразделов России */
      .ru-sub-section {
          display: none;
@@ -895,11 +905,10 @@ window.addEventListener('DOMContentLoaded', () => {
         if (splash) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
-            setTimeout(() => splash.remove(), 1200); 
+            // 🍏 СОХРАНЯЕМ ЭЛЕМЕНТ В ПАМЯТИ: убрали splash.remove(), чтобы слой мог активироваться при переворотах
         }
-    }, 2500); // Через 2.5 секунды заставка растворится, открыв сайт
+    }, 2500); 
 });
-
 // 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
 
