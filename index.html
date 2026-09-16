@@ -1908,6 +1908,12 @@ function switchView(viewId) {
     if (searchInput) searchInput.value = '';
     if (clearBtn) clearBtn.style.display = 'none';
     
+    // 🍏 АНТИ-ЗАЛИПАНИЕ СЛОЕВ: принудительно сбрасываем скролл изолированной коробки в ноль при смене вкладок!
+    const scrollLayer = document.getElementById('mainScrollContent');
+    if (scrollLayer) {
+        scrollLayer.scrollTo({ top: 0 });
+    }
+    
     currentRuZone = 'main'; // 🌟 САЙТ СБРОСИЛ ПАМЯТЬ ЗОНЫ ПРИ ПЕРЕХОДЕ НА ДРУГИЕ ВКЛАДКИ
 
     document.querySelectorAll('.continent-block').forEach(b => {
