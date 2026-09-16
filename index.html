@@ -69,7 +69,8 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
-            padding: 10px 4px 40px 4px;
+            /* 🍏 МИНИМАЛЬНЫЙ СТАРТОВЫЙ ЗАЗОР: прижали первую плашку ближе к поиску при открытии вкладок */
+            padding: 4px 4px 40px 4px;
             box-sizing: border-box;
         }
 
@@ -2626,14 +2627,14 @@ function toggleBlock(id) {
         setTimeout(() => {
             const scrollLayer = document.getElementById('mainScrollContent');
             if (scrollLayer) {
-                // 🍏 СУПЕР-ОТСТУП: Опускает открытый блок ровно под нижнюю границу поиска!
-                const offset = 120; 
+                // 🍏 ПИКСЕЛЬНАЯ СИММЕТРИЯ: плашка остановится ровно на расстоянии 4px от рамки поиска
+                const offset = 114; 
                 scrollLayer.scrollTo({
                     top: block.offsetTop - offset,
                     behavior: 'smooth'
                 });
             }
-        }, 80);    
+        }, 80);      
     }
 }
 
