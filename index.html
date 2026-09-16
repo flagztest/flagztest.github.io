@@ -732,21 +732,7 @@
          letter-spacing: 0.3px !important;
 
 } /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
-/* 🍏 АППАРАТНЫЙ ПЕРЕХВАТ ПОВОРОТА ЭКРАНА ДЛЯ IOS (PWA) */
-@media (orientation: landscape) {
-    #splashScreen {
-        display: flex !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        pointer-events: all !important;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        z-index: 999999 !important;
-        background-color: #ffffff !important;
-    }
+
     #splashScreen img {
         width: auto !important;
         height: 85vh !important; /* Ювелирный масштаб: Годзилла крупная, плавная и не обрезается краями экрана */
@@ -909,18 +895,48 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
 
-// 🌟 АВТОМАТИЧЕСКОЕ ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ ЗАСТАВКИ (КИНЕМАТОГРАФИЧНЫЙ ТАЙМЕР)
-window.addEventListener('DOMContentLoaded', () => {
-    window.scrollTo(0, 0); // Дублирующий защитный выстрел для старых версий iOS
-    setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
-        if (splash) {
+// 🍏 ИИ-СТАБИЛИЗАТОР И ДАТЧИК ОРИЕНТАЦИИ ЭКРАНА ДЛЯ IOS (PWA)
+let isInitialSplashDone = false;
+
+function checkScreenOrientation() {
+    const splash = document.getElementById('splashScreen');
+    if (!splash) return;
+
+    // Если ширина экрана смартфона больше высоты — значит телефон на боку!
+    if (window.innerWidth > window.innerHeight) {
+        splash.style.opacity = '1';
+        splash.style.visibility = 'visible';
+        splash.style.pointerEvents = 'all';
+        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
+        const img = splash.querySelector('img');
+        if (img) {
+            img.style.height = '85vh';
+            img.style.width = 'auto';
+        }
+    } else {
+        // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
+        if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
-            // 🍏 СОХРАНЯЕМ ЭЛЕМЕНТ В ПАМЯТИ: убрали splash.remove(), чтобы слой мог активироваться при переворотах
+            splash.style.pointerEvents = 'none';
         }
-    }, 2500); 
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    window.scrollTo(0, 0);
+
+    // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
+    setTimeout(() => {
+        isInitialSplashDone = true;
+        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
+    }, 2500);
 });
+
+// Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
+window.addEventListener('resize', checkScreenOrientation);
+window.addEventListener('orientationchange', checkScreenOrientation);
+
 // 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
 
