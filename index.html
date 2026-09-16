@@ -923,17 +923,13 @@ function checkScreenOrientation() {
     if (!splash) return;
 
     // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
-    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
-    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
     let metaViewport = document.querySelector('meta[name="viewport"]');
     if (!metaViewport) {
         metaViewport = document.createElement('meta');
         metaViewport.name = "viewport";
         document.getElementsByTagName('head')[0].appendChild(metaViewport);
     }
-    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
     metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-    // И тут же намертво фиксируем железные 100% масштаба без права изменения
     setTimeout(() => {
         metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }, 1);
@@ -943,7 +939,6 @@ function checkScreenOrientation() {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
-        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
@@ -955,6 +950,18 @@ function checkScreenOrientation() {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
+
+            // 🍏 АППАРАТНАЯ ВСТРЯСКА СТАТУС-БАРА IOS ДЛЯ РЕЖИМА ДОМОЙ:
+            // Даём Safari микроскопическую паузу в 300мс завершить анимацию поворота корпуса,
+            // а затем делаем невидимый глазу сдвиг высоты каркаса на долю пикселя.
+            // Это принудительно сбрасывает баг зависания челки Apple: шапка сама мгновенно
+            // отлипает от области часов и встаёт на своё идеальное ровное место!
+            setTimeout(() => {
+                document.body.style.height = 'calc(100dvh - 0.5px)';
+                setTimeout(() => {
+                    document.body.style.height = '100dvh';
+                }, 10);
+            }, 300);
         }
     }
 }
