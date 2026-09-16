@@ -946,6 +946,24 @@ function checkScreenOrientation() {
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
+    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
+    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
+    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        // Блокируем стандартный мультитач-зум
+        splash.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Блокируем системный жест масштабирования iOS
+        splash.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    }
+
     // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
     setTimeout(() => {
         isInitialSplashDone = true;
