@@ -2623,18 +2623,18 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под поиск!
+         // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под поиск!
         setTimeout(() => {
             const scrollLayer = document.getElementById('mainScrollContent');
             if (scrollLayer) {
-                // 🍏 ПИКСЕЛЬНАЯ СИММЕТРИЯ: плашка остановится ровно на расстоянии 4px от рамки поиска
-                const offset = 114; 
+                // 🍏 ИДЕАЛЬНЫЙ СДВИГ: увеличили шаг, чтобы плашка больше не заезжала под рамку поиска
+                const offset = 120; 
                 scrollLayer.scrollTo({
                     top: block.offsetTop - offset,
                     behavior: 'smooth'
                 });
             }
-        }, 80);      
+        }, 80);        
     }
 }
 
