@@ -922,6 +922,22 @@ function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
+    let metaViewport = document.querySelector('meta[name="viewport"]');
+    if (!metaViewport) {
+        metaViewport = document.createElement('meta');
+        metaViewport.name = "viewport";
+        document.getElementsByTagName('head')[0].appendChild(metaViewport);
+    }
+    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+    // И тут же намертво фиксируем железные 100% масштаба без права изменения
+    setTimeout(() => {
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }, 1);
+
     // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
         splash.style.opacity = '1';
