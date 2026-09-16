@@ -69,9 +69,11 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
-            /* 🍏 МИНИМАЛЬНЫЙ СТАРТОВЫЙ ЗАЗОР: прижали первую плашку ближе к поиску при открытии вкладок */
             padding: 4px 4px 40px 4px;
             box-sizing: border-box;
+            /* 🍏 АППАРАТНАЯ СТАБИЛИЗАЦИЯ: включает графический чип iOS для идеального удержания слоев без микро-сдвигов */
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
 
         .header-content {
@@ -2627,8 +2629,8 @@ function toggleBlock(id) {
         setTimeout(() => {
             const scrollLayer = document.getElementById('mainScrollContent');
             if (scrollLayer) {
-                // 🍏 ИДЕАЛЬНЫЙ СДВИГ: увеличили шаг, чтобы плашка больше не заезжала под рамку поиска
-                const offset = 120; 
+            // 🍏 ИДЕАЛЬНЫЙ СДВИГ: скомпенсировали sub-pixel рамки, убрав микро-шатание на 1 пиксель
+            const offset = 121;  
                 scrollLayer.scrollTo({
                     top: block.offsetTop - offset,
                     behavior: 'smooth'
