@@ -2103,11 +2103,11 @@ function runSearch() {
     if (searchInput.value.length > 0) {
         clearBtn.style.display = 'block';
         
-        // 🌟 ШАГ ИСПРАВЛЕНИЯ: Если пользователь вводит текст, мгновенно выталкиваем результаты из-под шапки наверх!
-        // Делаем микро-задержку в 10мс, чтобы браузер сначала успел отфильтровать DOM-дерево
-        setTimeout(() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 10);
+        // 🍏 ФИКС ПОИСКА: принудительно возвращаем скролл изолированной коробки наверх при вводе текста!
+        const scrollLayer = document.getElementById('mainScrollContent');
+        if (scrollLayer) {
+            scrollLayer.scrollTo({ top: 0 });
+        }
     } else {
         clearBtn.style.display = 'none';
     }
