@@ -730,14 +730,34 @@
          font-weight: 600 !important;
          color: #495057 !important;
          letter-spacing: 0.3px !important;
+     } 
 
 } /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
 
+/* 🍏 МГНОВЕННЫЙ CSS-ЩИТ ОТ ПРОСВЕЧИВАНИЯ САЙТА ПРИ ПОВОРОТЕ (0 МИЛЛИСЕКУНД)
+   Работает в связке с JavaScript-датчиком, перехватывая горизонтальный режим 
+   аппаратно на уровне видеочипа, полностью исключая задержки и моргание верстки! */
+@media (orientation: landscape) {
+    #splashScreen {
+        display: flex !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: all !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999999 !important; /* Абсолютный приоритет над любыми элементами */
+        background-color: #ffffff !important;
+        transition: none !important; /* ЖЕСТКИЙ ЗАПРЕТ ПЛАВНОСТИ: заставка включается мгновенно! */
+    }
     #splashScreen img {
         width: auto !important;
-        height: 85vh !important; /* Ювелирный масштаб: Годзилла крупная, плавная и не обрезается краями экрана */
+        height: 85vh !important; 
         max-width: 100% !important;
         object-fit: contain !important;
+        transition: none !important;
     }
 }
 
