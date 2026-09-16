@@ -69,13 +69,12 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
-            padding: 4px 4px 40px 4px;
+            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
+            padding: 0px 4px 40px 4px;
             box-sizing: border-box;
-            /* 🍏 АППАРАТНАЯ СТАБИЛИЗАЦИЯ: включает графический чип iOS для идеального удержания слоев без микро-сдвигов */
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
         }
-
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -178,16 +177,18 @@
         .continent-block {
             background: #fff;
             border-radius: 8px;
+            /* 🍏 БАМПЕР ДЛЯ СТАРТА: удерживает первую плашку ровно в 4px от поиска по умолчанию */
+            margin-top: 4px !important;
             margin-bottom: 15px;
             overflow: hidden;
             border-left: none !important;
             border-right: none !important;
             border-top: 1px solid var(--border-color);
-            /* 🌟 УБРАЛИ НИЖНЮЮ ЛИНЕЮ БЛОКА, ЧТОБЫ ИЗБАВИТЬСЯ ОТ ЗАДВОЕНИЯ ПОЛОС: */
             border-bottom: none !important; 
             box-shadow: none !important; 
+            /* 🍏 БАМПЕР ДЛЯ СКРОЛЛА: прикажет iOS при автоподлёте останавливать блок строго на отметке 4px */
+            scroll-margin-top: 4px !important;
         }
-
 .continent-header {
     background-color: #f1f3f5;
     padding: 15px 20px;
@@ -2625,17 +2626,13 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно поднимает открытую плашку на самый верх на место первой вкладки!
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
         setTimeout(() => {
-            const scrollLayer = document.getElementById('mainScrollContent');
-            if (scrollLayer) {
-                // Жестко катим скролл коробки строго до верхней границы открытого блока
-                scrollLayer.scrollTo({
-                    top: block.offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        }, 80);                
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);                  
     }
 }
 
