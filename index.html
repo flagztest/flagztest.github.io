@@ -2625,18 +2625,17 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-         // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под поиск!
+        // РАСКРЫТИЕ: плавно поднимает открытую плашку на самый верх на место первой вкладки!
         setTimeout(() => {
             const scrollLayer = document.getElementById('mainScrollContent');
             if (scrollLayer) {
-            // 🍏 ИДЕАЛЬНЫЙ СДВИГ: скомпенсировали sub-pixel рамки, убрав микро-шатание на 1 пиксель
-            const offset = 121;  
+                // Жестко катим скролл коробки строго до верхней границы открытого блока
                 scrollLayer.scrollTo({
-                    top: block.offsetTop - offset,
+                    top: block.offsetTop,
                     behavior: 'smooth'
                 });
             }
-        }, 80);        
+        }, 80);                
     }
 }
 
