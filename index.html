@@ -38,16 +38,21 @@
             flex-direction: column;
         }
         
-        .fixed-header {
-            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
-            position: relative;
+         .fixed-header {
+            /* 🍏 ЖЕЛЕЗНЫЙ ФИКС ДЛЯ IOS: Панель намертво прикована к верхнему стеклу экрана */
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
-            z-index: 1000;
+            z-index: 100000 !important; /* Гарантированный приоритет над всем сайтом */
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
-            padding-top: calc(env(safe-area-inset-top) + 8px);
+            /* 🍏 АНТИ-НАЕЗД НА ЧАСЫ: Барьер в 44px удержит шапку строго ПОД системной строкой iOS, 
+               даже если Safari полностью сбросит env() в ноль при автоповороте! */
+            padding-top: max(env(safe-area-inset-top), 44px) !important;
+            box-sizing: border-box !important;
         }
 
         .container {
@@ -58,7 +63,6 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
             flex-grow: 1; 
             overflow: hidden;
         }
@@ -69,11 +73,12 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
-            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
             padding: 0px 4px 40px 4px;
             box-sizing: border-box;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
+            /* 🍏 ЗАЩИТНАЯ ПОДУШКА КОНТЕНТА: Опускает таблицы и квизы строго ниже нашей fixed-шапки */
+            margin-top: 170px !important;
         }
         .header-content {
             max-width: 1000px;
@@ -934,7 +939,7 @@ function checkScreenOrientation() {
         metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }, 1);
 
-    // Если ширина экрана смартфона больше высоты — значит телефон на боку!
+    // If screen is wider than it is tall, it's landscape!
     if (window.innerWidth > window.innerHeight) {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
@@ -945,23 +950,11 @@ function checkScreenOrientation() {
             img.style.width = 'auto';
         }
     } else {
-        // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
+        // If screen is portrait, hide Godzilla after initial load
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-
-            // 🍏 АППАРАТНАЯ ВСТРЯСКА СТАТУС-БАРА IOS ДЛЯ РЕЖИМА ДОМОЙ:
-            // Даём Safari микроскопическую паузу в 300мс завершить анимацию поворота корпуса,
-            // а затем делаем невидимый глазу сдвиг высоты каркаса на долю пикселя.
-            // Это принудительно сбрасывает баг зависания челки Apple: шапка сама мгновенно
-            // отлипает от области часов и встаёт на своё идеальное ровное место!
-            setTimeout(() => {
-                document.body.style.height = 'calc(100dvh - 0.5px)';
-                setTimeout(() => {
-                    document.body.style.height = '100dvh';
-                }, 10);
-            }, 300);
         }
     }
 }
@@ -2309,19 +2302,18 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     }
 });
 
-// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР: следит за движением пальца внутри изолированного контейнера!
-setTimeout(() => {
-    const scrollBox = document.getElementById('mainScrollContent');
-    if (scrollBox) {
-        scrollBox.addEventListener('scroll', (e) => {
-            const btn = document.getElementById('scrollTopBtn');
-            if (btn) {
-                if (e.target.scrollTop > 300) btn.style.display = 'flex';
-                else btn.style.display = 'none';
+         // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под fixed-поиск!
+        setTimeout(() => {
+            const scrollLayer = document.getElementById('mainScrollContent');
+            if (scrollLayer) {
+                // 🍏 ЮВЕЛИРНЫЙ СДВИГ: Значение 10 идеально выставит плашку ровно под fixed-шапку
+                const offset = 10; 
+                scrollLayer.scrollTo({
+                    top: block.offsetTop - offset,
+                    behavior: 'smooth'
+                });
             }
-        });
-    }
-}, 100);
+        }, 80);                  
 
 function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
