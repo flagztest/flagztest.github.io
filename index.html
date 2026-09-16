@@ -836,8 +836,8 @@
     <div id="ruPaddingBuffer" style="height: 100vh; display: none;"></div>
 
 
-    <div id="quizFlagsView" class="view-section">
-        <div class="quiz-panel">
+    <div id="quizFlagsView" class="view-section" style="padding-top: 125px !important; box-sizing: border-box;">
+        <div class="quiz-panel" style="padding-top: 10px !important; margin-top: 0px !important;">
             <div class="quiz-flag-container">
                 <img id="quizFlagImg" class="quiz-flag-img" src="" alt="Флаг">
             </div>
@@ -846,8 +846,8 @@
             <div class="quiz-stats" id="quizFlagStats">Очки: 0 | Раунд: 1</div>
         </div>
     </div>
-    <div id="quizCapitalsView" class="view-section">
-        <div class="quiz-panel">
+    <div id="quizCapitalsView" class="view-section" style="padding-top: 125px !important; box-sizing: border-box;">
+        <div class="quiz-panel" style="padding-top: 10px !important; margin-top: 0px !important;">
         <!-- 🌟 ВОПРОС СТОЛИЦ СТАЛ МЯГКИМ И ДОРОГИМ АНТРАЦИТОВЫМ ЦВЕТОМ -->
 <div class="quiz-question" id="quizCapitalQuestionTarget" style="color:#212529; font-size:26px;"></div>
             <div class="quiz-options" id="quizCapitalOptions"></div>
@@ -855,8 +855,8 @@
             <div class="quiz-stats" id="quizCapitalStats">Очки: 0 | Раунд: 1</div>
         </div>
     </div>
-    <div id="quizCountriesView" class="view-section">
-        <div class="quiz-panel">
+    <div id="quizCountriesView" class="view-section" style="padding-top: 125px !important; box-sizing: border-box;">
+        <div class="quiz-panel" style="padding-top: 10px !important; margin-top: 0px !important;">
 <!-- 🌟 ВОПРОС СТРАН СТАЛ МЯГКИМ И ДОРОГИМ АНТРАЦИТОВЫМ ЦВЕТОМ -->
 <div class="quiz-question" id="quizCountryQuestionTarget" style="color:#212529; font-size:26px;"></div>
             <div class="quiz-options" id="quizCountryOptions"></div>
@@ -2626,13 +2626,14 @@ function toggleBlock(id) {
         setTimeout(() => {
             const scrollLayer = document.getElementById('mainScrollContent');
             if (scrollLayer) {
-                const offset = 10; 
+                // 🍏 СУПЕР-ОТСТУП: Опускает открытый блок ровно под нижнюю границу поиска!
+                const offset = 120; 
                 scrollLayer.scrollTo({
                     top: block.offsetTop - offset,
                     behavior: 'smooth'
                 });
             }
-        }, 80);  
+        }, 80);    
     }
 }
 
