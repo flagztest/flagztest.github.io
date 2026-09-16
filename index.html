@@ -2587,40 +2587,16 @@ function toggleBlock(id) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
             
-            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
+            // 🍏 БАРХАТНЫЙ АВТО-ВОЗВРАТ: катит изолированный контейнер в абсолютный верхний ноль!
             setTimeout(() => {
-                const offset = 120;
-                const isRussia = id.startsWith('block-ru-');
-                
-                if (isRussia) {
-                    // 🌟 БЕЗОПАСНЫЙ ЩИТ: Если мы в Округах, катим камеру к началу округов!
-                    if (currentRuZone === 'okrugs') {
-                        const firstOkrug = document.querySelector('#ruOkrugsContainer .continent-block');
-                        if (firstOkrug) {
-                            window.scrollTo({ top: firstOkrug.offsetTop - offset, behavior: 'smooth' });
-                            return;
-                        }
-                    } else {
-                        // В Субъектах спокойно возвращаемся к Республикам
-                        const republicsBlock = document.getElementById('block-ru-subject-Республики');
-                        if (republicsBlock && id !== 'block-ru-subject-Республики') {
-                            window.scrollTo({ top: republicsBlock.offsetTop - offset, behavior: 'smooth' });
-                            return;
-                        }
-                    }
-                } else {
-                    // 🌍 В Базе стран мира находим «Европу» по её точному элементу
-                    const europeBlock = document.getElementById('block-Европа');
-                    if (europeBlock && id !== 'block-Европа') {
-                        const offsetPosition = europeBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
-                    }
+                const scrollLayer = document.getElementById('mainScrollContent');
+                if (scrollLayer) {
+                    scrollLayer.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 }
-                
-                // Защитное удержание камеры, если схлопнули самую первую плашку
-                window.scrollTo({ top: block.offsetTop - offset, behavior: 'smooth' });
-            }, 10);
+            }, 40); // 40мс — идеальное время, чтобы Safari успел схлопнуть DOM-структуру таблицы
             return;
         } else {
             content.style.display = 'block';
