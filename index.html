@@ -36,19 +36,21 @@
             overflow: hidden !important;
             display: flex;
             flex-direction: column;
+            /* 🍏 ЖЕЛЕЗНЫЙ БАМПЕР ФЛЕКС-ПОТОКА: Создает внешнюю подушку безопасности в 24px над всем сайтом.
+               Она физически заблокирует уползание меню под часы в любых режимах и при любых кликах! */
+            padding-top: max(env(safe-area-inset-top), 24px) !important;
         }
         
         .fixed-header {
-            /* 🍏 БЕЗ FIXED: Шапка остается монолитным потолком, но с внутренней аппаратной защитой */
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
             position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* 🍏 ВНУТРЕННИЙ БАМПЕР IOS: Балансирует весы Safe Area. Если инсет чёлки после переворота 
-               сбросится в ноль, лимит в 44px намертво удержит кнопки меню строго под часами! */
-            padding-top: calc(max(env(safe-area-inset-top), 44px) + 44px) !important;
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
