@@ -30,44 +30,52 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            /* 🍏 БАЛАНС SAFARI: Возвращаем сайту классическую сквозную прокрутку всей страницы, 
-               чтобы WebKit больше никогда не мог выдавить контент или раздуть белую дыру! */
-            padding-top: 175px !important; 
-            box-sizing: border-box;
+            /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
+            height: 100dvh !important;
+            width: 100vw;
+            overflow: hidden !important;
+            display: flex;
+            flex-direction: column;
         }
         
         .fixed-header {
-            /* 🍏 АППАРАТНАЯ ФИКСАЦИЯ: Шапка намертво приколочена к верхнему стеклу экрана */
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
+            /* 🍏 БЕЗ FIXED: Шапка остается монолитным потолком, но с внутренней аппаратной защитой */
+            position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
-            z-index: 100000 !important; /* Полный приоритет над таблицами баз */
-            padding: 8px 16px 4px 16px; 
+            z-index: 1000;
+            padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* 🍏 БАРЬЕР ОТ НАЕЗДА: Барьер в 44px намертво удержит шапку строго под системной строкой времени iOS! */
-            padding-top: max(env(safe-area-inset-top), 44px) !important;
-            box-sizing: border-box !important;
+            /* 🍏 ВНУТРЕННИЙ БАМПЕР IOS: Сбалансирует весы Safe Area. Если инсет чёлки после переворота 
+               сбросится в ноль, лимит в 44px намертво удержит кнопки меню строго под часами! */
+            padding-top: calc(max(env(safe-area-inset-top), 44px) + 8px) !important;
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            /* Восстанавливаем аккуратные боковые отступы безопасности для мобильных плашек */
-            padding: 10px 12px;
+            padding: 0;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
+            flex-grow: 1; 
+            overflow: hidden;
         }
 
-        /* Полностью обнуляем внутренний скролл-враппер, так как страница теперь крутится целиком */
+        /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
         .scroll-wrapper {
             width: 100%;
-            padding: 0;
-            margin: 0;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
+            padding: 0px 4px 40px 4px;
+            box-sizing: border-box;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
-
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -913,16 +921,20 @@ let isInitialSplashDone = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
-    const header = document.querySelector('.fixed-header');
     if (!splash) return;
 
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
     let metaViewport = document.querySelector('meta[name="viewport"]');
     if (!metaViewport) {
         metaViewport = document.createElement('meta');
         metaViewport.name = "viewport";
-        document.getElementsByTagName('head').appendChild(metaViewport);
+        document.getElementsByTagName('head')[0].appendChild(metaViewport);
     }
+    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
     metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+    // И тут же намертво фиксируем железные 100% масштаба без права изменения
     setTimeout(() => {
         metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }, 1);
@@ -932,27 +944,18 @@ function checkScreenOrientation() {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
+        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
-        // На боку полностью обнуляем пэддинг шапки контента
-        if (header) header.style.setProperty('padding-top', '0px', 'important');
     } else {
         // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-        }
-        
-        // 🍏 ПРОГРАММНЫЙ БАМПЕР СТАТУС-БАРА (МГНОВЕННЫЙ ФИКС):
-        // Как только телефон встает вертикально, JS принудительно перехватывает управление 
-        // верхним отступом. Мы жестко прописываем 52px (44px стандартная челка Apple + 8px ваш родной зазор).
-        // Это полностью блокирует системный баг Safari: шапка железно встанет ровно под часы в любых условиях!
-        if (header) {
-            header.style.setProperty('padding-top', '52px', 'important');
         }
     }
 }
@@ -2300,15 +2303,19 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     }
 });
 
-// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР: следит за прокруткой всей страницы окна браузера
-window.addEventListener('scroll', () => {
-    const btn = document.getElementById('scrollTopBtn');
-    if (btn) {
-        if (window.scrollY > 300) btn.style.display = 'flex';
-        else btn.style.display = 'none';
+// 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР: следит за движением пальца внутри изолированного контейнера!
+setTimeout(() => {
+    const scrollBox = document.getElementById('mainScrollContent');
+    if (scrollBox) {
+        scrollBox.addEventListener('scroll', (e) => {
+            const btn = document.getElementById('scrollTopBtn');
+            if (btn) {
+                if (e.target.scrollTop > 300) btn.style.display = 'flex';
+                else btn.style.display = 'none';
+            }
+        });
     }
-});
-
+}, 100);
 
 function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
@@ -2670,55 +2677,36 @@ function generateRussiaSubjectsTables() {
 function toggleBlock(id) {
     const block = document.getElementById(id);
     if (!block) return;
-
+    
     block.classList.toggle('collapsed');
     const content = block.querySelector('.continent-content');
-
+    
     if (content) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
-
-            // 🌟 УМНЫЙ НЕЗАВИСИМЫЙ И БАРХАТНЫЙ ВОЗВРАТ НАВЕРХ ПРИ СВЕРНУТИИ
+            
+            // 🍏 БАРХАТНЫЙ АВТО-ВОЗВРАТ: катит изолированный контейнер в абсолютный верхний ноль!
             setTimeout(() => {
-                const offset = 155;
-                const isRussia = id.startsWith('block-ru-');
-
-                if (isRussia) {
-                    if (currentRuZone === 'okrugs') {
-                        const firstOkrug = document.querySelector('#ruOkrugsContainer .continent-block');
-                        if (firstOkrug) {
-                            window.scrollTo({ top: firstOkrug.offsetTop - offset, behavior: 'smooth' });
-                            return;
-                        }
-                    } else {
-                        const republicsBlock = document.getElementById('block-ru-subject-Республики');
-                        if (republicsBlock && id !== 'block-ru-subject-Республики') {
-                            window.scrollTo({ top: republicsBlock.offsetTop - offset, behavior: 'smooth' });
-                            return;
-                        }
-                    }
-                } else {
-                    const europeBlock = document.getElementById('block-Европа');
-                    if (europeBlock && id !== 'block-Европа') {
-                        const offsetPosition = europeBlock.offsetTop - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                        return;
-                    }
+                const scrollLayer = document.getElementById('mainScrollContent');
+                if (scrollLayer) {
+                    scrollLayer.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 }
-
-                window.scrollTo({ top: block.offsetTop - offset, behavior: 'smooth' });
-            }, 10);
+            }, 40); // 40мс — идеальное время, чтобы Safari успел схлопнуть DOM-структуру таблицы
             return;
         } else {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно выталкивает открытый блок ровно под поиск по координатам всей страницы!
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
         setTimeout(() => {
-            const offset = 155;
-            const offsetPosition = block.offsetTop - offset;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }, 60); 
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);                  
     }
 }
 
