@@ -968,33 +968,45 @@ function applyHeaderPadding() {
     const header = document.querySelector('.fixed-header');
     if (!header) return;
 
-    // Сначала сбрасываем прежний inline padding, чтобы измерить честно.
     header.style.removeProperty('padding-top');
-    void header.offsetHeight;   // форсируем reflow
+    void header.offsetHeight;
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-               || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    if (!isIOS) return;
-
-    // Реальная позиция содержимого шапки = rect.top + смещение visualViewport.
-    // Если Safari сдвинул контент под часы, visualViewport.offsetTop это покажет.
     const content = header.querySelector('.header-content') || header;
     const rect = content.getBoundingClientRect();
     const vvTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
     const realTop = rect.top + vvTop;
 
-    // 🌟 Если шапка уже на нормальном месте (≥ 20px от верха) — не трогаем.
-    // Это защищает от двойного отступа при возврате из фона.
+    const envProbe = document.createElement('div');
+    envProbe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);';
+    document.body.appendChild(envProbe);
+    const envVal = envProbe.offsetHeight;
+    envProbe.remove();
+
+    // 🔍 ПИШЕМ ЗНАЧЕНИЯ В ПАНЕЛЬ
+    const dbg = document.getElementById('debugPanel');
+    if (dbg) {
+        dbg.textContent =
+            'pad=' + getComputedStyle(header).paddingTop +
+            '  rect=' + rect.top.toFixed(0) +
+            '  env=' + envVal +
+            '  vv=' + vvTop.toFixed(0) +
+            '  scr=' + window.screen.width + 'x' + window.screen.height +
+            '  inH=' + window.innerHeight;
+    }
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+               || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (!isIOS) return;
+
     if (realTop >= 20) return;
 
-    // Иначе — Safari-баг (env() = 0 и не сдвигает) — подставляем по модели.
     const h = Math.max(window.screen.width, window.screen.height);
     let safeTop;
-    if (h >= 932) safeTop = 59;       // iPhone 14/15/16 Pro Max / Plus
-    else if (h >= 852) safeTop = 59;  // iPhone 14/15/16 Pro
-    else if (h >= 844) safeTop = 47;  // iPhone X/XS/11 Pro/12/13/14
-    else if (h >= 812) safeTop = 44;  // iPhone X / 11 Pro / 12 mini / 13 mini
-    else safeTop = 20;                // iPhone SE / 6 / 7 / 8
+    if (h >= 932) safeTop = 59;
+    else if (h >= 852) safeTop = 59;
+    else if (h >= 844) safeTop = 47;
+    else if (h >= 812) safeTop = 44;
+    else safeTop = 20;
 
     const isMobile = window.innerWidth <= 600;
     const basePad = isMobile ? 6 : 8;
@@ -2908,10 +2920,21 @@ window.addEventListener('DOMContentLoaded', () => {
         isInitialSplashDone = true;
         checkScreenOrientation();
     }, 2500);
+// 🔍 Запускаем отладку повторно
+    setTimeout(applyHeaderPadding, 200);
+    setTimeout(applyHeaderPadding, 2000);
+    setTimeout(applyHeaderPadding, 4000);
 });
 
 </script>
 
-
+<!-- 🔍 ОТЛАДОЧНАЯ ПАНЕЛЬ (временно) -->
+<div id="debugPanel" style="
+    position:fixed; bottom:0; left:0; right:0;
+    background:rgba(0,0,0,0.85); color:#0f0;
+    padding:4px 6px; font-size:11px; font-family:monospace;
+    z-index:999999; line-height:1.3; white-space:pre-wrap;
+    pointer-events:none;
+">DEBUG</div>
 </body>
 </html>
