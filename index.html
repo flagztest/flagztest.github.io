@@ -980,21 +980,19 @@ function applyHeaderPadding() {
     const safeTop = probe.offsetHeight;
     probe.remove();
 
-    // 🌟 НОВОЕ: определяем iPhone и ВСЕГДА даём минимум 20px сверху,
-    // даже если env() вернул 0 (баг Safari в обычном режиме)
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) 
                 || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     
     let effectiveTop = safeTop;
     
-    if (isIOS && effectiveTop === 0) {
-        // Определяем высоту статус-бара по диагонали экрана
-        const h = Math.max(window.screen.width, window.screen.height);
-        if (h >= 932) effectiveTop = 59;       // iPhone 14/15/16 Pro Max / Plus
-        else if (h >= 852) effectiveTop = 59;  // iPhone 14/15/16 Pro
-        else if (h >= 844) effectiveTop = 47;  // iPhone X/XS/11 Pro/12/13/14
-        else if (h >= 812) effectiveTop = 44;  // iPhone X/11 Pro/12 mini/13 mini
-        else effectiveTop = 20;                // iPhone SE / 6 / 7 / 8 и старые
+    // 🌟 ГЛАВНОЕ ИСПРАВЛЕНИЕ: НЕ применяем fallback через JS.
+    // Полагаемся на CSS env(). Если env() вернул нормальное значение — используем его.
+    // Если env() = 0 (Safari-баг или уже "съедено" самим Safari) — просто НЕ трогаем padding,
+    // пусть работает CSS со своим env(safe-area-inset-top, 0px).
+    if (isIOS && (effectiveTop === 0 || effectiveTop > 80)) {
+        // Сломанный env() — снимаем inline-стиль и доверяем CSS
+        header.style.removeProperty('padding-top');
+        return;
     }
 
     const isMobile = window.innerWidth <= 600;
@@ -1002,9 +1000,6 @@ function applyHeaderPadding() {
 
     if (effectiveTop > 0) {
         header.style.setProperty('padding-top', `${effectiveTop + basePad}px`, 'important');
-    } else if (isMobile) {
-        // 🌟 Финальный минимум на всякий случай
-        header.style.setProperty('padding-top', '26px', 'important');
     } else {
         header.style.removeProperty('padding-top');
     }
