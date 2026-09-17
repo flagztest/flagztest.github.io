@@ -39,19 +39,15 @@
         }
         
         .fixed-header {
-            /* 🍏 ЖЕЛЕЗНЫЙ FIXED: Шапка монолитно прикована к стеклу экрана дисплея */
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
-            z-index: 100000 !important; /* Полный приоритет слоёв */
-            padding: 4px 16px 4px 16px;
+            z-index: 1000;
+            padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* 🍏 ЩИТ СТАТУС-БАРА: Идеально держит меню под временем и на старте, и после поворотов */
-            padding-top: 46px !important;
-            box-sizing: border-box !important;
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
@@ -72,13 +68,12 @@
             width: 100%;
             height: 100%;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
             padding: 0px 4px 40px 4px;
             box-sizing: border-box;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
-            /* 🍏 РАСПОРКА КОНТЕНТА: Спускает таблицы стран ровно под нижний срез поиска */
-            margin-top: 135px !important;
         }
         .header-content {
             max-width: 1000px;
@@ -927,18 +922,13 @@ function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
-    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
-    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
-    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
     let metaViewport = document.querySelector('meta[name="viewport"]');
     if (!metaViewport) {
         metaViewport = document.createElement('meta');
         metaViewport.name = "viewport";
         document.getElementsByTagName('head')[0].appendChild(metaViewport);
     }
-    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
     metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-    // И тут же намертво фиксируем железные 100% масштаба без права изменения
     setTimeout(() => {
         metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }, 1);
@@ -948,7 +938,6 @@ function checkScreenOrientation() {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
-        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
@@ -960,6 +949,17 @@ function checkScreenOrientation() {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
+
+            // 🍏 АППАРАТНАЯ ВСТРЯСКА ВЕРСТКИ ПРИ ВОЗВРАТЕ В ВЕРТИКАЛКУ:
+            // Даём Safari микроскопическую паузу в 100мс завершить анимацию поворота корпуса,
+            // а затем повторно накатываем мета-тег масштаба. Это заставит WebKit мгновенно 
+            // вернуть Safe Area назад: шапка сама отлипнет от области часов и встанет на своё идеальное место!
+            setTimeout(() => {
+                metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+                setTimeout(() => {
+                    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                }, 1);
+            }, 100);
         }
     }
 }
@@ -968,14 +968,18 @@ window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
     // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
+    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
+    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
     const splash = document.getElementById('splashScreen');
     if (splash) {
+        // Блокируем стандартный мультитач-зум
         splash.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
         }, { passive: false });
 
+        // Блокируем системный жест масштабирования iOS
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
@@ -984,20 +988,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
     setTimeout(() => {
         isInitialSplashDone = true;
-
-        // 🍏 ИИ-СТАБИЛИЗАТОР SAFARI: за кулисами белого экрана встряхиваем Viewport.
-        // Это принудительно заставляет Айфон выставить правильные координаты шапки под часы
-        // ЕЩЕ ДО ТОГО, как заставка растворится. Прыжки «туда-сюда» полностью исчезнут!
-        let metaViewport = document.querySelector('meta[name="viewport"]');
-        if (metaViewport) {
-            metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-            setTimeout(() => {
-                metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-                checkScreenOrientation(); // Сверяем положение телефона на боку
-            }, 1);
-        } else {
-            checkScreenOrientation();
-        }
+        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
     }, 2500);
 });
 
@@ -2713,18 +2704,13 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под fixed-поиск!
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
         setTimeout(() => {
-            const scrollLayer = document.getElementById('mainScrollContent');
-            if (scrollLayer) {
-                // 🍏 ПИКСЕЛЬНАЯ СИММЕТРИЯ: плашка остановится ровно в 4px от рамки поиска
-                const offset = 4; 
-                scrollLayer.scrollTo({
-                    top: block.offsetTop - offset,
-                    behavior: 'smooth'
-                });
-            }
-        }, 80);                                    
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);                  
     }
 }
 
