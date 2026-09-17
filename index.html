@@ -39,16 +39,15 @@
         }
         
         .fixed-header {
-            /* 🍏 БЕЗ FIXED: Шапка остается монолитным потолком, но с внутренней аппаратной защитой */
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
             position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* 🍏 ВНУТРЕННИЙ БАМПЕР IOS: Сбалансирует весы Safe Area. Если инсет чёлки после переворота 
-               сбросится в ноль, лимит в 44px намертво удержит кнопки меню строго под часами! */
-            padding-top: calc(max(env(safe-area-inset-top), 44px) + 8px) !important;
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
@@ -921,20 +920,16 @@ let isInitialSplashDone = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
+    const header = document.querySelector('.fixed-header');
     if (!splash) return;
 
-    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
-    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
-    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
     let metaViewport = document.querySelector('meta[name="viewport"]');
     if (!metaViewport) {
         metaViewport = document.createElement('meta');
         metaViewport.name = "viewport";
-        document.getElementsByTagName('head')[0].appendChild(metaViewport);
+        document.getElementsByTagName('head').appendChild(metaViewport);
     }
-    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
     metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-    // И тут же намертво фиксируем железные 100% масштаба без права изменения
     setTimeout(() => {
         metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }, 1);
@@ -944,18 +939,27 @@ function checkScreenOrientation() {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
-        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
+        // На боку полностью обнуляем пэддинг шапки контента
+        if (header) header.style.setProperty('padding-top', '0px', 'important');
     } else {
         // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
+        }
+        
+        // 🍏 ПРОГРАММНЫЙ БАМПЕР СТАТУС-БАРА (МГНОВЕННЫЙ ФИКС):
+        // Как только телефон встает вертикально, JS принудительно перехватывает управление 
+        // верхним отступом. Мы жестко прописываем 52px (44px стандартная челка Apple + 8px ваш родной зазор).
+        // Это полностью блокирует системный баг Safari: шапка железно встанет ровно под часы в любых условиях!
+        if (header) {
+            header.style.setProperty('padding-top', '52px', 'important');
         }
     }
 }
