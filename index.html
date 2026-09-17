@@ -2699,18 +2699,13 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-         // РАСКРЫТИЕ: плавно выталкивает открытый блок ровно под поиск по координатам всей страницы!
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
         setTimeout(() => {
-            const scrollLayer = document.getElementById('mainScrollContent');
-            if (scrollLayer) {
-                // 🍏 ИДЕАЛЬНАЯ ПОДУШКА БЕЗОПАСНОСТИ: плашка остановится ровно под инпутом, не сдвигая шапку
-                const offset = 120;
-                scrollLayer.scrollTo({
-                    top: block.offsetTop - offset,
-                    behavior: 'smooth'
-                });
-            }
-        }, 80);                                    
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);                  
     }
 }
 
