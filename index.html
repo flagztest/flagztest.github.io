@@ -958,21 +958,23 @@ function checkScreenOrientation() {
             splash.style.pointerEvents = 'none';
         }
         // 🍏 ПРИНУДИТЕЛЬНЫЙ ПЕРЕСЧЁТ safe-area после возврата из landscape
-        const header = document.querySelector('.fixed-header');
-        if (header) {
-            header.style.paddingTop = '0px';
-            void header.offsetHeight; // форсируем reflow
-            header.style.paddingTop = ''; // возвращаем CSS-правило с env(safe-area-inset-top)
-            // 🍏 ЗАПАСНОЙ ВАРИАНТ: Измеряем реальный safe-area-inset-top через временный элемент
+        // iOS не пересчитывает env() мгновенно — нужна задержка
+        setTimeout(() => {
+            const header = document.querySelector('.fixed-header');
+            if (!header) return;
+            // Создаём probe-элемент для чтения актуального env(safe-area-inset-top)
             const probe = document.createElement('div');
-            probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);visibility:hidden;';
+            probe.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);visibility:hidden;';
             document.body.appendChild(probe);
             const safeTop = getComputedStyle(probe).paddingTop;
             document.body.removeChild(probe);
+            // Применяем явно в пикселях — надёжнее чем CSS-правило
             if (safeTop && safeTop !== '0px') {
                 header.style.paddingTop = 'calc(' + safeTop + ' + 6px)';
+            } else {
+                header.style.paddingTop = '';
             }
-        }
+        }, 250);
     }
 }
 
