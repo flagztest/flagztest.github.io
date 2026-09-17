@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -46,8 +46,9 @@
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* Умный отступ iOS: max() гарантирует минимум 47px даже если env() = 0 */
-            padding-top: max(env(safe-area-inset-top), 47px);
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: env(safe-area-inset-top);
+            /* ВАЖНО: без !important — чтобы JS мог применить сохранённое значение после поворота */
         }
 
         .container {
@@ -455,8 +456,8 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 6px 12px !important;
-         padding-top: max(env(safe-area-inset-top), 47px) !important;
+         padding: 6px 12px;
+         padding-top: env(safe-area-inset-top);
          box-sizing: border-box !important;
      }
 
@@ -918,21 +919,17 @@ window.scrollTo(0, 0); // Принудительно выставляем кам
 
 // 🍏 ИИ-СТАБИЛИЗАТОР И ДАТЧИК ОРИЕНТАЦИИ ЭКРАНА ДЛЯ IOS (PWA)
 let isInitialSplashDone = false;
-let storedSafeAreaTop = null; // Запоминаем правильный отступ при старте
 
-// Читает реальное значение env(safe-area-inset-top) через probe-элемент
-function readEnvSafeArea() {
-    const probe = document.createElement('div');
-    probe.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);visibility:hidden;pointer-events:none;';
-    document.body.appendChild(probe);
-    const val = window.getComputedStyle(probe).paddingTop;
-    document.body.removeChild(probe);
-    return val;
-}
+// 🍏 Сохранённое значение safe-area-inset-top для восстановления после поворота
+let storedSafeAreaTop = '';
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
+
+    // 🍏 Viewport больше не трогаем из JS — статичный meta-тег с viewport-fit=cover
+    // обеспечивает корректный env(safe-area-inset-top). Переписывание viewport
+    // при повороте сбрасывало safe-area в 0 — это и было причиной наезда шапки на часы.
 
     // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
@@ -952,24 +949,35 @@ function checkScreenOrientation() {
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
         }
-
-        // 🍏 ФИКС ШАПКИ: iOS не пересчитывает env() сразу после поворота
+        // 🍏 ФИКС БЕЗОПАСНОЙ ЗОНЫ ПОСЛЕ ПОВОРОТА
+        // iOS не сразу обновляет env(safe-area-inset-top) — используем сохранённое значение
         const header = document.querySelector('.fixed-header');
         if (header) {
-            // Снимаем инлайн-стиль, чтобы CSS-правило снова взяло своё
-            header.style.paddingTop = '';
-            void header.offsetHeight; // force reflow
-
-            // Читаем текущее значение env() через probe
-            const currentEnv = readEnvSafeArea();
-
-            if (currentEnv && currentEnv !== '0px') {
-                // iOS пересчитал env() правильно — запоминаем и не трогаем
-                storedSafeAreaTop = currentEnv;
-            } else if (storedSafeAreaTop && storedSafeAreaTop !== '0px') {
-                // iOS вернул 0 (не успел пересчитать) — применяем сохранённое значение
-                header.style.paddingTop = storedSafeAreaTop;
-            }
+            const applySafeArea = () => {
+                // Читаем актуальное env() через probe-элемент
+                const probe = document.createElement('div');
+                probe.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);pointer-events:none;';
+                document.body.appendChild(probe);
+                const safeTop = getComputedStyle(probe).paddingTop;
+                document.body.removeChild(probe);
+                
+                if (safeTop && safeTop !== '0px') {
+                    // env() пересчитался корректно — обновляем сохранённое значение
+                    storedSafeAreaTop = safeTop;
+                    // Убираем инлайн-стиль, пусть CSS работает
+                    header.style.paddingTop = '';
+                } else if (storedSafeAreaTop) {
+                    // env() вернул 0 (iOS не пересчитал) — применяем сохранённое значение
+                    header.style.paddingTop = storedSafeAreaTop;
+                }
+            };
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setTimeout(applySafeArea, 100);
+                    setTimeout(applySafeArea, 300);
+                    setTimeout(applySafeArea, 500);
+                });
+            });
         }
     }
 }
@@ -998,7 +1006,12 @@ window.addEventListener('DOMContentLoaded', () => {
     // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
     setTimeout(() => {
         isInitialSplashDone = true;
-        storedSafeAreaTop = readEnvSafeArea(); // Запоминаем правильный отступ
+        // 🍏 Читаем и сохраняем правильное значение env(safe-area-inset-top) при старте
+        const probe = document.createElement('div');
+        probe.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);pointer-events:none;';
+        document.body.appendChild(probe);
+        storedSafeAreaTop = getComputedStyle(probe).paddingTop;
+        document.body.removeChild(probe);
         checkScreenOrientation(); // Сразу сверяем текущее положение телефона
     }, 2500);
 });
