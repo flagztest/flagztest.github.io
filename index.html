@@ -963,6 +963,15 @@ function checkScreenOrientation() {
             header.style.paddingTop = '0px';
             void header.offsetHeight; // форсируем reflow
             header.style.paddingTop = ''; // возвращаем CSS-правило с env(safe-area-inset-top)
+            // 🍏 ЗАПАСНОЙ ВАРИАНТ: Измеряем реальный safe-area-inset-top через временный элемент
+            const probe = document.createElement('div');
+            probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);visibility:hidden;';
+            document.body.appendChild(probe);
+            const safeTop = getComputedStyle(probe).paddingTop;
+            document.body.removeChild(probe);
+            if (safeTop && safeTop !== '0px') {
+                header.style.paddingTop = 'calc(' + safeTop + ' + 6px)';
+            }
         }
     }
 }
