@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -955,18 +955,6 @@ function checkScreenOrientation() {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-
-            // 🍏 АППАРАТНАЯ ВСТРЯСКА СТАТУС-БАРА IOS (FIX):
-            // Даём Safari маленькую паузу в 200мс полностью завершить поворот экрана,
-            // а затем делаем микроскопический, невидимый глазу сдвиг высоты каркаса.
-            // Это аппаратно имитирует сворачивание/разворачивание сайта силами видеочипа:
-            // WebKit мгновенно обновляет Safe Area, и шапка сама встаёт на своё идеальное место под часы!
-            setTimeout(() => {
-                document.body.style.height = 'calc(100dvh - 0.5px)';
-                setTimeout(() => {
-                    document.body.style.height = '100dvh';
-                }, 1);
-            }, 200);
         }
     }
 }
