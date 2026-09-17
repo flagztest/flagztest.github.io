@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -453,10 +453,9 @@
          right: 15px !important;
      } 
      
-      /* Выравниваем боковые края шапки, НО сохраняем safe-area сверху */
-     .fixed-header {
-         padding: 6px 12px !important; 
-         padding-top: calc(env(safe-area-inset-top) + 6px) !important; /* 🌟 ВЕРНУЛИ ЗАЩИТУ ОТ ЧАСОВ */
+      .fixed-header {
+         padding: 6px 12px !important;
+         padding-top: calc(env(safe-area-inset-top, 0px) + 6px) !important; /* 🌟 ЖЁСТКО ВОЗВРАЩАЕМ ЗАЩИТУ */
          box-sizing: border-box !important;
      }
 
@@ -923,24 +922,6 @@ function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
-    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA)
-    let metaViewport = document.querySelector('meta[name="viewport"]');
-    if (!metaViewport) {
-        metaViewport = document.createElement('meta');
-        metaViewport.name = "viewport";
-        document.getElementsByTagName('head')[0].appendChild(metaViewport);
-    }
-
-    // 🌟 ГЛАВНОЕ: сохраняем viewport-fit=cover, иначе env(safe-area-inset-*) станет 0!
-    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
-    setTimeout(() => {
-        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-
-        // 🌟 ФОРСИРУЕМ ПЕРЕСЧЁТ SAFE-AREA: заставляем iOS заново вычислить отступы
-        forceSafeAreaRecalc();
-    }, 1);
-
-    // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
@@ -951,29 +932,75 @@ function checkScreenOrientation() {
             img.style.width = 'auto';
         }
     } else {
-        // Если телефон вернули вертикально — убираем Годзиллу
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
 
-            // 🌟 Даём Safari 150мс «успокоиться» и ещё раз пересчитываем safe-area
+            // 🌟 ХАК: заставляем iOS пересчитать env(safe-area-inset-top)
+            forceSafeAreaRecalc();
             setTimeout(forceSafeAreaRecalc, 150);
+            setTimeout(forceSafeAreaRecalc, 500);
+            }
         }
     }
-}
-
-// 🌟 ХАК: принудительный reflow заставляет iOS пересчитать env(safe-area-inset-top)
+// 🌟 ХАК ОТ iOS-БАГА: принудительный reflow заставляет iOS заново вычислить env(safe-area-inset-*)
 function forceSafeAreaRecalc() {
     const header = document.querySelector('.fixed-header');
-    if (header) {
-        const prev = header.style.paddingTop;
-        header.style.paddingTop = '0px';
-        void header.offsetHeight; // Хард-вызов reflow
-        header.style.paddingTop = prev;
-    }
+    if (!header) return;
+
+    // Способ 1: сброс padding через inline-стиль
+    const prev = header.style.paddingTop;
+    header.style.paddingTop = '0px';
+    void header.offsetHeight;   // хард-вызов reflow — это критично!
+    header.style.paddingTop = prev;
+
+    // Способ 2: микро-встряска layout всего документа
+    const bodyEl = document.body;
+    const prevTransform = bodyEl.style.transform;
+    bodyEl.style.transform = 'translateZ(0.0001px)';
+    void bodyEl.offsetHeight;
+    bodyEl.style.transform = prevTransform;
+
+    // Способ 3: финальная подстраховка — явно выставляем padding через JS
+    applyHeaderPadding();
 }
 
+// 🌟 ФИНАЛЬНАЯ ЗАЩИТА: измеряем safe-area и жёстко прибиваем padding-top к шапке
+function applyHeaderPadding() {
+    const header = document.querySelector('.fixed-header');
+    if (!header) return;
+
+    // Меряем env(safe-area-inset-top) через зонд-элемент
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none;z-index:-1;';
+    document.body.appendChild(probe);
+    const safeTop = probe.offsetHeight;
+    probe.remove();
+
+    // Fallback: если env() вернул 0, но мы в PWA-режиме на iPhone — ставим минимум
+    const isStandalone = window.navigator.standalone === true
+        || window.matchMedia('(display-mode: standalone)').matches;
+    let effectiveTop = safeTop;
+    if (effectiveTop === 0 && isStandalone) {
+        // Определяем высоту статус-бара по классу устройства
+        const h = Math.max(window.screen.width, window.screen.height);
+        if (h >= 932) effectiveTop = 59;       // iPhone 14/15 Pro Max, 16 Pro
+        else if (h >= 852) effectiveTop = 59;  // iPhone 14/15/16 Pro
+        else if (h >= 844) effectiveTop = 47;  // iPhone X/XS/11 Pro/12/13/14
+        else if (h >= 812) effectiveTop = 44;  // iPhone X/11 Pro/12 mini/13 mini
+        else effectiveTop = 20;                // старые iPhone
+    }
+
+    const isMobile = window.innerWidth <= 600;
+    const basePad = isMobile ? 6 : 8;
+
+    if (effectiveTop > 0) {
+        header.style.setProperty('padding-top', `${effectiveTop + basePad}px`, 'important');
+    } else {
+        header.style.removeProperty('padding-top');
+    }
+}
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
@@ -2863,6 +2890,11 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
+
+    // 🌟 ШАГ 6: Стартовое выравнивание шапки под safe-area (защита от часов iOS)
+    applyHeaderPadding();
+    setTimeout(applyHeaderPadding, 100);
+    setTimeout(applyHeaderPadding, 500);
 });
 
 </script>
