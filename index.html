@@ -2,14 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
     <title>FlagZilla</title>
         <!-- 🍏 БРОНЕБОЙНЫЙ МЕТА-ЩИТ: включает жесткий полноэкранный PWA режим, фиксируя Safe Area под часамидисплея раз и навсегда! -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">    
     <!-- 🌟 СУПЕР-ХВОСТИК _vMAX ДЛЯ ОБНОВЛЕНИЯ МАСШТАБА И СБРОСА СЕРОГО КВАДРАТА -->
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png?v=godzilla_vMAX">
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=godzilla_vMAX">
@@ -41,21 +41,16 @@
         }
         
         .fixed-header {
-            /* 🍏 ЖЕЛЕЗНЫЙ FIXED: Шапка монолитно прикована к стеклу экрана, исключая стартовые дыры! */
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
-            z-index: 100000 !important; /* Полный приоритет над таблицами баз */
-            padding: 4px 16px 4px 16px;
+            z-index: 1000;
+            padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* 🍏 АБСОЛЮТНЫЙ БАРЬЕР: Идеально держит меню под временем и на старте, и после поворотов */
-            padding-top: 50px !important;
-            box-sizing: border-box !important;
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
-
 
         .container {
             width: 100%;
@@ -76,14 +71,12 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
             padding: 0px 4px 40px 4px;
             box-sizing: border-box;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
-            /* 🍏 РАСПОРКА КОНТЕНТА: Спускает таблицы стран ровно под фиксированную шапку сайта */
-            margin-top: 140px !important;
         }
-
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -929,16 +922,20 @@ let isInitialSplashDone = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
-    const header = document.querySelector('.fixed-header');
     if (!splash) return;
 
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
     let metaViewport = document.querySelector('meta[name="viewport"]');
     if (!metaViewport) {
         metaViewport = document.createElement('meta');
         metaViewport.name = "viewport";
         document.getElementsByTagName('head')[0].appendChild(metaViewport);
     }
+    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
     metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+    // И тут же намертво фиксируем железные 100% масштаба без права изменения
     setTimeout(() => {
         metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }, 1);
@@ -948,40 +945,18 @@ function checkScreenOrientation() {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
+        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
-        // На боку убираем любые инлайновые отступы шапки
-        if (header) header.style.paddingTop = '';
     } else {
         // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-
-            // 🍏 ИИ-ПОДСТРАХОВКА СТАТУС-БАРА IOS:
-            // Даем Safari 150мс завершить анимацию поворота корпуса, создаем невидимый блок 
-            // и проверяем, вернула ли iOS отступ челки. Если система выдала баг и прислала 0px, 
-            // JavaScript принудительно накатит на шапку жесткие и ровные 52 пикселя (44px челка + 8px родной отступ).
-            // Шапка гарантированно отлипнет от часов и встанет на свое эталонное место в любых условиях!
-            setTimeout(() => {
-                if (header) {
-                    const testDiv = document.createElement('div');
-                    testDiv.style.paddingTop = 'env(safe-area-inset-top)';
-                    document.body.appendChild(testDiv);
-                    const insetTop = parseInt(window.getComputedStyle(testDiv).paddingTop) || 0;
-                    document.body.removeChild(testDiv);
-
-                    if (insetTop === 0) {
-                        header.style.setProperty('padding-top', '52px', 'important');
-                    } else {
-                        header.style.paddingTop = ''; // Если iOS сама вернула инсет, оставляем чистый CSS
-                    }
-                }
-            }, 155);
         }
     }
 }
@@ -2726,18 +2701,13 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-        // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под fixed-поиск!
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
         setTimeout(() => {
-            const scrollLayer = document.getElementById('mainScrollContent');
-            if (scrollLayer) {
-                // 🍏 ИДЕАЛЬНЫЙ ПУЛЛАП: плашка остановится ровно в 4px от рамки поиска
-                const offset = 4; 
-                scrollLayer.scrollTo({
-                    top: block.offsetTop - offset,
-                    behavior: 'smooth'
-                });
-            }
-        }, 80);                                    
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);                  
     }
 }
 
