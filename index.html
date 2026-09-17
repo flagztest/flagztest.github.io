@@ -932,12 +932,8 @@ function checkScreenOrientation() {
         metaViewport.name = "viewport";
         document.getElementsByTagName('head')[0].appendChild(metaViewport);
     }
-    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
-    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
-    // И тут же намертво фиксируем железные 100% масштаба без права изменения
-    setTimeout(() => {
-        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-    }, 1);
+    // Сбрасываем масштаб и фиксируем viewport с safe-area
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
 
     // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
@@ -958,23 +954,33 @@ function checkScreenOrientation() {
             splash.style.pointerEvents = 'none';
         }
         // 🍏 ПРИНУДИТЕЛЬНЫЙ ПЕРЕСЧЁТ safe-area после возврата из landscape
-        // iOS не пересчитывает env() мгновенно — нужна задержка
-        setTimeout(() => {
-            const header = document.querySelector('.fixed-header');
-            if (!header) return;
-            // Создаём probe-элемент для чтения актуального env(safe-area-inset-top)
-            const probe = document.createElement('div');
-            probe.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);visibility:hidden;';
-            document.body.appendChild(probe);
-            const safeTop = getComputedStyle(probe).paddingTop;
-            document.body.removeChild(probe);
-            // Применяем явно в пикселях — надёжнее чем CSS-правило
-            if (safeTop && safeTop !== '0px') {
-                header.style.paddingTop = 'calc(' + safeTop + ' + 6px)';
-            } else {
-                header.style.paddingTop = '';
-            }
-        }, 250);
+        const header = document.querySelector('.fixed-header');
+        if (header) {
+            header.style.paddingTop = '';
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        const probe = document.createElement('div');
+                        probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);visibility:hidden;';
+                        document.body.appendChild(probe);
+                        const safeTop = getComputedStyle(probe).paddingTop;
+                        document.body.removeChild(probe);
+                        if (safeTop && safeTop !== '0px') {
+                            header.style.paddingTop = 'calc(' + safeTop + ' + 6px)';
+                        } else {
+                            const screenHeight = window.screen.height;
+                            let fallback = 0;
+                            if (screenHeight >= 852) fallback = 59;
+                            else if (screenHeight >= 812) fallback = 47;
+                            else fallback = 20;
+                            if (fallback > 0) {
+                                header.style.paddingTop = (fallback + 6) + 'px';
+                            }
+                        }
+                    }, 150);
+                });
+            });
+        }
     }
 }
 
