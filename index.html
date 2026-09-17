@@ -455,7 +455,9 @@
      
       .fixed-header {
          padding: 6px 12px !important;
-         padding-top: calc(env(safe-area-inset-top, 0px) + 6px) !important; /* 🌟 ЖЁСТКО ВОЗВРАЩАЕМ ЗАЩИТУ */
+         /* 🌟 МАКСИМУМ: берём либо safe-area+6, либо 26px минимум — что больше.
+            Это защищает от Safari-бага, когда env(safe-area-inset-top) возвращает 0 */
+         padding-top: max(26px, calc(env(safe-area-inset-top, 0px) + 6px)) !important;
          box-sizing: border-box !important;
      }
 
@@ -978,18 +980,21 @@ function applyHeaderPadding() {
     const safeTop = probe.offsetHeight;
     probe.remove();
 
-    // Fallback: если env() вернул 0, но мы в PWA-режиме на iPhone — ставим минимум
-    const isStandalone = window.navigator.standalone === true
-        || window.matchMedia('(display-mode: standalone)').matches;
+    // 🌟 НОВОЕ: определяем iPhone и ВСЕГДА даём минимум 20px сверху,
+    // даже если env() вернул 0 (баг Safari в обычном режиме)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) 
+                || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
     let effectiveTop = safeTop;
-    if (effectiveTop === 0 && isStandalone) {
-        // Определяем высоту статус-бара по классу устройства
+    
+    if (isIOS && effectiveTop === 0) {
+        // Определяем высоту статус-бара по диагонали экрана
         const h = Math.max(window.screen.width, window.screen.height);
-        if (h >= 932) effectiveTop = 59;       // iPhone 14/15 Pro Max, 16 Pro
+        if (h >= 932) effectiveTop = 59;       // iPhone 14/15/16 Pro Max / Plus
         else if (h >= 852) effectiveTop = 59;  // iPhone 14/15/16 Pro
         else if (h >= 844) effectiveTop = 47;  // iPhone X/XS/11 Pro/12/13/14
         else if (h >= 812) effectiveTop = 44;  // iPhone X/11 Pro/12 mini/13 mini
-        else effectiveTop = 20;                // старые iPhone
+        else effectiveTop = 20;                // iPhone SE / 6 / 7 / 8 и старые
     }
 
     const isMobile = window.innerWidth <= 600;
@@ -997,6 +1002,9 @@ function applyHeaderPadding() {
 
     if (effectiveTop > 0) {
         header.style.setProperty('padding-top', `${effectiveTop + basePad}px`, 'important');
+    } else if (isMobile) {
+        // 🌟 Финальный минимум на всякий случай
+        header.style.setProperty('padding-top', '26px', 'important');
     } else {
         header.style.removeProperty('padding-top');
     }
