@@ -46,9 +46,9 @@
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* 🍏 ЖЕЛЕЗНЫЙ БАМПЕР IOS: Создает внешнюю подушку безопасности в 24px над шапкой.
-               Она физически заблокирует уползание меню под часы в любых режимах и при любых кликах! */
-            margin-top: max(env(safe-area-inset-top), 24px) !important;
+            /* 🍏 ЖЕЛЕЗНЫЙ БАМПЕР IOS: увеличили барьер до 38px, чтобы шапка гарантированно 
+               вставала строго под системное время и зарядку на любых моделях iPhone! */
+            margin-top: max(env(safe-area-inset-top), 38px) !important;
             padding-top: 8px !important;
         }
 
