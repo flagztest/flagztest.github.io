@@ -956,20 +956,13 @@ function checkScreenOrientation() {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-} else {
-    if (isInitialSplashDone) {
-        splash.style.opacity = '0';
-        splash.style.visibility = 'hidden';
-        splash.style.pointerEvents = 'none';
-    }
-    // 🍏 ПРИНУДИТЕЛЬНЫЙ ПЕРЕСЧЁТ safe-area после возврата из landscape
-    const header = document.querySelector('.fixed-header');
-    if (header) {
-        header.style.paddingTop = '0px';
-        void header.offsetHeight; // форсируем reflow
-        header.style.paddingTop = ''; // возвращаем CSS-правило с env(safe-area-inset-top)
-    }
-}
+        }
+        // 🍏 ПРИНУДИТЕЛЬНЫЙ ПЕРЕСЧЁТ safe-area после возврата из landscape
+        const header = document.querySelector('.fixed-header');
+        if (header) {
+            header.style.paddingTop = '0px';
+            void header.offsetHeight; // форсируем reflow
+            header.style.paddingTop = ''; // возвращаем CSS-правило с env(safe-area-inset-top)
         }
     }
 }
