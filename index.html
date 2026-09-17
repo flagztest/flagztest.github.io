@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -453,9 +453,9 @@
          right: 15px !important;
      } 
      
+     /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 6px 12px !important;
-         padding-top: calc(env(safe-area-inset-top, 0px) + 6px) !important;
+         padding: 6px 12px !important; 
          box-sizing: border-box !important;
      }
 
@@ -922,128 +922,77 @@ function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
+    let metaViewport = document.querySelector('meta[name="viewport"]');
+    if (!metaViewport) {
+        metaViewport = document.createElement('meta');
+        metaViewport.name = "viewport";
+        document.getElementsByTagName('head')[0].appendChild(metaViewport);
+    }
+    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+    // И тут же намертво фиксируем железные 100% масштаба без права изменения
+    setTimeout(() => {
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }, 1);
+
+    // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
+        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
     } else {
+        // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-            }
         }
     }
-// 🌟 ХАК ОТ iOS-БАГА: принудительный reflow заставляет iOS заново вычислить env(safe-area-inset-*)
-function forceSafeAreaRecalc() {
-    const header = document.querySelector('.fixed-header');
-    if (!header) return;
-
-    // Способ 1: сброс padding через inline-стиль
-    const prev = header.style.paddingTop;
-    header.style.paddingTop = '0px';
-    void header.offsetHeight;   // хард-вызов reflow — это критично!
-    header.style.paddingTop = prev;
-
-    // Способ 2: микро-встряска layout всего документа
-    const bodyEl = document.body;
-    const prevTransform = bodyEl.style.transform;
-    bodyEl.style.transform = 'translateZ(0.0001px)';
-    void bodyEl.offsetHeight;
-    bodyEl.style.transform = prevTransform;
-
-    // Способ 3: финальная подстраховка — явно выставляем padding через JS
-    applyHeaderPadding();
 }
 
-// 🌟 ИЗМЕРЯЕМ РЕАЛЬНУЮ ПОЗИЦИЮ ШАПКИ, а не полагаемся на env().
-// Если содержимое шапки уже ниже 20px от верха видимой области — ничего не делаем.
-// Если шапка прижата к самому верху — подставляем safe-area.
-function applyHeaderPadding() {
-    const header = document.querySelector('.fixed-header');
-    if (!header) return;
+window.addEventListener('DOMContentLoaded', () => {
+    window.scrollTo(0, 0);
 
-    header.style.removeProperty('padding-top');
-    void header.offsetHeight;
+    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
+    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
+    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        // Блокируем стандартный мультитач-зум
+        splash.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
-    const content = header.querySelector('.header-content') || header;
-    const rect = content.getBoundingClientRect();
-    const vvTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
-    const realTop = rect.top + vvTop;
-
-    const envProbe = document.createElement('div');
-    envProbe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);';
-    document.body.appendChild(envProbe);
-    const envVal = envProbe.offsetHeight;
-    envProbe.remove();
-
-    // 🔍 ПИШЕМ ЗНАЧЕНИЯ В ПАНЕЛЬ
-    const dbg = document.getElementById('debugPanel');
-    if (dbg) {
-        dbg.textContent =
-            'pad=' + getComputedStyle(header).paddingTop +
-            '  rect=' + rect.top.toFixed(0) +
-            '  env=' + envVal +
-            '  vv=' + vvTop.toFixed(0) +
-            '  scr=' + window.screen.width + 'x' + window.screen.height +
-            '  inH=' + window.innerHeight;
+        // Блокируем системный жест масштабирования iOS
+        splash.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        }, { passive: false });
     }
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-               || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    if (!isIOS) return;
-
-    if (realTop >= 20) return;
-
-    const h = Math.max(window.screen.width, window.screen.height);
-    let safeTop;
-    if (h >= 932) safeTop = 59;
-    else if (h >= 852) safeTop = 59;
-    else if (h >= 844) safeTop = 47;
-    else if (h >= 812) safeTop = 44;
-    else safeTop = 20;
-
-    const isMobile = window.innerWidth <= 600;
-    const basePad = isMobile ? 6 : 8;
-
-    header.style.setProperty('padding-top', `${safeTop + basePad}px`, 'important');
-}
-// 🌟 Теперь просто вызываем пересчёт на всех событиях — функция сама разберётся,
-// нужно что-то подставлять или нет.
-function safeReapply() {
-    applyHeaderPadding();
-    setTimeout(applyHeaderPadding, 100);
-    setTimeout(applyHeaderPadding, 300);
-    setTimeout(applyHeaderPadding, 700);
-}
-
-window.addEventListener('orientationchange', safeReapply);
-window.addEventListener('resize', safeReapply);
-
-document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) safeReapply();
+    // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
+    setTimeout(() => {
+        isInitialSplashDone = true;
+        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
+    }, 2500);
 });
-
-if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-        setTimeout(applyHeaderPadding, 100);
-    });
-}
-
-// Один вызов при старте — через 200мс после DOMContentLoaded
-window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(applyHeaderPadding, 200);
-});
-
 
 // Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
 window.addEventListener('resize', checkScreenOrientation);
 window.addEventListener('orientationchange', checkScreenOrientation);
+
+// 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
+let currentRuZone = 'main';
 
 const specialFlags = {
     "mt": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Flag_of_Malta.svg/1280px-Flag_of_Malta.svg.png",
@@ -2893,48 +2842,16 @@ function generateRussiaOkrugsTables() {
     }
 }
 
+// 🌟 ОЖИВЛЯЕМ ВСЮ БАЗУ РОССИИ: запускаем сборку таблиц строго после того,
+// как браузер полностью прочитал всю страницу и создал HTML-контейнеры.
 window.addEventListener('DOMContentLoaded', () => {
-    // 🌟 СБОРКА ТАБЛИЦ РОССИИ
     generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
-
-    // 🦖 СКРЫТИЕ СТАРТОВОЙ ЗАСТАВКИ + ЗАЩИТА ОТ ЗУМА
-    window.scrollTo(0, 0);
-
-    const splash = document.getElementById('splashScreen');
-    if (splash) {
-        // Блокируем стандартный мультитач-зум
-        splash.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) e.preventDefault();
-        }, { passive: false });
-
-        // Блокируем системный жест масштабирования iOS
-        splash.addEventListener('gesturestart', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-    }
-
-    // Стартовый таймер: показывает Годзиллу 2.5 секунды и убирает заставку
-    setTimeout(() => {
-        isInitialSplashDone = true;
-        checkScreenOrientation();
-    }, 2500);
-// 🔍 Запускаем отладку повторно
-    setTimeout(applyHeaderPadding, 200);
-    setTimeout(applyHeaderPadding, 2000);
-    setTimeout(applyHeaderPadding, 4000);
 });
 
 </script>
 
-<!-- 🔍 ОТЛАДОЧНАЯ ПАНЕЛЬ (временно) -->
-<div id="debugPanel" style="
-    position:fixed; bottom:0; left:0; right:0;
-    background:rgba(0,0,0,0.85); color:#0f0;
-    padding:4px 6px; font-size:11px; font-family:monospace;
-    z-index:999999; line-height:1.3; white-space:pre-wrap;
-    pointer-events:none;
-">DEBUG</div>
+
 </body>
 </html>
