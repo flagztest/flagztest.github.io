@@ -39,17 +39,21 @@
         }
         
         .fixed-header {
-            /* 🍏 БЕЗ FIXED: Шапка остается монолитным потолком, но с внутренней аппаратной защитой */
-            position: relative;
+            /* 🍏 ЖЕЛЕЗНЫЙ FIXED: Шапка монолитно прикована к стеклу экрана, исключая стартовые дыры! */
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
-            z-index: 1000;
-            padding: 8px 16px 4px 16px;
+            z-index: 100000 !important; /* Полный приоритет над таблицами баз */
+            padding: 4px 16px 4px 16px;
             flex-shrink: 0;
-            /* 🍏 ВНУТРЕННИЙ БАМПЕР СИСТЕМЫ: Тот самый защитный щит под cover-viewport.
-               Если переменная отступа сбросится в ноль после переворота, лимит в 40px удержит кнопки меню строго под часами! */
-            padding-top: calc(max(env(safe-area-inset-top), 40px) + 4px) !important;
+            /* 🍏 АБСОЛЮТНЫЙ БАРЬЕР: Идеально держит меню под временем и на старте, и после поворотов */
+            padding-top: 50px !important;
+            box-sizing: border-box !important;
         }
+
 
         .container {
             width: 100%;
@@ -70,12 +74,14 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
-            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
             padding: 0px 4px 40px 4px;
             box-sizing: border-box;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
+            /* 🍏 РАСПОРКА КОНТЕНТА: Спускает таблицы стран ровно под фиксированную шапку сайта */
+            margin-top: 140px !important;
         }
+
         .header-content {
             max-width: 1000px;
             margin: 0 auto;
@@ -2718,13 +2724,18 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
+        // РАСКРЫТИЕ: плавно выталкивает открытый континент строго в видимую область под fixed-поиск!
         setTimeout(() => {
-            block.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 80);                  
+            const scrollLayer = document.getElementById('mainScrollContent');
+            if (scrollLayer) {
+                // 🍏 ИДЕАЛЬНЫЙ ПУЛЛАП: плашка остановится ровно в 4px от рамки поиска
+                const offset = 4; 
+                scrollLayer.scrollTo({
+                    top: block.offsetTop - offset,
+                    behavior: 'smooth'
+                });
+            }
+        }, 80);                                    
     }
 }
 
