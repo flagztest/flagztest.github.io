@@ -961,15 +961,20 @@ function forceSafeAreaRecalc() {
     applyHeaderPadding();
 }
 
-// 🌟 ОТКЛЮЧЕНО: в Safari на iPhone env(safe-area-inset-top) уже даёт правильное значение,
-// а любое вмешательство через JS только ломает layout. Оставляем только CSS env().
-// 🌟 РЕАЛЬНАЯ ЗАЩИТА ОТ БАГА SAFARI: Safari с viewport-fit=cover может
-// возвращать env(safe-area-inset-top) = 0, тогда как в PWA он же = 47-59.
-// Если env() вернул 0 и это iPhone — подставляем значение по модели устройства.
+// 🌟 ФЛАГ: "мы уже покинули холодный старт"
+// При холодном старте Safari сам сдвигает viewport под часы, и env() часто = 0.
+// Если мы в этот момент подставим padding — получим ДВОЙНОЙ отступ.
+// После поворота/возврата из фона Safari сдвиг сбрасывает, и подстановка нужна.
+let hasLeftInitialState = false;
+
 function applyHeaderPadding() {
     const header = document.querySelector('.fixed-header');
     if (!header) return;
 
+    // 🌟 ГЛАВНОЕ: при холодном старте ничего не делаем — работает CSS env().
+    if (!hasLeftInitialState) return;
+
+    // Дальше — после поворота/возврата из фона.
     // Меряем env(safe-area-inset-top)
     const probe = document.createElement('div');
     probe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none;';
@@ -982,8 +987,7 @@ function applyHeaderPadding() {
 
     let safeTop = envTop;
 
-    // 🌟 ГЛАВНЫЙ ФОКУС: если env() = 0 и это iPhone — Safari-баг,
-    // подставляем высоту статус-бара по диагонали экрана
+    // 🌟 Safari сбросил сдвиг, env() = 0 — подставляем высоту статус-бара по модели
     if (isIOS && envTop === 0) {
         const h = Math.max(window.screen.width, window.screen.height);
         if (h >= 932) safeTop = 59;       // iPhone 14/15/16 Pro Max / Plus
@@ -996,61 +1000,42 @@ function applyHeaderPadding() {
     const isMobile = window.innerWidth <= 600;
     const basePad = isMobile ? 6 : 8;
 
-    // 🌟 ВСЕГДА задаём padding-top, даже если safeTop = 0,
-    // чтобы Safari-баг с пересчётом не оставлял шапку без защиты
     if (safeTop > 0) {
         header.style.setProperty('padding-top', `${safeTop + basePad}px`, 'important');
-    } else {
-        // На десктопе (Mac) сбрасываем — работает чистый CSS env()
-        header.style.removeProperty('padding-top');
     }
 }
 
-// 🌟 ЗАПУСКАЕМ ФУНКЦИЮ НА ВСЕХ КЛЮЧЕВЫХ СОБЫТИЯХ
-window.addEventListener('DOMContentLoaded', () => {
-    window.scrollTo(0, 0);
-
-    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI
-    const splash = document.getElementById('splashScreen');
-    if (splash) {
-        splash.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) e.preventDefault();
-        }, { passive: false });
-        splash.addEventListener('gesturestart', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-    }
-
-    // Стартовый таймер: показывает Годзиллу 2.5 секунды
-    setTimeout(() => {
-        isInitialSplashDone = true;
-        checkScreenOrientation();
-    }, 2500);
-
-    // Применяем padding сразу и с задержками (пока iOS устаканит layout)
-    applyHeaderPadding();
-    setTimeout(applyHeaderPadding, 100);
-    setTimeout(applyHeaderPadding, 500);
-    setTimeout(applyHeaderPadding, 1500);
-});
-
-// 🌟 ПЕРЕСЧЁТ ПРИ ПОВОРОТЕ — это ключевое место для бага
-window.addEventListener('resize', () => {
-    applyHeaderPadding();
-    setTimeout(applyHeaderPadding, 100);
-    setTimeout(applyHeaderPadding, 300);
-});
-
+// 🌟 ПОВОРОТ: ставим флаг и пересчитываем
 window.addEventListener('orientationchange', () => {
+    hasLeftInitialState = true;
     applyHeaderPadding();
     setTimeout(applyHeaderPadding, 100);
     setTimeout(applyHeaderPadding, 300);
     setTimeout(applyHeaderPadding, 700);
 });
 
-// 🌟 Дополнительно — на изменение visualViewport (iOS 15+)
+// 🌟 ВОЗВРАТ ИЗ ФОНА (сворачивание → разворот): тоже ставим флаг и пересчитываем
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        hasLeftInitialState = true;
+        applyHeaderPadding();
+        setTimeout(applyHeaderPadding, 100);
+        setTimeout(applyHeaderPadding, 500);
+    }
+});
+
+// 🌟 RESIZE: если уже покинули стартовое состояние — пересчитываем
+window.addEventListener('resize', () => {
+    if (!hasLeftInitialState) return;
+    applyHeaderPadding();
+    setTimeout(applyHeaderPadding, 100);
+    setTimeout(applyHeaderPadding, 300);
+});
+
+// 🌟 VISUALVIEWPORT
 if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', () => {
+        if (!hasLeftInitialState) return;
         setTimeout(applyHeaderPadding, 100);
     });
 }
@@ -2913,11 +2898,6 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
-
-    // 🌟 ШАГ 6: Стартовое выравнивание шапки под safe-area (защита от часов iOS)
-    applyHeaderPadding();
-    setTimeout(applyHeaderPadding, 100);
-    setTimeout(applyHeaderPadding, 500);
 });
 
 </script>
