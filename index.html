@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -922,15 +922,20 @@ function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
     let metaViewport = document.querySelector('meta[name="viewport"]');
     if (!metaViewport) {
         metaViewport = document.createElement('meta');
         metaViewport.name = "viewport";
-        document.getElementsByTagName('head').appendChild(metaViewport);
+        document.getElementsByTagName('head')[0].appendChild(metaViewport);
     }
-    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+    // И тут же намертво фиксируем железные 100% масштаба без права изменения
     setTimeout(() => {
-        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
     }, 1);
 
     // Если ширина экрана смартфона больше высоты — значит телефон на боку!
@@ -938,6 +943,7 @@ function checkScreenOrientation() {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
+        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
@@ -949,27 +955,20 @@ function checkScreenOrientation() {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-
-            // 🍏 АППАРАТНЫЙ ПЕРЕЗАПУСК КОМПОНЕНТА ШАПКИ (ЖЕСТКИЙ СБРОС КЭША):
-            // Ждем 150мс окончания анимации, находим шапку, вырезаем ее из DOM дерева 
-            // и тут же возвращаем обратно перед контейнером. Это заставит iOS заново рассчитать 
-            // безопасные отступы с абсолютного нуля. Шапка монолитно встанет на свое эталонное место!
-            setTimeout(() => {
-                const header = document.querySelector('.fixed-header');
-                const container = document.querySelector('.container');
-                if (header && container && container.parentNode) {
-                    const parent = container.parentNode;
-                    parent.removeChild(header); // Вырезаем сломавшуюся шапку
-                    parent.insertBefore(header, container); // Вставляем заново — чистую и обновленную!
-                    
-                    // Хак для принудительной фокусировки поиска, если он сбился
-                    const searchInput = document.getElementById('searchInput');
-                    if (searchInput && document.activeElement === searchInput) {
-                        searchInput.blur();
-                        searchInput.focus();
-                    }
-                }
-            }, 150);
+} else {
+    if (isInitialSplashDone) {
+        splash.style.opacity = '0';
+        splash.style.visibility = 'hidden';
+        splash.style.pointerEvents = 'none';
+    }
+    // 🍏 ПРИНУДИТЕЛЬНЫЙ ПЕРЕСЧЁТ safe-area после возврата из landscape
+    const header = document.querySelector('.fixed-header');
+    if (header) {
+        header.style.paddingTop = '0px';
+        void header.offsetHeight; // форсируем reflow
+        header.style.paddingTop = ''; // возвращаем CSS-правило с env(safe-area-inset-top)
+    }
+}
         }
     }
 }
