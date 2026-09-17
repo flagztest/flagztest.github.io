@@ -2892,12 +2892,33 @@ function generateRussiaOkrugsTables() {
     }
 }
 
-// 🌟 ОЖИВЛЯЕМ ВСЮ БАЗУ РОССИИ: запускаем сборку таблиц строго после того,
-// как браузер полностью прочитал всю страницу и создал HTML-контейнеры.
 window.addEventListener('DOMContentLoaded', () => {
+    // 🌟 СБОРКА ТАБЛИЦ РОССИИ
     generateRussiaSubjectsTables();
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
+
+    // 🦖 СКРЫТИЕ СТАРТОВОЙ ЗАСТАВКИ + ЗАЩИТА ОТ ЗУМА
+    window.scrollTo(0, 0);
+
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        // Блокируем стандартный мультитач-зум
+        splash.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+
+        // Блокируем системный жест масштабирования iOS
+        splash.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    }
+
+    // Стартовый таймер: показывает Годзиллу 2.5 секунды и убирает заставку
+    setTimeout(() => {
+        isInitialSplashDone = true;
+        checkScreenOrientation();
+    }, 2500);
 });
 
 </script>
