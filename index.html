@@ -39,17 +39,15 @@
         }
         
         .fixed-header {
-            /* 🍏 БЕЗ FIXED: Шапка остается монолитным потолком, но с аппаратной защитой от наезда */
+            /* 🍏 МОНОЛИТНЫЙ ПОТОЛОК: Возвращаем чистый относительный слой */
             position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* 🍏 ЖЕЛЕЗНЫЙ БАМПЕР IOS: Создает внешнюю подушку безопасности в 24px над шапкой.
-               Она физически заблокирует уползание меню под часы в любых режимах и при любых кликах! */
-            margin-top: max(env(safe-area-inset-top), 20px) !important;
-            padding-top: 8px !important;
+            /* Аккуратный отступ под челку Айфона */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
@@ -965,18 +963,14 @@ window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
     // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
-    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
-    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
     const splash = document.getElementById('splashScreen');
     if (splash) {
-        // Блокируем стандартный мультитач-зум
         splash.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
         }, { passive: false });
 
-        // Блокируем системный жест масштабирования iOS
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
@@ -985,7 +979,20 @@ window.addEventListener('DOMContentLoaded', () => {
     // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
     setTimeout(() => {
         isInitialSplashDone = true;
-        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
+
+        // 🍏 ИИ-СТАБИЛИЗАТОР SAFARI: за кулисами белого экрана встряхиваем Viewport.
+        // Это принудительно заставляет Айфон выставить правильные координаты шапки под часы
+        // ЕЩЕ ДО ТОГО, как заставка растворится. Прыжки «туда-сюда» полностью исчезнут!
+        let metaViewport = document.querySelector('meta[name="viewport"]');
+        if (metaViewport) {
+            metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+            setTimeout(() => {
+                metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                checkScreenOrientation(); // Сверяем положение телефона на боку
+            }, 1);
+        } else {
+            checkScreenOrientation();
+        }
     }, 2500);
 });
 
