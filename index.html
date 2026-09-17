@@ -36,6 +36,9 @@
             overflow: hidden !important;
             display: flex;
             flex-direction: column;
+            /* 🍏 ЖЕЛЕЗНЫЙ БАМПЕР ФЛЕКС-ПОТОКА: Создает внешнюю подушку безопасности в 24px над всем сайтом.
+               Она физически заблокирует уползание меню под часы в любых режимах и при любых кликах! */
+            padding-top: max(env(safe-area-inset-top), 24px) !important;
         }
         
         .fixed-header {
