@@ -920,7 +920,6 @@ let isInitialSplashDone = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
-    const header = document.querySelector('.fixed-header');
     if (!splash) return;
 
     let metaViewport = document.querySelector('meta[name="viewport"]');
@@ -944,22 +943,33 @@ function checkScreenOrientation() {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
-        // На боку полностью обнуляем пэддинг шапки контента
-        if (header) header.style.setProperty('padding-top', '0px', 'important');
     } else {
         // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-        }
-        
-        // 🍏 ПРОГРАММНЫЙ БАМПЕР СТАТУС-БАРА (МГНОВЕННЫЙ ФИКС):
-        // Как только телефон встает вертикально, JS принудительно перехватывает управление 
-        // верхним отступом. Мы жестко прописываем 52px (44px стандартная челка Apple + 8px ваш родной зазор).
-        // Это полностью блокирует системный баг Safari: шапка железно встанет ровно под часы в любых условиях!
-        if (header) {
-            header.style.setProperty('padding-top', '52px', 'important');
+
+            // 🍏 АППАРАТНЫЙ ПЕРЕЗАПУСК КОМПОНЕНТА ШАПКИ (ЖЕСТКИЙ СБРОС КЭША):
+            // Ждем 150мс окончания анимации, находим шапку, вырезаем ее из DOM дерева 
+            // и тут же возвращаем обратно перед контейнером. Это заставит iOS заново рассчитать 
+            // безопасные отступы с абсолютного нуля. Шапка монолитно встанет на свое эталонное место!
+            setTimeout(() => {
+                const header = document.querySelector('.fixed-header');
+                const container = document.querySelector('.container');
+                if (header && container && container.parentNode) {
+                    const parent = container.parentNode;
+                    parent.removeChild(header); // Вырезаем сломавшуюся шапку
+                    parent.insertBefore(header, container); // Вставляем заново — чистую и обновленную!
+                    
+                    // Хак для принудительной фокусировки поиска, если он сбился
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput && document.activeElement === searchInput) {
+                        searchInput.blur();
+                        searchInput.focus();
+                    }
+                }
+            }, 150);
         }
     }
 }
