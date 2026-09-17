@@ -961,84 +961,73 @@ function forceSafeAreaRecalc() {
     applyHeaderPadding();
 }
 
-// 🌟 ФЛАГ: "мы уже покинули холодный старт"
-// При холодном старте Safari сам сдвигает viewport под часы, и env() часто = 0.
-// Если мы в этот момент подставим padding — получим ДВОЙНОЙ отступ.
-// После поворота/возврата из фона Safari сдвиг сбрасывает, и подстановка нужна.
-let hasLeftInitialState = false;
-
+// 🌟 ИЗМЕРЯЕМ РЕАЛЬНУЮ ПОЗИЦИЮ ШАПКИ, а не полагаемся на env().
+// Если содержимое шапки уже ниже 20px от верха видимой области — ничего не делаем.
+// Если шапка прижата к самому верху — подставляем safe-area.
 function applyHeaderPadding() {
     const header = document.querySelector('.fixed-header');
     if (!header) return;
 
-    // 🌟 ГЛАВНОЕ: при холодном старте ничего не делаем — работает CSS env().
-    if (!hasLeftInitialState) return;
-
-    // Дальше — после поворота/возврата из фона.
-    // Меряем env(safe-area-inset-top)
-    const probe = document.createElement('div');
-    probe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none;';
-    document.body.appendChild(probe);
-    const envTop = probe.offsetHeight;
-    probe.remove();
+    // Сначала сбрасываем прежний inline padding, чтобы измерить честно.
+    header.style.removeProperty('padding-top');
+    void header.offsetHeight;   // форсируем reflow
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
                || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (!isIOS) return;
 
-    let safeTop = envTop;
+    // Реальная позиция содержимого шапки = rect.top + смещение visualViewport.
+    // Если Safari сдвинул контент под часы, visualViewport.offsetTop это покажет.
+    const content = header.querySelector('.header-content') || header;
+    const rect = content.getBoundingClientRect();
+    const vvTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
+    const realTop = rect.top + vvTop;
 
-    // 🌟 Safari сбросил сдвиг, env() = 0 — подставляем высоту статус-бара по модели
-    if (isIOS && envTop === 0) {
-        const h = Math.max(window.screen.width, window.screen.height);
-        if (h >= 932) safeTop = 59;       // iPhone 14/15/16 Pro Max / Plus
-        else if (h >= 852) safeTop = 59;  // iPhone 14/15/16 Pro
-        else if (h >= 844) safeTop = 47;  // iPhone X/XS/11 Pro/12/13/14
-        else if (h >= 812) safeTop = 44;  // iPhone X / 11 Pro / 12 mini / 13 mini
-        else safeTop = 20;                // iPhone SE / 6 / 7 / 8
-    }
+    // 🌟 Если шапка уже на нормальном месте (≥ 20px от верха) — не трогаем.
+    // Это защищает от двойного отступа при возврате из фона.
+    if (realTop >= 20) return;
+
+    // Иначе — Safari-баг (env() = 0 и не сдвигает) — подставляем по модели.
+    const h = Math.max(window.screen.width, window.screen.height);
+    let safeTop;
+    if (h >= 932) safeTop = 59;       // iPhone 14/15/16 Pro Max / Plus
+    else if (h >= 852) safeTop = 59;  // iPhone 14/15/16 Pro
+    else if (h >= 844) safeTop = 47;  // iPhone X/XS/11 Pro/12/13/14
+    else if (h >= 812) safeTop = 44;  // iPhone X / 11 Pro / 12 mini / 13 mini
+    else safeTop = 20;                // iPhone SE / 6 / 7 / 8
 
     const isMobile = window.innerWidth <= 600;
     const basePad = isMobile ? 6 : 8;
 
-    if (safeTop > 0) {
-        header.style.setProperty('padding-top', `${safeTop + basePad}px`, 'important');
-    }
+    header.style.setProperty('padding-top', `${safeTop + basePad}px`, 'important');
 }
-
-// 🌟 ПОВОРОТ: ставим флаг и пересчитываем
-window.addEventListener('orientationchange', () => {
-    hasLeftInitialState = true;
+// 🌟 Теперь просто вызываем пересчёт на всех событиях — функция сама разберётся,
+// нужно что-то подставлять или нет.
+function safeReapply() {
     applyHeaderPadding();
     setTimeout(applyHeaderPadding, 100);
     setTimeout(applyHeaderPadding, 300);
     setTimeout(applyHeaderPadding, 700);
-});
+}
 
-// 🌟 ВОЗВРАТ ИЗ ФОНА (сворачивание → разворот): тоже ставим флаг и пересчитываем
+window.addEventListener('orientationchange', safeReapply);
+window.addEventListener('resize', safeReapply);
+
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-        hasLeftInitialState = true;
-        applyHeaderPadding();
-        setTimeout(applyHeaderPadding, 100);
-        setTimeout(applyHeaderPadding, 500);
-    }
+    if (!document.hidden) safeReapply();
 });
 
-// 🌟 RESIZE: если уже покинули стартовое состояние — пересчитываем
-window.addEventListener('resize', () => {
-    if (!hasLeftInitialState) return;
-    applyHeaderPadding();
-    setTimeout(applyHeaderPadding, 100);
-    setTimeout(applyHeaderPadding, 300);
-});
-
-// 🌟 VISUALVIEWPORT
 if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', () => {
-        if (!hasLeftInitialState) return;
         setTimeout(applyHeaderPadding, 100);
     });
 }
+
+// Один вызов при старте — через 200мс после DOMContentLoaded
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(applyHeaderPadding, 200);
+});
+
 
 // Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
 window.addEventListener('resize', checkScreenOrientation);
