@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -963,44 +963,101 @@ function forceSafeAreaRecalc() {
 
 // 🌟 ОТКЛЮЧЕНО: в Safari на iPhone env(safe-area-inset-top) уже даёт правильное значение,
 // а любое вмешательство через JS только ломает layout. Оставляем только CSS env().
+// 🌟 РЕАЛЬНАЯ ЗАЩИТА ОТ БАГА SAFARI: Safari с viewport-fit=cover может
+// возвращать env(safe-area-inset-top) = 0, тогда как в PWA он же = 47-59.
+// Если env() вернул 0 и это iPhone — подставляем значение по модели устройства.
 function applyHeaderPadding() {
-    // Ничего не делаем. Функция оставлена, чтобы не ломать существующие вызовы.
-    // Работает чистый CSS: padding-top: calc(env(safe-area-inset-top, 0px) + 6px).
+    const header = document.querySelector('.fixed-header');
+    if (!header) return;
+
+    // Меряем env(safe-area-inset-top)
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none;';
+    document.body.appendChild(probe);
+    const envTop = probe.offsetHeight;
+    probe.remove();
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+               || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    let safeTop = envTop;
+
+    // 🌟 ГЛАВНЫЙ ФОКУС: если env() = 0 и это iPhone — Safari-баг,
+    // подставляем высоту статус-бара по диагонали экрана
+    if (isIOS && envTop === 0) {
+        const h = Math.max(window.screen.width, window.screen.height);
+        if (h >= 932) safeTop = 59;       // iPhone 14/15/16 Pro Max / Plus
+        else if (h >= 852) safeTop = 59;  // iPhone 14/15/16 Pro
+        else if (h >= 844) safeTop = 47;  // iPhone X/XS/11 Pro/12/13/14
+        else if (h >= 812) safeTop = 44;  // iPhone X / 11 Pro / 12 mini / 13 mini
+        else safeTop = 20;                // iPhone SE / 6 / 7 / 8
+    }
+
+    const isMobile = window.innerWidth <= 600;
+    const basePad = isMobile ? 6 : 8;
+
+    // 🌟 ВСЕГДА задаём padding-top, даже если safeTop = 0,
+    // чтобы Safari-баг с пересчётом не оставлял шапку без защиты
+    if (safeTop > 0) {
+        header.style.setProperty('padding-top', `${safeTop + basePad}px`, 'important');
+    } else {
+        // На десктопе (Mac) сбрасываем — работает чистый CSS env()
+        header.style.removeProperty('padding-top');
+    }
 }
+
+// 🌟 ЗАПУСКАЕМ ФУНКЦИЮ НА ВСЕХ КЛЮЧЕВЫХ СОБЫТИЯХ
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
-    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
-    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
-    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
+    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI
     const splash = document.getElementById('splashScreen');
     if (splash) {
-        // Блокируем стандартный мультитач-зум
         splash.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
+            if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
-
-        // Блокируем системный жест масштабирования iOS
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
     }
 
-    // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
+    // Стартовый таймер: показывает Годзиллу 2.5 секунды
     setTimeout(() => {
         isInitialSplashDone = true;
-        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
+        checkScreenOrientation();
     }, 2500);
+
+    // Применяем padding сразу и с задержками (пока iOS устаканит layout)
+    applyHeaderPadding();
+    setTimeout(applyHeaderPadding, 100);
+    setTimeout(applyHeaderPadding, 500);
+    setTimeout(applyHeaderPadding, 1500);
 });
+
+// 🌟 ПЕРЕСЧЁТ ПРИ ПОВОРОТЕ — это ключевое место для бага
+window.addEventListener('resize', () => {
+    applyHeaderPadding();
+    setTimeout(applyHeaderPadding, 100);
+    setTimeout(applyHeaderPadding, 300);
+});
+
+window.addEventListener('orientationchange', () => {
+    applyHeaderPadding();
+    setTimeout(applyHeaderPadding, 100);
+    setTimeout(applyHeaderPadding, 300);
+    setTimeout(applyHeaderPadding, 700);
+});
+
+// 🌟 Дополнительно — на изменение visualViewport (iOS 15+)
+if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+        setTimeout(applyHeaderPadding, 100);
+    });
+}
 
 // Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
 window.addEventListener('resize', checkScreenOrientation);
 window.addEventListener('orientationchange', checkScreenOrientation);
-
-// 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
-let currentRuZone = 'main';
 
 const specialFlags = {
     "mt": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Flag_of_Malta.svg/1280px-Flag_of_Malta.svg.png",
