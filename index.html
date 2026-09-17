@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -47,7 +47,7 @@
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
             /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
-            padding-top: calc(var(--safe-top, env(safe-area-inset-top)) + 8px);
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
@@ -922,21 +922,21 @@ function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
-// 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
-let metaViewport = document.querySelector('meta[name="viewport"]');
-if (!metaViewport) {
-    metaViewport = document.createElement('meta');
-    metaViewport.name = "viewport";
-    document.getElementsByTagName('head')[0].appendChild(metaViewport);
-}
-// Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
-// 🌟 ДОБАВИЛИ viewport-fit=cover — без него iOS не отдаёт safe-area-inset-top после переворота!
-metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
-// И тут же намертво фиксируем железные 100% масштаба без права изменения
-setTimeout(() => {
-    // 🌟 И ЗДЕСЬ ТОЖЕ добавили viewport-fit=cover
-    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-}, 1);
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
+    let metaViewport = document.querySelector('meta[name="viewport"]');
+    if (!metaViewport) {
+        metaViewport = document.createElement('meta');
+        metaViewport.name = "viewport";
+        document.getElementsByTagName('head')[0].appendChild(metaViewport);
+    }
+    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+    // И тут же намертво фиксируем железные 100% масштаба без права изменения
+    setTimeout(() => {
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }, 1);
 
     // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
@@ -955,46 +955,22 @@ setTimeout(() => {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
+
+            // 🍏 АППАРАТНАЯ ВСТРЯСКА СТАТУС-БАРА IOS (FIX):
+            // Даём Safari маленькую паузу в 200мс полностью завершить поворот экрана,
+            // а затем делаем микроскопический, невидимый глазу сдвиг высоты каркаса.
+            // Это аппаратно имитирует сворачивание/разворачивание сайта силами видеочипа:
+            // WebKit мгновенно обновляет Safe Area, и шапка сама встаёт на своё идеальное место под часы!
+            setTimeout(() => {
+                document.body.style.height = 'calc(100dvh - 0.5px)';
+                setTimeout(() => {
+                    document.body.style.height = '100dvh';
+                }, 1);
+            }, 200);
         }
     }
 }
-// 🌟 ШАГ 3.2: ФУНКЦИЯ ПРИНУДИТЕЛЬНОГО ПЕРЕСЧЁТА SAFE-AREA
-function updateSafeAreaInsets() {
-    let probe = document.getElementById('safeAreaProbe');
-    if (!probe) {
-        probe = document.createElement('div');
-        probe.id = 'safeAreaProbe';
-        probe.style.cssText =
-            'position:fixed;top:0;left:0;width:0;height:0;' +
-            'padding-top:env(safe-area-inset-top);' +
-            'padding-bottom:env(safe-area-inset-bottom);' +
-            'padding-left:env(safe-area-inset-left);' +
-            'padding-right:env(safe-area-inset-right);' +
-            'pointer-events:none;visibility:hidden;z-index:-1;';
-        document.body.appendChild(probe);
-    }
 
-    // Форсируем reflow — заставляем WebKit пересчитать safe-area
-    probe.style.display = 'none';
-    void probe.offsetHeight;
-    probe.style.display = 'block';
-    void probe.offsetHeight;
-
-    const cs = getComputedStyle(probe);
-    const top    = parseFloat(cs.paddingTop)    || 0;
-    const bottom = parseFloat(cs.paddingBottom) || 0;
-    const left   = parseFloat(cs.paddingLeft)   || 0;
-    const right  = parseFloat(cs.paddingRight)  || 0;
-
-    const root = document.documentElement;
-    root.style.setProperty('--safe-top',    top    + 'px');
-    root.style.setProperty('--safe-bottom', bottom + 'px');
-    root.style.setProperty('--safe-left',   left   + 'px');
-    root.style.setProperty('--safe-right',  right  + 'px');
-}
-
-// Первичный расчёт сразу при загрузке скрипта
-updateSafeAreaInsets();
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
@@ -1023,20 +999,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 2500);
 });
 
-window.addEventListener('resize', () => {
-    checkScreenOrientation();
-    // 🌟 Мгновенный пересчёт и повторные — с задержкой, чтобы поймать финальное значение iOS
-    updateSafeAreaInsets();
-    setTimeout(updateSafeAreaInsets, 120);
-    setTimeout(updateSafeAreaInsets, 350);
-});
-
-window.addEventListener('orientationchange', () => {
-    checkScreenOrientation();
-    updateSafeAreaInsets();
-    setTimeout(updateSafeAreaInsets, 120);
-    setTimeout(updateSafeAreaInsets, 350);
-});
+// Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
+window.addEventListener('resize', checkScreenOrientation);
+window.addEventListener('orientationchange', checkScreenOrientation);
 
 // 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
