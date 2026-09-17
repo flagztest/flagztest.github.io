@@ -39,15 +39,17 @@
         }
         
         .fixed-header {
-            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            /* 🍏 БЕЗ FIXED: Шапка остается монолитным потолком, но с аппаратной защитой от наезда */
             position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
-            padding-top: calc(env(safe-area-inset-top) + 8px);
+            /* 🍏 ЖЕЛЕЗНЫЙ БАМПЕР IOS: Создает внешнюю подушку безопасности в 24px над шапкой.
+               Она физически заблокирует уползание меню под часы в любых режимах и при любых кликах! */
+            margin-top: max(env(safe-area-inset-top), 24px) !important;
+            padding-top: 8px !important;
         }
 
         .container {
@@ -2699,13 +2701,13 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-         // РАСКРЫТИЕ: Умная пауза в 320мс ждёт стабилизации iOS, намертво блокируя уход шапки под часы!
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
         setTimeout(() => {
             block.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
             });
-        }, 320);                                    
+        }, 80);                  
     }
 }
 
