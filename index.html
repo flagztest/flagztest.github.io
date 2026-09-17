@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -453,11 +453,9 @@
          right: 15px !important;
      } 
      
-      .fixed-header {
+     .fixed-header {
          padding: 6px 12px !important;
-         /* 🌟 МАКСИМУМ: берём либо safe-area+6, либо 26px минимум — что больше.
-            Это защищает от Safari-бага, когда env(safe-area-inset-top) возвращает 0 */
-         padding-top: max(26px, calc(env(safe-area-inset-top, 0px) + 6px)) !important;
+         padding-top: calc(env(safe-area-inset-top, 0px) + 6px) !important;
          box-sizing: border-box !important;
      }
 
@@ -938,11 +936,6 @@ function checkScreenOrientation() {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-
-            // 🌟 ХАК: заставляем iOS пересчитать env(safe-area-inset-top)
-            forceSafeAreaRecalc();
-            setTimeout(forceSafeAreaRecalc, 150);
-            setTimeout(forceSafeAreaRecalc, 500);
             }
         }
     }
@@ -968,41 +961,11 @@ function forceSafeAreaRecalc() {
     applyHeaderPadding();
 }
 
-// 🌟 ФИНАЛЬНАЯ ЗАЩИТА: измеряем safe-area и жёстко прибиваем padding-top к шапке
+// 🌟 ОТКЛЮЧЕНО: в Safari на iPhone env(safe-area-inset-top) уже даёт правильное значение,
+// а любое вмешательство через JS только ломает layout. Оставляем только CSS env().
 function applyHeaderPadding() {
-    const header = document.querySelector('.fixed-header');
-    if (!header) return;
-
-    // Меряем env(safe-area-inset-top) через зонд-элемент
-    const probe = document.createElement('div');
-    probe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none;z-index:-1;';
-    document.body.appendChild(probe);
-    const safeTop = probe.offsetHeight;
-    probe.remove();
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) 
-                || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    
-    let effectiveTop = safeTop;
-    
-    // 🌟 ГЛАВНОЕ ИСПРАВЛЕНИЕ: НЕ применяем fallback через JS.
-    // Полагаемся на CSS env(). Если env() вернул нормальное значение — используем его.
-    // Если env() = 0 (Safari-баг или уже "съедено" самим Safari) — просто НЕ трогаем padding,
-    // пусть работает CSS со своим env(safe-area-inset-top, 0px).
-    if (isIOS && (effectiveTop === 0 || effectiveTop > 80)) {
-        // Сломанный env() — снимаем inline-стиль и доверяем CSS
-        header.style.removeProperty('padding-top');
-        return;
-    }
-
-    const isMobile = window.innerWidth <= 600;
-    const basePad = isMobile ? 6 : 8;
-
-    if (effectiveTop > 0) {
-        header.style.setProperty('padding-top', `${effectiveTop + basePad}px`, 'important');
-    } else {
-        header.style.removeProperty('padding-top');
-    }
+    // Ничего не делаем. Функция оставлена, чтобы не ломать существующие вызовы.
+    // Работает чистый CSS: padding-top: calc(env(safe-area-inset-top, 0px) + 6px).
 }
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
