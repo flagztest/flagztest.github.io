@@ -39,15 +39,16 @@
         }
         
         .fixed-header {
-            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            /* 🍏 БЕЗ FIXED: Шапка остается монолитным потолком, но с внутренней аппаратной защитой */
             position: relative;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
-            padding-top: calc(env(safe-area-inset-top) + 8px);
+            /* 🍏 ВНУТРЕННИЙ БАМПЕР СИСТЕМЫ: Тот самый защитный щит под cover-viewport.
+               Если переменная отступа сбросится в ноль после переворота, лимит в 40px удержит кнопки меню строго под часами! */
+            padding-top: calc(max(env(safe-area-inset-top), 40px) + 4px) !important;
         }
 
         .container {
@@ -920,20 +921,16 @@ let isInitialSplashDone = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
+    const header = document.querySelector('.fixed-header');
     if (!splash) return;
 
-    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
-    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
-    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
     let metaViewport = document.querySelector('meta[name="viewport"]');
     if (!metaViewport) {
         metaViewport = document.createElement('meta');
         metaViewport.name = "viewport";
         document.getElementsByTagName('head')[0].appendChild(metaViewport);
     }
-    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
     metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-    // И тут же намертво фиксируем железные 100% масштаба без права изменения
     setTimeout(() => {
         metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }, 1);
@@ -943,18 +940,40 @@ function checkScreenOrientation() {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
-        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
+        // На боку убираем любые инлайновые отступы шапки
+        if (header) header.style.paddingTop = '';
     } else {
         // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
+
+            // 🍏 ИИ-ПОДСТРАХОВКА СТАТУС-БАРА IOS:
+            // Даем Safari 150мс завершить анимацию поворота корпуса, создаем невидимый блок 
+            // и проверяем, вернула ли iOS отступ челки. Если система выдала баг и прислала 0px, 
+            // JavaScript принудительно накатит на шапку жесткие и ровные 52 пикселя (44px челка + 8px родной отступ).
+            // Шапка гарантированно отлипнет от часов и встанет на свое эталонное место в любых условиях!
+            setTimeout(() => {
+                if (header) {
+                    const testDiv = document.createElement('div');
+                    testDiv.style.paddingTop = 'env(safe-area-inset-top)';
+                    document.body.appendChild(testDiv);
+                    const insetTop = parseInt(window.getComputedStyle(testDiv).paddingTop) || 0;
+                    document.body.removeChild(testDiv);
+
+                    if (insetTop === 0) {
+                        header.style.setProperty('padding-top', '52px', 'important');
+                    } else {
+                        header.style.paddingTop = ''; // Если iOS сама вернула инсет, оставляем чистый CSS
+                    }
+                }
+            }, 155);
         }
     }
 }
