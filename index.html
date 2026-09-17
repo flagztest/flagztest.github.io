@@ -455,7 +455,8 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 6px 12px !important; 
+         padding: 6px 12px !important;
+         padding-top: calc(env(safe-area-inset-top) + 6px) !important;
          box-sizing: border-box !important;
      }
 
@@ -955,13 +956,20 @@ function checkScreenOrientation() {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
-        }
-        // 🍏 ПРИНУДИТЕЛЬНЫЙ ПЕРЕСЧЁТ safe-area после возврата из landscape
-        const header = document.querySelector('.fixed-header');
-        if (header) {
-            header.style.paddingTop = '0px';
-            void header.offsetHeight; // форсируем reflow
-            header.style.paddingTop = ''; // возвращаем CSS-правило с env(safe-area-inset-top)
+} else {
+    if (isInitialSplashDone) {
+        splash.style.opacity = '0';
+        splash.style.visibility = 'hidden';
+        splash.style.pointerEvents = 'none';
+    }
+    // 🍏 ПРИНУДИТЕЛЬНЫЙ ПЕРЕСЧЁТ safe-area после возврата из landscape
+    const header = document.querySelector('.fixed-header');
+    if (header) {
+        header.style.paddingTop = '0px';
+        void header.offsetHeight; // форсируем reflow
+        header.style.paddingTop = ''; // возвращаем CSS-правило с env(safe-area-inset-top)
+    }
+}
         }
     }
 }
