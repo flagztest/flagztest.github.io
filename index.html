@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -46,8 +46,8 @@
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* Умный отступ iOS: var(--safe-top) установлен JS один раз при старте */
-            padding-top: var(--safe-top, env(safe-area-inset-top));
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: env(safe-area-inset-top);
         }
 
         .container {
@@ -455,8 +455,8 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding-bottom: 6px !important; padding-left: 12px !important; padding-right: 12px !important;
-         padding-top: var(--safe-top, env(safe-area-inset-top));
+         padding: 6px 12px;
+         padding-top: env(safe-area-inset-top);
          box-sizing: border-box !important;
      }
 
@@ -916,55 +916,9 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
 
-// 🍏 ИИ-СТАБИЛИЗАТОР И ДАТЧИК ОРИЕНТАЦИИ ЭКРАНА ДЛЯ IOS (PWA)
+// 🍏 SAFE-AREA: Полностью убран JS-контроль отступа.
+// CSS env(safe-area-inset-top) для position:relative работает корректно на iOS во всех случаях.
 let isInitialSplashDone = false;
-
-// 🍏 ПРОБНЫЙ ЭЛЕМЕНТ: читает НАСТОЯЩИЙ отрисованный safe-area через offsetHeight
-// offsetHeight даёт фактические пиксели, в отличие от getComputedStyle,
-// который в Safari может возвращать неверное значение для env()
-function detectSafeAreaProbe() {
-    const probe = document.createElement('div');
-    probe.style.cssText = 
-        'position: fixed; top: 0; left: 0; width: 1px; ' +
-        'height: env(safe-area-inset-top); ' +
-        'pointer-events: none; opacity: 0; z-index: -1;';
-    document.body.appendChild(probe);
-    const height = probe.offsetHeight; // фактические пиксели
-    document.body.removeChild(probe);
-    return height;
-}
-
-// 🍏 Fallback по размеру экрана
-function detectSafeAreaByScreen() {
-    const maxDim = Math.max(window.screen.height, window.screen.width);
-    if (maxDim >= 852) return 59;   // iPhone 14 Pro+, Dynamic Island
-    if (maxDim >= 844) return 47;   // iPhone 12, 13, 14
-    if (maxDim >= 812) return 44;   // iPhone X, XS, 11 Pro
-    if (maxDim >= 568) return 20;   // iPhone SE, 8, 7
-    return 0;
-}
-
-// 🍏 ГЛАВНАЯ ФУНКЦИЯ: читает safe-area ОДИН РАЗ и записывает в CSS-переменную
-// Переменная --safe-top используется в CSS вместо env().
-// Значение ФИЗИЧЕСКИ НЕ МЕНЯЕТСЯ — это константа устройства в портретном режиме.
-let safeAreaInitialized = false;
-
-function initSafeArea() {
-    if (safeAreaInitialized) return; // уже инициализировано, не трогаем
-    if (window.innerWidth <= window.innerHeight) {
-        // Портрет: читаем safe-area
-        let safeTop = detectSafeAreaProbe();
-        if (!safeTop || safeTop === 0) {
-            safeTop = detectSafeAreaByScreen();
-        }
-        if (safeTop > 0) {
-            document.documentElement.style.setProperty('--safe-top', safeTop + 'px');
-            safeAreaInitialized = true;
-        }
-        // Если safeTop = 0 (что маловероятно в портрете), 
-        // функция будет вызвана снова при следующей попытке
-    }
-}
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
@@ -981,37 +935,24 @@ function checkScreenOrientation() {
             img.style.width = 'auto';
         }
     } else {
-        // Портрет: скрываем заставку (если старт прошёл)
+        // Портрет: скрываем заставку и фиксируем отступ
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
         }
-        // 🍏 Пробуем инициализировать safe-area (если ещё не сделано)
-        initSafeArea();
-        // 🍏 НИЧЕГО НЕ ДЕЛАЕМ С padding-top!
-        // CSS-переменная --safe-top уже установлена и не меняется.
     }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
-    // 🍏 Читаем safe-area НЕМЕДЛЕННО при загрузке DOM
-    initSafeArea();
-
-    // 🍏 Подстраховка: если при DOMContentLoaded env() ещё не рассчитан,
-    // пробуем ещё раз через короткие интервалы
-    [100, 300, 600, 1000].forEach(delay => {
-        setTimeout(() => {
-            if (!safeAreaInitialized) initSafeArea();
-        }, delay);
-    });
-
     const splash = document.getElementById('splashScreen');
     if (splash) {
         splash.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) e.preventDefault();
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
         }, { passive: false });
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
@@ -1020,29 +961,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
         isInitialSplashDone = true;
-        // 🍏 Последняя попытка инициализации перед показом контента
-        if (!safeAreaInitialized) initSafeArea();
         checkScreenOrientation();
     }, 2500);
 });
 
-// 🍏 При повороте — только заставка + попытка init (safe-area НЕ МЕНЯЕМ если уже задано)
 window.addEventListener('resize', checkScreenOrientation);
 window.addEventListener('orientationchange', checkScreenOrientation);
 
-// 🍏 При возврате в Safari — только заставка, safe-area НЕ ТРОГАЕМ
-window.addEventListener('visibilitychange', () => {
+// При сворачивании/разворачивании Safari — пересчитываем заставку
+document.addEventListener('visibilitychange', () => {
     if (!document.hidden && isInitialSplashDone) {
         checkScreenOrientation();
     }
 });
-
-window.addEventListener('pageshow', () => {
-    if (isInitialSplashDone) {
-        checkScreenOrientation();
-    }
-});
-
 
 // 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
