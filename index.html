@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -39,15 +39,23 @@
         }
         
         .fixed-header {
-            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
-            position: relative;
+            /* 🍏 FIXED: env(safe-area-inset-top) работает только для fixed элементов в iOS Safari */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             background-color: var(--panel-bg);
             box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
-            flex-shrink: 0;
-            /* Нативный отступ iOS safe-area */
+            box-sizing: border-box;
+            /* Умный отступ iOS динамически добавит место под челку и часы */
             padding-top: env(safe-area-inset-top);
+        }
+        
+        /* 🍏 SPACER: заполняет место под fixed-шапкой, чтобы контент не залезал под неё */
+        #headerSpacer {
+            flex-shrink: 0;
         }
 
         .container {
@@ -455,8 +463,11 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding-bottom: 6px !important; padding-left: 12px !important; padding-right: 12px !important;
+         padding: 6px 12px;
          padding-top: env(safe-area-inset-top);
+         box-sizing: border-box !important;
+     }
+     #headerSpacer {
          box-sizing: border-box !important;
      }
 
@@ -814,6 +825,7 @@
     </div>
 </div>
 
+<div id="headerSpacer"></div>
 <div class="container">
     <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ОТКРЫЛИ СЛОЙ СКРОЛЛА -->
         <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
@@ -916,8 +928,18 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
 
+// 🍏 SAFE-AREA: Шапка теперь position:fixed, env() работает корректно.
+// JS читает высоту fixed-шапки (включая env() padding) и ставит spacer той же высоты.
 let isInitialSplashDone = false;
 
+function adjustHeaderSpacer() {
+    const header = document.querySelector('.fixed-header');
+    const spacer = document.getElementById('headerSpacer');
+    if (header && spacer) {
+        // offsetHeight включает padding-top: env(safe-area-inset-top)
+        spacer.style.height = header.offsetHeight + 'px';
+    }
+}
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
@@ -934,13 +956,13 @@ function checkScreenOrientation() {
             img.style.width = 'auto';
         }
     } else {
-        // Портрет: скрываем заставку (если старт прошёл)
+        // Портрет: скрываем заставку и фиксируем отступ
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
         }
-                                    }
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -949,7 +971,9 @@ window.addEventListener('DOMContentLoaded', () => {
     const splash = document.getElementById('splashScreen');
     if (splash) {
         splash.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) e.preventDefault();
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
         }, { passive: false });
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
@@ -959,55 +983,34 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         isInitialSplashDone = true;
         checkScreenOrientation();
+        adjustHeaderSpacer();
     }, 2500);
+    
+    // Дополнительные проверки с задержкой (iOS может пересчитать env() не сразу)
+    setTimeout(adjustHeaderSpacer, 100);
+    setTimeout(adjustHeaderSpacer, 500);
+    setTimeout(adjustHeaderSpacer, 1500);
+    setTimeout(adjustHeaderSpacer, 3000);
 });
 
-// 🍏 При повороте — заставка + принудительный пересчёт env() для relative-элементов
-window.addEventListener('resize', checkScreenOrientation);
+window.addEventListener('resize', () => { checkScreenOrientation(); adjustHeaderSpacer(); });
 window.addEventListener('orientationchange', () => {
     checkScreenOrientation();
-    // 🍏 ХАК: удаляем и вставляем шапку обратно, заставляя iOS пересчитать env()
-    setTimeout(() => {
-        if (window.innerWidth <= window.innerHeight) {
-            const header = document.querySelector('.fixed-header');
-            if (header && header.parentNode) {
-                const parent = header.parentNode;
-                const next = header.nextSibling;
-                parent.removeChild(header);
-                void parent.offsetHeight; // force reflow
-                if (next) parent.insertBefore(header, next);
-                else parent.appendChild(header);
-            }
-        }
-    }, 300);
+    // Несколько проверок с задержкой после поворота
+    setTimeout(adjustHeaderSpacer, 50);
+    setTimeout(adjustHeaderSpacer, 200);
+    setTimeout(adjustHeaderSpacer, 500);
+    setTimeout(adjustHeaderSpacer, 1000);
 });
 
-// 🍏 При возврате в Safari — заставка + пересчёт env()
-window.addEventListener('visibilitychange', () => {
+// При сворачивании/разворачивании Safari — пересчитываем заставку
+document.addEventListener('visibilitychange', () => {
     if (!document.hidden && isInitialSplashDone) {
         checkScreenOrientation();
-        setTimeout(() => {
-            if (window.innerWidth <= window.innerHeight) {
-                const header = document.querySelector('.fixed-header');
-                if (header && header.parentNode) {
-                    const parent = header.parentNode;
-                    const next = header.nextSibling;
-                    parent.removeChild(header);
-                    void parent.offsetHeight;
-                    if (next) parent.insertBefore(header, next);
-                    else parent.appendChild(header);
-                }
-            }
-        }, 200);
+        setTimeout(adjustHeaderSpacer, 50);
+        setTimeout(adjustHeaderSpacer, 200);
     }
 });
-
-window.addEventListener('pageshow', () => {
-    if (isInitialSplashDone) {
-        checkScreenOrientation();
-    }
-});
-
 
 // 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
