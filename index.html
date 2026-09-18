@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -39,23 +39,19 @@
         }
         
         .fixed-header {
-            /* 🍏 FIXED: env(safe-area-inset-top) работает только для fixed элементов в iOS Safari */
+            /* 🍏 FIXED: env() работает надёжно для fixed-элементов при старте и после сворачивания */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             background-color: var(--panel-bg);
-            box-shadow: none !important;      
+            box-shadow: none !important;
             z-index: 1000;
             padding: 8px 16px 4px 16px;
-            box-sizing: border-box;
-            /* Умный отступ iOS динамически добавит место под челку и часы */
-            padding-top: env(safe-area-inset-top);
-        }
-        
-        /* 🍏 SPACER: заполняет место под fixed-шапкой, чтобы контент не залезал под неё */
-        #headerSpacer {
             flex-shrink: 0;
+            /* CSS env() — работает при старте и после сворачивания */
+            padding-top: env(safe-area-inset-top);
+            box-sizing: border-box;
         }
 
         .container {
@@ -463,11 +459,8 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 6px 12px;
-          padding-top: env(safe-area-inset-top);
-         box-sizing: border-box !important;
-     }
-     #headerSpacer {
+         padding-bottom: 6px !important; padding-left: 12px !important; padding-right: 12px !important;
+         padding-top: env(safe-area-inset-top);
          box-sizing: border-box !important;
      }
 
@@ -824,8 +817,8 @@
         </div>
     </div>
 </div>
+<div id="headerSpacer" style="height: 0px; flex-shrink: 0;"></div>
 
-<div id="headerSpacer"></div>
 <div class="container">
     <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ОТКРЫЛИ СЛОЙ СКРОЛЛА -->
         <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
@@ -928,80 +921,8 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
 
-// 🍏 SAFE-AREA: CSS env() работает при старте, ломается после поворота.
-// Читаем РЕАЛЬНЫЙ отступ из самой шапки через offsetHeight, запоминаем, применяем после поворота.
-// НИКОГДА не перечитываем env() после старта — он вернёт 0 или неправильное значение.
 let isInitialSplashDone = false;
-let storedSafeTop = 0;
 
-// Измеряем реальный padding-top шапки через offsetHeight (фактические пиксели, не getComputedStyle)
-function measureHeaderPadding() {
-    var header = document.querySelector('.fixed-header');
-    if (!header) return 0;
-    
-    // 🍏 КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: сначала убираем любой инлайн, даём CSS env() работать
-    header.style.paddingTop = '';
-    // Форсируем reflow, чтобы iOS пересчитал env()
-    void header.offsetHeight;
-    
-    // Теперь измеряем с чистым CSS env()
-    var fullH = header.offsetHeight;
-    if (fullH === 0) return 0;
-    
-    // Временно убираем padding-top, измеряем высоту контента
-    header.style.paddingTop = '0px';
-    var contentH = header.offsetHeight;
-    
-    // Восстанавливаем CSS env() (убираем инлайн)
-    header.style.paddingTop = '';
-    
-    var diff = fullH - contentH;
-    console.log('[SafeArea] measureHeaderPadding: fullH=' + fullH + ' contentH=' + contentH + ' diff=' + diff);
-    return diff > 0 ? diff : 0;
-}
-
-function getFallbackSafeTop() {
-    var sh = window.screen.height;
-    console.log('[SafeArea] screen.height=' + sh);
-    if (sh >= 852) return 59;
-    if (sh >= 844) return 47;
-    if (sh >= 812) return 44;
-    if (sh >= 780) return 44;
-    return 20;
-}
-
-function applySafeTop() {
-    var header = document.querySelector('.fixed-header');
-    if (!header) return;
-    if (storedSafeTop > 0) {
-        header.style.paddingTop = storedSafeTop + 'px';
-        console.log('[SafeArea] applySafeTop: ' + storedSafeTop + 'px');
-    }
-}
-
-function initSafeTop() {
-    // Читаем реальный отступ из самой шапки (CSS env() работает при старте)
-    var val = measureHeaderPadding();
-    if (val === 0) {
-        val = getFallbackSafeTop();
-        console.log('[SafeArea] env() вернул 0, используем fallback: ' + val + 'px');
-        // Если использовали fallback — применяем как инлайн
-        storedSafeTop = val;
-        applySafeTop();
-    } else {
-        storedSafeTop = val;
-        console.log('[SafeArea] Сохранено из шапки: ' + val + 'px');
-        // CSS env() уже работает, инлайн не нужен
-    }
-}
-
-function adjustHeaderSpacer() {
-    const header = document.querySelector('.fixed-header');
-    const spacer = document.getElementById('headerSpacer');
-    if (header && spacer) {
-        spacer.style.height = header.offsetHeight + 'px';
-    }
-}
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
@@ -1018,13 +939,13 @@ function checkScreenOrientation() {
             img.style.width = 'auto';
         }
     } else {
-        // Портрет: скрываем заставку
+        // Портрет: скрываем заставку (если старт прошёл)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
         }
-    }
+                                    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -1033,72 +954,117 @@ window.addEventListener('DOMContentLoaded', () => {
     const splash = document.getElementById('splashScreen');
     if (splash) {
         splash.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
+            if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
     }
 
-    // Инициализируем safe-area сразу при загрузке (заставка всё закрывает)
-    initSafeTop();
-    adjustHeaderSpacer();
-    
     setTimeout(() => {
         isInitialSplashDone = true;
         checkScreenOrientation();
-        // Перечитываем через 2.5с — env() точно вычислен к этому моменту
-        var val = measureHeaderPadding();
-        if (val > 0) {
-            storedSafeTop = val;
-            console.log('[SafeArea] Обновлено через 2.5с: ' + val + 'px');
-            // 🍏 ПРИМЕНЯЕМ как инлайн — переопределяет CSS env(),
-            // который при старте может возвращать слишком большое значение
-            applySafeTop();
-        }
-        adjustHeaderSpacer();
+        initSafeTop();
+        setTimeout(updateSpacer, 200);
     }, 2500);
-    
-    setTimeout(adjustHeaderSpacer, 100);
-    setTimeout(adjustHeaderSpacer, 500);
-    setTimeout(adjustHeaderSpacer, 1500);
-    setTimeout(adjustHeaderSpacer, 3000);
-    // 🍏 Повторная проверка после полного исчезновения заставки (2.5с + 1.2с fade = 3.7с)
-    setTimeout(() => {
-        var val = measureHeaderPadding();
-        if (val > 0 && val !== storedSafeTop) {
-            console.log('[SafeArea] Корректировка через 4с: было ' + storedSafeTop + 'px → стало ' + val + 'px');
-            storedSafeTop = val;
-            applySafeTop();
-        }
-        adjustHeaderSpacer();
-    }, 4000);
 });
 
-window.addEventListener('resize', () => { checkScreenOrientation(); applySafeTop(); adjustHeaderSpacer(); });
+// 🍏 SAFE-AREA: CSS env() как основной, JS только для поворота
+let storedSafeTop = 0;
+
+function readEnvSafeTop() {
+    // Читаем env() через зонд — position: fixed, как и шапка
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top);pointer-events:none;visibility:hidden;';
+    document.body.appendChild(probe);
+    const h = probe.offsetHeight;
+    document.body.removeChild(probe);
+    return h;
+}
+
+function applyStoredSafeTop() {
+    const header = document.querySelector('.fixed-header');
+    if (header && storedSafeTop > 0) {
+        header.style.paddingTop = storedSafeTop + 'px';
+    }
+}
+
+function clearInlineSafeTop() {
+    const header = document.querySelector('.fixed-header');
+    if (header) {
+        header.style.paddingTop = '';
+    }
+}
+
+function updateSpacer() {
+    const header = document.querySelector('.fixed-header');
+    const spacer = document.getElementById('headerSpacer');
+    if (header && spacer) {
+        spacer.style.height = header.offsetHeight + 'px';
+    }
+}
+
+function initSafeTop() {
+    storedSafeTop = readEnvSafeTop();
+    console.log('FlagZilla safe-area: env()=' + storedSafeTop + 'px, screen.height=' + window.screen.height);
+    if (storedSafeTop === 0) {
+        // Fallback по screen.height
+        const h = window.screen.height;
+        if (h >= 852) storedSafeTop = 59;
+        else if (h >= 844) storedSafeTop = 47;
+        else if (h >= 812) storedSafeTop = 44;
+        else if (h >= 667) storedSafeTop = 20;
+        else storedSafeTop = 0;
+        console.log('FlagZilla safe-area: fallback by screen.height → ' + storedSafeTop + 'px');
+    }
+    // ВСЕГДА применяем инлайн — CSS env() ненадёжён и может возвращать большее значение
+    applyStoredSafeTop();
+    updateSpacer();
+}
+
+window.addEventListener('resize', () => {
+    checkScreenOrientation();
+    updateSpacer();
+});
 
 window.addEventListener('orientationchange', () => {
     checkScreenOrientation();
-    // После поворота: применяем СОХРАНЁННОЕ значение (env() сломается и вернёт 0)
-    applySafeTop();
-    setTimeout(adjustHeaderSpacer, 50);
-    setTimeout(() => { applySafeTop(); adjustHeaderSpacer(); }, 200);
-    setTimeout(() => { applySafeTop(); adjustHeaderSpacer(); }, 500);
-    setTimeout(() => { applySafeTop(); adjustHeaderSpacer(); }, 1000);
+    // После поворота всегда применяем сохранённое значение, не пытаемся перечитать env()
+    setTimeout(() => {
+        applyStoredSafeTop();
+        updateSpacer();
+    }, 100);
+    setTimeout(() => {
+        applyStoredSafeTop();
+        updateSpacer();
+    }, 400);
+    setTimeout(() => {
+        applyStoredSafeTop();
+        updateSpacer();
+    }, 800);
 });
 
-// При сворачивании/разворачивании Safari — ТОЛЬКО применяем сохранённое значение
-// НЕ перечитываем env() — он вернёт неправильное значение
-document.addEventListener('visibilitychange', () => {
+window.addEventListener('visibilitychange', () => {
     if (!document.hidden && isInitialSplashDone) {
         checkScreenOrientation();
+        // После сворачивания ВСЕГДА пере-применяем сохранённое значение
+        // НИКОГДА не убираем инлайн — CSS env() ненадёжён
         setTimeout(() => {
-            applySafeTop();
-            adjustHeaderSpacer();
+            applyStoredSafeTop();
+            updateSpacer();
         }, 100);
-        setTimeout(adjustHeaderSpacer, 300);
+        setTimeout(() => {
+            applyStoredSafeTop();
+            updateSpacer();
+        }, 300);
+    }
+});
+
+window.addEventListener('pageshow', () => {
+    if (isInitialSplashDone) {
+        checkScreenOrientation();
+        applyStoredSafeTop();
+        setTimeout(updateSpacer, 100);
     }
 });
 
