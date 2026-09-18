@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -39,34 +39,39 @@
         }
         
         .fixed-header {
-            /* 🍏 STICKY: env(safe-area-inset-top) работает для sticky элементов в потоке документа */
             position: sticky;
             top: 0;
+            left: 0;
             width: 100%;
             background-color: var(--panel-bg);
             box-shadow: none !important;
             z-index: 1000;
             padding: 8px 16px 4px 16px;
-            box-sizing: border-box;
+            flex-shrink: 0;
             padding-top: env(safe-area-inset-top);
+            box-sizing: border-box;
         }
-        
-
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 0 4px 40px 4px;
+            padding: 0;
             box-sizing: border-box;
+            flex: 1 1 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
         .scroll-wrapper {
             width: 100%;
-            flex: 1;
+            flex: 1 1 0;
+            min-height: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            padding: 0px 4px 40px 4px;
             box-sizing: border-box;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
@@ -451,10 +456,11 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 6px 12px;
-          padding-top: env(safe-area-inset-top);
+         padding-bottom: 6px !important; padding-left: 12px !important; padding-right: 12px !important;
+         padding-top: env(safe-area-inset-top);
          box-sizing: border-box !important;
      }
+
      .header-content {
          gap: 2px !important; /* Прижали поиск к вкладкам */
      }
@@ -791,8 +797,9 @@
         mix-blend-mode: multiply;">
 </div>
 
-<div class="scroll-wrapper" id="mainScrollContent">
-    <div class="fixed-header">
+<div class="container">
+    <div class="scroll-wrapper" id="mainScrollContent">
+        <div class="fixed-header">
     <div class="header-content">
 <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
@@ -809,7 +816,7 @@
         </div>
     </div>
 </div>
-    <div class="container">
+ <!-- 🌟 ОТКРЫЛИ СЛОЙ СКРОЛЛА -->
         <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
         <div id="dbView" class="view-section active">
         
@@ -891,8 +898,8 @@
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
         </div>
-    </div> <!-- 🌟 ЗАКРЫЛИ КОНТЕЙНЕР -->
-</div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
+    </div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
+</div>
 
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
@@ -910,17 +917,15 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
 
-// 🍏 STICKY: шапка теперь position:sticky внутри scroll-wrapper.
-// CSS env(safe-area-inset-top) на sticky-элементах iOS пересчитывает корректно.
-// Никакого JS-зонда, инлайн-стилей или спейсера не нужно.
-
 let isInitialSplashDone = false;
+
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
     if (window.innerWidth > window.innerHeight) {
+        // Ландшафт: показываем заставку
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
@@ -930,12 +935,13 @@ function checkScreenOrientation() {
             img.style.width = 'auto';
         }
     } else {
+        // Портрет: скрываем заставку (если старт прошёл)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
         }
-    }
+                                    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -944,44 +950,145 @@ window.addEventListener('DOMContentLoaded', () => {
     const splash = document.getElementById('splashScreen');
     if (splash) {
         splash.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
+            if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
     }
 
-    // Через 2.5с разрешаем скрывать заставку при возврате из ландшафта
-    setTimeout(function() {
+    setTimeout(() => {
         isInitialSplashDone = true;
         checkScreenOrientation();
+        initSafeTop();
     }, 2500);
 });
 
-// На resize: проверяем ориентацию
-window.addEventListener('resize', function() {
+// 🍏 SAFE-AREA: sticky + минимальный JS
+let storedSafeTop = 0;
+
+function measureHeaderPadding() {
+    const header = document.querySelector('.fixed-header');
+    if (!header) return 0;
+    const saved = header.style.paddingTop;
+    header.style.paddingTop = '';
+    void header.offsetHeight;
+    const fullH = header.offsetHeight;
+    header.style.paddingTop = '0px';
+    void header.offsetHeight;
+    const contentH = header.offsetHeight;
+    header.style.paddingTop = saved;
+    void header.offsetHeight;
+    return Math.max(0, fullH - contentH);
+}
+
+function applyStoredSafeTop() {
+    const header = document.querySelector('.fixed-header');
+    if (header && storedSafeTop > 0) {
+        header.style.paddingTop = storedSafeTop + 'px';
+    }
+}
+
+function clearInlineSafeTop() {
+    const header = document.querySelector('.fixed-header');
+    if (header) {
+        header.style.paddingTop = '';
+    }
+}
+
+function initSafeTop() {
+    storedSafeTop = measureHeaderPadding();
+    console.log('[SafeArea] init: ' + storedSafeTop + 'px, screen.height=' + window.screen.height);
+    
+    if (storedSafeTop === 0) {
+        const h = window.screen.height;
+        if (h >= 852) storedSafeTop = 59;
+        else if (h >= 844) storedSafeTop = 47;
+        else if (h >= 812) storedSafeTop = 44;
+        else if (h >= 667) storedSafeTop = 20;
+        else storedSafeTop = 0;
+        console.log('[SafeArea] fallback: ' + storedSafeTop + 'px');
+    }
+    
+    // Применяем инлайн сразу
+    applyStoredSafeTop();
+}
+
+window.addEventListener('resize', () => {
     checkScreenOrientation();
+    // Пере-применяем после resize (может сработать после orientationchange)
+    setTimeout(() => {
+        const envVal = measureHeaderPadding();
+        if (envVal > 0 && envVal <= storedSafeTop) {
+            clearInlineSafeTop();
+        } else {
+            applyStoredSafeTop();
+        }
+    }, 300);
 });
 
-// На поворот: проверяем ориентацию
+
+// After orientation change: apply stored immediately, then try to let CSS take over
 window.addEventListener('orientationchange', () => {
     checkScreenOrientation();
-    setTimeout(function() { checkScreenOrientation(); }, 300);
+    // Сразу применяем сохранённое значение (env() после поворота = 0)
+    applyStoredSafeTop();
+    // Через 500мс пробуем убрать инлайн — может env() пересчитался
+    setTimeout(() => {
+        const envVal = measureHeaderPadding();
+        if (envVal > 0 && envVal <= storedSafeTop) {
+            storedSafeTop = envVal;
+            clearInlineSafeTop();
+            console.log('[SafeArea] orientation: env works (' + envVal + 'px), removed inline');
+        } else {
+            applyStoredSafeTop();
+            console.log('[SafeArea] orientation: env=' + envVal + ', keeping inline ' + storedSafeTop + 'px');
+        }
+    }, 500);
 });
 
-// При возврате из фона: проверяем ориентацию
-document.addEventListener('visibilitychange', () => {
+// After visibility change (minimize/restore): let CSS env() work
+window.addEventListener('visibilitychange', () => {
     if (!document.hidden && isInitialSplashDone) {
         checkScreenOrientation();
+        // Убираем инлайн — после сворачивания env() для sticky пересчитывается правильно
+        clearInlineSafeTop();
+        // Через 300мс проверяем: если env() = 0, применяем stored
+        setTimeout(() => {
+            const envVal = measureHeaderPadding();
+            if (envVal > 0 && envVal <= storedSafeTop) {
+                storedSafeTop = envVal;
+                clearInlineSafeTop();
+                console.log('[SafeArea] visibility: env works (' + envVal + 'px)');
+            } else if (envVal === 0) {
+                applyStoredSafeTop();
+                console.log('[SafeArea] visibility: env=0, applied inline ' + storedSafeTop + 'px');
+            } else {
+                // env > stored: iOS вернул большее значение, используем stored
+                applyStoredSafeTop();
+                console.log('[SafeArea] visibility: env=' + envVal + ' > stored, applied inline ' + storedSafeTop + 'px');
+            }
+        }, 300);
     }
 });
 
-window.addEventListener('pageshow', function(event) {
-    checkScreenOrientation();
+window.addEventListener('pageshow', () => {
+    if (isInitialSplashDone) {
+        checkScreenOrientation();
+        clearInlineSafeTop();
+        setTimeout(() => {
+            const envVal = measureHeaderPadding();
+            if (envVal > 0 && envVal <= storedSafeTop) {
+                storedSafeTop = envVal;
+                clearInlineSafeTop();
+            } else {
+                applyStoredSafeTop();
+            }
+        }, 300);
+    }
 });
 
+// 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
 
 const specialFlags = {
