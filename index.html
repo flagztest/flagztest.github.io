@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -46,8 +46,9 @@
             z-index: 1000;
             padding: 8px 16px 4px 16px;
             flex-shrink: 0;
-            /* Умный отступ iOS: max() гарантирует минимум 47px даже если env() = 0 */
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
             padding-top: env(safe-area-inset-top);
+            /* ВАЖНО: без !important — чтобы JS мог применить сохранённое значение после поворота */
         }
 
         .container {
@@ -455,7 +456,7 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding-bottom: 6px !important; padding-left: 12px !important; padding-right: 12px !important;
+         padding: 6px 12px;
          padding-top: env(safe-area-inset-top);
          box-sizing: border-box !important;
      }
@@ -918,17 +919,10 @@ window.scrollTo(0, 0); // Принудительно выставляем кам
 
 // 🍏 ИИ-СТАБИЛИЗАТОР И ДАТЧИК ОРИЕНТАЦИИ ЭКРАНА ДЛЯ IOS (PWA)
 let isInitialSplashDone = false;
-let storedSafeAreaTop = null; // Запоминаем правильный отступ при старте
 
-// Читает реальное значение env(safe-area-inset-top) через probe-элемент
-function readEnvSafeArea() {
-    const probe = document.createElement('div');
-    probe.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top);visibility:hidden;pointer-events:none;';
-    document.body.appendChild(probe);
-    const val = window.getComputedStyle(probe).paddingTop;
-    document.body.removeChild(probe);
-    return val;
-}
+// 🍏 Сохранённое значение safe-area-inset-top для восстановления после поворота
+let storedSafeAreaTop = '';
+let isFixingSafeArea = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
@@ -939,110 +933,125 @@ function checkScreenOrientation() {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
-        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
     } else {
-        // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
+        // Портретная ориентация
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
             splash.style.pointerEvents = 'none';
         }
-
-        // 🍏 ФИКС ШАПКИ: iOS не пересчитывает env() сразу после поворота
+        
+        if (isFixingSafeArea) return;
+        isFixingSafeArea = true;
+        
         const header = document.querySelector('.fixed-header');
-        if (header) {
-            // Снимаем инлайн-стиль, чтобы CSS-правило снова взяло своё
-            header.style.paddingTop = '';
-            void header.offsetHeight; // force reflow
-
-            // Читаем текущее значение env() через probe
-            const currentEnv = readEnvSafeArea();
-
-            if (currentEnv && currentEnv !== '0px') {
-                // iOS пересчитал env() правильно — запоминаем и не трогаем
-                storedSafeAreaTop = currentEnv;
-            } else if (storedSafeAreaTop && storedSafeAreaTop !== '0px') {
-                // iOS вернул 0 (не успел пересчитать) — применяем сохранённое значение
+        if (!header) { isFixingSafeArea = false; return; }
+        
+        let attempt = 0;
+        
+        const tryFix = () => {
+            attempt++;
+            // Читаем padding прямо из шапки (а не через probe-элемент!)
+            const currentPadding = getComputedStyle(header).paddingTop;
+            
+            if (currentPadding && currentPadding !== '0px' && currentPadding !== 'auto') {
+                // env() работает корректно — сохраняем и убираем инлайн-стиль
+                storedSafeAreaTop = currentPadding;
+                header.style.paddingTop = '';
+                isFixingSafeArea = false;
+                return;
+            }
+            
+            // env() вернул 0 — применяем сохранённое значение
+            if (storedSafeAreaTop && storedSafeAreaTop !== '0px') {
                 header.style.paddingTop = storedSafeAreaTop;
             }
-        }
-    }
-    
-    // 🍏 Отложенная проверка: iOS может пересчитать env() через 200-500мс после поворота
-    setTimeout(() => {
-        if (window.innerWidth < window.innerHeight) {
-            const header = document.querySelector('.fixed-header');
-            if (header) {
-                const lateEnv = readEnvSafeArea();
-                if (lateEnv && lateEnv !== '0px') {
-                    storedSafeAreaTop = lateEnv;
-                    header.style.paddingTop = '';
+            
+            // Пытаемся заставить iOS пересчитать env()
+            if (attempt === 1) {
+                // Метод 1: Вынимаем шапку из DOM и вставляем обратно — заставляет iOS пересчитать layout
+                const parent = header.parentNode;
+                const next = header.nextSibling;
+                parent.removeChild(header);
+                void parent.offsetHeight;
+                parent.insertBefore(header, next);
+                void parent.offsetHeight;
+            } else if (attempt === 2) {
+                // Метод 2: Пересоздаём meta viewport — заставляет iOS заново обработать viewport-fit
+                const vp = document.querySelector('meta[name="viewport"]');
+                if (vp) {
+                    const newVp = document.createElement('meta');
+                    newVp.setAttribute('name', 'viewport');
+                    newVp.setAttribute('content', vp.getAttribute('content'));
+                    vp.parentNode.replaceChild(newVp, vp);
                 }
+            } else if (attempt === 3) {
+                // Метод 3: Дёргаем zoom на body — форсирует полный reflow
+                document.body.style.zoom = '0.999';
+                void document.body.offsetHeight;
+                document.body.style.zoom = '';
+                void document.body.offsetHeight;
             }
-        }
-    }, 300);
+            
+            if (attempt < 8) {
+                setTimeout(tryFix, attempt * 80);
+            } else {
+                isFixingSafeArea = false;
+            }
+        };
+        
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setTimeout(tryFix, 50);
+            });
+        });
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
-    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
-    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
-    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
     const splash = document.getElementById('splashScreen');
     if (splash) {
-        // Блокируем стандартный мультитач-зум
         splash.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
         }, { passive: false });
-
-        // Блокируем системный жест масштабирования iOS
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
     }
 
-    // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
     setTimeout(() => {
         isInitialSplashDone = true;
-        storedSafeAreaTop = readEnvSafeArea(); // Запоминаем правильный отступ
-        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
+        // Читаем padding прямо из шапки, а не через probe
+        const header = document.querySelector('.fixed-header');
+        if (header) {
+            storedSafeAreaTop = getComputedStyle(header).paddingTop;
+        }
+        checkScreenOrientation();
     }, 2500);
 });
 
-// Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
 window.addEventListener('resize', checkScreenOrientation);
 window.addEventListener('orientationchange', checkScreenOrientation);
 
-// 🍏 ФИКС: при возврате в Safari (сворачивание/разворачивание) — пересчитываем env()
-window.addEventListener('visibilitychange', () => {
+// Когда Safari сворачивают и разворачивают — env() пересчитывается корректно,
+// обновляем сохранённое значение
+document.addEventListener('visibilitychange', () => {
     if (!document.hidden && isInitialSplashDone) {
         const header = document.querySelector('.fixed-header');
         if (header) {
-            header.style.paddingTop = '';
-            const freshEnv = readEnvSafeArea();
-            if (freshEnv && freshEnv !== '0px') {
-                storedSafeAreaTop = freshEnv;
-            }
-        }
-    }
-});
-
-window.addEventListener('pageshow', () => {
-    if (isInitialSplashDone) {
-        const header = document.querySelector('.fixed-header');
-        if (header) {
-            header.style.paddingTop = '';
-            const freshEnv = readEnvSafeArea();
-            if (freshEnv && freshEnv !== '0px') {
-                storedSafeAreaTop = freshEnv;
+            const currentPadding = getComputedStyle(header).paddingTop;
+            if (currentPadding && currentPadding !== '0px' && currentPadding !== 'auto') {
+                storedSafeAreaTop = currentPadding;
+                header.style.paddingTop = '';
             }
         }
     }
