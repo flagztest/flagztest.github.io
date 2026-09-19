@@ -2120,11 +2120,9 @@ function toggleAllContinents() {
 
       if (allCollapsed) {
           setTimeout(() => {
-              window.scrollTo({
-                  top: 0,
-                  behavior: 'smooth' /* Плавная и мягкая прокрутка наверх */
-            });
-        }, 50); // Микро-задержка, чтобы браузер успел скрыть таблицы до начала движения
+              const sl = document.getElementById('mainScrollContent');
+              if (sl) sl.scrollTo({top: 0, behavior: 'smooth'});
+        }, 50);
     }
 }
 
@@ -2282,22 +2280,28 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Ждем 320мс, пока полностью завершится CSS-анимация сжатия таблиц, и плавно катим наверх
+    // Сбрасываем флаг и кнопку
+    allCollapsed = true;
+    const toggleAllBtn = document.getElementById('toggleAllBtn');
+    if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
+    // Ждем 320мс, пока завершится CSS-анимация сжатия таблиц, и плавно катим наверх
+    const scrollLayer = document.getElementById('mainScrollContent');
     setTimeout(() => {
-        window.scrollTo({top: 0, behavior: 'smooth'});
+        if (scrollLayer) scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
     }, 320);
     searchInput.focus();
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
     runSearch();
-    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Если пользователь стёр текст до конца, ждем окончания анимации сжатия и плавно катим наверх
+    // Если пользователь стёр текст до конца — полный сброс к исходному состоянию
     if (e.target.value.trim() === '') {
+        allCollapsed = true;
+        const toggleAllBtn = document.getElementById('toggleAllBtn');
+        if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
+        const scrollLayer = document.getElementById('mainScrollContent');
         setTimeout(() => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            if (scrollLayer) scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
         }, 320);
     }
 });
