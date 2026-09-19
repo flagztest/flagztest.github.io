@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -15,7 +15,6 @@
     <link rel="apple-touch-icon" href="favicon.png?v=godzilla_vMAX">
     <style>
         :root {
-            --safe-top: 0px;
             /* 🧪 ЭКСПЕРИМЕНТ: ЗАЛИВАЕМ ЗАДНИЙ ФОН САЙТА КРИСТАЛЬНО БЕЛЫМ ЦВЕТОМ */
             --bg-color: #ffffff;         
             --text-color: #212529;       
@@ -32,7 +31,7 @@
             margin: 0;
             padding: 0;
             /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
-            height: 100vh !important;
+            height: 100dvh !important;
             width: 100vw;
             overflow: hidden !important;
             display: flex;
@@ -40,39 +39,38 @@
         }
         
         .fixed-header {
-            position: sticky;
-            top: var(--safe-top);
-            width: 100%;
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            position: relative;
             background-color: var(--panel-bg);
-            box-shadow: none !important;
+            box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
-            box-sizing: border-box;
-        }
-        
-        #safeAreaSpacer {
-            height: var(--safe-top);
-            width: 100%;
             flex-shrink: 0;
-            background-color: var(--panel-bg);
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
-        
-
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 0 4px 40px 4px;
+            padding: 0;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
+            flex-grow: 1; 
+            overflow: hidden;
         }
 
         /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
         .scroll-wrapper {
             width: 100%;
-            flex: 1;
+            height: 100%;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
+            padding: 0px 4px 40px 4px;
             box-sizing: border-box;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
@@ -457,9 +455,11 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 6px 12px;
+         padding: 6px 12px !important;
+         padding-top: calc(env(safe-area-inset-top) + 6px) !important;
          box-sizing: border-box !important;
      }
+
      .header-content {
          gap: 2px !important; /* Прижали поиск к вкладкам */
      }
@@ -796,9 +796,7 @@
         mix-blend-mode: multiply;">
 </div>
 
-<div class="scroll-wrapper" id="mainScrollContent">
-    <div id="safeAreaSpacer"></div>
-    <div class="fixed-header">
+<div class="fixed-header">
     <div class="header-content">
 <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
@@ -815,7 +813,9 @@
         </div>
     </div>
 </div>
-    <div class="container">
+
+<div class="container">
+    <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ОТКРЫЛИ СЛОЙ СКРОЛЛА -->
         <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
         <div id="dbView" class="view-section active">
         
@@ -897,8 +897,8 @@
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
         </div>
-    </div> <!-- 🌟 ЗАКРЫЛИ КОНТЕЙНЕР -->
-</div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
+    </div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
+</div>
 
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
@@ -916,192 +916,42 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
 
-// 🍏 // ═══ SAFE AREA: чистый env() + минимальный JS ═══
-// Стратегия: старт с 0px, поллинг env() во время заставки, 
-// берём НАИМЕНЬШЕЕ ненулевое значение, фиксируем после заставки.
-
-// ═══ SAFE AREA: техника из GitHub gist (fozzedout/iphone-pwa-game-guide) ═══
-// Ключевая идея: viewport-fit toggle trick — кратковременное переключение
-// viewport-fit=cover → auto → cover заставляет WebKit пересчитать env()
-// без физического поворота устройства. Плюс height:env() вместо padding-top.
-
-var storedSafeTop = 0;
-var safeTopLocked = false;
-
-// Измерение env() через height + offsetHeight (надёжнее padding-top)
-function measureEnv() {
-    var el = document.createElement('div');
-    el.style.cssText = 'position:fixed;top:0;left:-9999px;width:0;' +
-        'height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none';
-    document.body.appendChild(el);
-    var val = el.offsetHeight;
-    document.body.removeChild(el);
-    return val;
-}
-
-// viewport-fit toggle trick — принудительный пересчёт env() в WebKit
-function forceEnvRecalc(callback) {
-    var meta = document.querySelector('meta[name="viewport"]');
-    if (!meta) { if (callback) callback(); return; }
-    var original = meta.getAttribute('content');
-    // Переключаем cover → auto
-    meta.setAttribute('content', original.replace('viewport-fit=cover', 'viewport-fit=auto'));
-    requestAnimationFrame(function() {
-        // Переключаем обратно auto → cover
-        meta.setAttribute('content', original);
-        requestAnimationFrame(function() {
-            if (callback) callback();
-        });
-    });
-}
-
-function applySafeTop() {
-    document.documentElement.style.setProperty('--safe-top', storedSafeTop + 'px');
-    var header = document.querySelector('.fixed-header');
-    if (header) {
-        header.style.top = storedSafeTop + 'px';
-    }
-    var spacer = document.getElementById('safeAreaSpacer');
-    if (spacer) {
-        spacer.style.height = storedSafeTop + 'px';
-    }
-}
-
-function updateSafeTop(reason) {
-    var envVal = measureEnv();
-    console.log('[SafeArea] ' + reason + ': env=' + envVal + 'px stored=' + storedSafeTop);
-    if (envVal > 0) {
-        if (storedSafeTop === 0 || envVal < storedSafeTop) {
-            storedSafeTop = envVal;
-            applySafeTop();
-            console.log('[SafeArea] updated to ' + envVal + 'px');
-        }
-    }
-    return envVal;
-}
-
-function initSafeTop() {
-    // Старт с 0 — шапка в самом верху (за заставкой не видно)
-    storedSafeTop = 0;
-    safeTopLocked = false;
-    applySafeTop();
-    
-    // MutationObserver — ловит сброс инлайна iOS после сворачивания
-    var header = document.querySelector('.fixed-header');
-    var spacer = document.getElementById('safeAreaSpacer');
-    if (header && !header._safeObserver) {
-        header._safeObserver = new MutationObserver(function() {
-            var expected = storedSafeTop + 'px';
-            if (header.style.top !== expected) {
-                header.style.top = expected;
-            }
-        });
-        header._safeObserver.observe(header, { attributes: true, attributeFilter: ['style'] });
-    }
-    if (spacer && !spacer._safeObserver) {
-        spacer._safeObserver = new MutationObserver(function() {
-            var expected = storedSafeTop + 'px';
-            if (spacer.style.height !== expected) {
-                spacer.style.height = expected;
-            }
-        });
-        spacer._safeObserver.observe(spacer, { attributes: true, attributeFilter: ['style'] });
-    }
-    
-    // 1)viewport-fit toggle trick — принудительный пересчёт env() при старте
-    forceEnvRecalc(function() {
-        updateSafeTop('viewport-toggle');
-    });
-    
-    // 2) Многоэтапный опрос env() — staggered timeouts
-    var delays = [100, 300, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000];
-    delays.forEach(function(delay) {
-        setTimeout(function() {
-            if (safeTopLocked) return;
-            updateSafeTop('poll@' + delay + 'ms');
-        }, delay);
-    });
-    
-    // 3) Через 5с — фиксируем значение
-    setTimeout(function() {
-        if (!safeTopLocked && storedSafeTop > 0) {
-            safeTopLocked = true;
-            applySafeTop();
-            console.log('[SafeArea] LOCKED at start: ' + storedSafeTop + 'px');
-        }
-    }, 5000);
-}
-
-function onOrientationSafeTop() {
-    // После поворота env() = 0 — применяем сохранённое мгновенно
-    applySafeTop();
-    // Временно разблокируем для перечитывания
-    safeTopLocked = false;
-    
-    // Через 300мс — viewport-fit toggle trick + перечитывание
-    setTimeout(function() {
-        forceEnvRecalc(function() {
-            var envVal = updateSafeTop('rotation-toggle');
-            // Если env() = 0 (ландшафт) — применяем сохранённое
-            if (envVal === 0) {
-                applySafeTop();
-            }
-        });
-    }, 300);
-    
-    // Через 1с — ещё одна проверка
-    setTimeout(function() {
-        updateSafeTop('rotation-1s');
-    }, 1000);
-    
-    // Через 2с — окончательная фиксация
-    setTimeout(function() {
-        var envVal = updateSafeTop('rotation-2s');
-        if (envVal === 0) {
-            applySafeTop();
-        }
-        safeTopLocked = true;
-        console.log('[SafeArea] LOCKED after rotation: ' + storedSafeTop + 'px');
-    }, 2000);
-}
-
-function onVisibilitySafeTop() {
-    // После сворачивания — viewport-fit toggle trick + пере-применение
-    applySafeTop();
-    requestAnimationFrame(function() { applySafeTop(); });
-    
-    // Через 50мс — toggle trick для пересчёта env()
-    setTimeout(function() {
-        forceEnvRecalc(function() {
-            // После toggle — пере-применяем сохранённое
-            // НЕ обновляем storedSafeTop — env() может соврать после сворачивания
-            applySafeTop();
-            console.log('[SafeArea] re-apply after visibility: ' + storedSafeTop + 'px');
-        });
-    }, 50);
-    
-    // Дополнительные пере-применения
-    setTimeout(function() { applySafeTop(); }, 150);
-    setTimeout(function() { applySafeTop(); }, 300);
-    setTimeout(function() { applySafeTop(); }, 500);
-}
-
+// 🍏 ИИ-СТАБИЛИЗАТОР И ДАТЧИК ОРИЕНТАЦИИ ЭКРАНА ДЛЯ IOS (PWA)
 let isInitialSplashDone = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
+    let metaViewport = document.querySelector('meta[name="viewport"]');
+    if (!metaViewport) {
+        metaViewport = document.createElement('meta');
+        metaViewport.name = "viewport";
+        document.getElementsByTagName('head')[0].appendChild(metaViewport);
+    }
+    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+    // И тут же намертво фиксируем железные 100% масштаба без права изменения
+    setTimeout(() => {
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+    }, 1);
+
+    // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
+        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
     } else {
+        // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
@@ -1112,60 +962,37 @@ function checkScreenOrientation() {
 
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
-    initSafeTop();
 
+    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
+    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
+    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
     const splash = document.getElementById('splashScreen');
     if (splash) {
+        // Блокируем стандартный мультитач-зум
         splash.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
         }, { passive: false });
+
+        // Блокируем системный жест масштабирования iOS
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
     }
 
-    // Через 2.5с разрешаем скрывать заставку при возврате из ландшафта
-    setTimeout(function() {
+    // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
+    setTimeout(() => {
         isInitialSplashDone = true;
-        checkScreenOrientation();
+        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
     }, 2500);
 });
 
-// На resize: проверяем ориентацию
-window.addEventListener('resize', function() {
-    checkScreenOrientation();
-    onVisibilitySafeTop();
-});
+// Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
+window.addEventListener('resize', checkScreenOrientation);
+window.addEventListener('orientationchange', checkScreenOrientation);
 
-// На поворот: проверяем ориентацию
-window.addEventListener('orientationchange', () => {
-    checkScreenOrientation();
-    onOrientationSafeTop();
-    setTimeout(function() { checkScreenOrientation(); }, 300);
-});
-
-// При возврате из фона: проверяем ориентацию
-document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && isInitialSplashDone) {
-        checkScreenOrientation();
-        onVisibilitySafeTop();
-    }
-});
-
-window.addEventListener('pageshow', function(event) {
-    checkScreenOrientation();
-    onVisibilitySafeTop();
-});
-
-// Дополнительный триггер: focus срабатывает при возврате из фона
-window.addEventListener('focus', function() {
-    if (isInitialSplashDone) {
-        onVisibilitySafeTop();
-    }
-});
-
+// 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
 
 const specialFlags = {
@@ -3023,6 +2850,177 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
+
+
+// 🍏 SAFE-AREA STABILIZER: viewport-fit toggle trick из GitHub-статьи
+// https://gist.github.com/fozzedout/5e77925381991a9570151550992baf14
+(function() {
+    'use strict';
+    
+    var metaViewport = document.querySelector('meta[name="viewport"]');
+    var storedSafeTop = 0;
+    var safeTopLocked = false;
+    
+    // Измеряет env(safe-area-inset-top) через height: env() + offsetHeight
+    function measureEnv() {
+        var probe = document.createElement('div');
+        probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top);pointer-events:none;visibility:hidden;z-index:-1';
+        document.body.appendChild(probe);
+        var val = probe.offsetHeight;
+        document.body.removeChild(probe);
+        return val;
+    }
+    
+    // Принудительно пересчитывает env() переключением viewport-fit
+    function forceEnvRecalc() {
+        if (!metaViewport) return;
+        var original = metaViewport.getAttribute('content');
+        // Переключаем cover -> auto -> cover за два кадра
+        metaViewport.setAttribute('content', original.replace('viewport-fit=cover', 'viewport-fit=auto'));
+        requestAnimationFrame(function() {
+            metaViewport.setAttribute('content', original.replace('viewport-fit=auto', 'viewport-fit=cover'));
+        });
+    }
+    
+    // Применяет значение как инлайн на шапку
+    function applySafeTop(val) {
+        var header = document.querySelector('.fixed-header');
+        if (!header) return;
+        if (val > 0) {
+            header.style.setProperty('padding-top', 'calc(' + val + 'px + 6px)', 'important');
+        } else {
+            header.style.removeProperty('padding-top');
+        }
+    }
+    
+    // Убирает инлайн (отдаёт контроль CSS)
+    function clearInlineSafeTop() {
+        var header = document.querySelector('.fixed-header');
+        if (header) header.style.removeProperty('padding-top');
+    }
+    
+    // Обновляет storedSafeTop если новое значение меньше (меньшее побеждает)
+    function updateSafeTop() {
+        if (safeTopLocked) return;
+        var env = measureEnv();
+        if (env > 0 && (storedSafeTop === 0 || env < storedSafeTop)) {
+            storedSafeTop = env;
+            applySafeTop(storedSafeTop);
+            console.log('[SafeArea] env=' + env + 'px → updated stored=' + storedSafeTop + 'px');
+        }
+        return env;
+    }
+    
+    // Инициализация при старте
+    function initSafeTop() {
+        // Сначала измеряем env()
+        var env = measureEnv();
+        console.log('[SafeArea] init: env=' + env + 'px, screen.height=' + screen.height);
+        
+        if (env > 0) {
+            storedSafeTop = env;
+        }
+        
+        // Запускаем viewport-fit toggle для принудительного пересчёта
+        forceEnvRecalc();
+        
+        // Поллинг: 13 раз за 5 секунд, берём наименьшее ненулевое
+        var delays = [100, 200, 300, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 5000];
+        delays.forEach(function(d) {
+            setTimeout(function() {
+                var env = updateSafeTop();
+                console.log('[SafeArea] poll@' + d + 'ms: env=' + env + 'px stored=' + storedSafeTop + 'px');
+            }, d);
+        });
+        
+        // Через 5.5 секунд — блокировка
+        setTimeout(function() {
+            safeTopLocked = true;
+            console.log('[SafeArea] LOCKED: ' + storedSafeTop + 'px');
+        }, 5500);
+    }
+    
+    // После поворота
+    var rotationTimeout;
+    function onRotation() {
+        // Мгновенно применяем сохранённое значение (env() = 0 после поворота)
+        if (storedSafeTop > 0) {
+            applySafeTop(storedSafeTop);
+            console.log('[SafeArea] rotation: applied stored=' + storedSafeTop + 'px');
+        }
+        
+        // Через 500мс пробуем перечитать env()
+        clearTimeout(rotationTimeout);
+        rotationTimeout = setTimeout(function() {
+            var env = measureEnv();
+            console.log('[SafeArea] rotation recheck: env=' + env + 'px stored=' + storedSafeTop + 'px');
+            
+            if (env > 0) {
+                // env() восстановился — убираем инлайн, отдаём контроль CSS
+                if (!safeTopLocked && env < storedSafeTop) {
+                    storedSafeTop = env;
+                }
+                clearInlineSafeTop();
+                console.log('[SafeArea] rotation: env() works (' + env + 'px), cleared inline');
+            } else {
+                // env() = 0 — оставляем инлайн
+                applySafeTop(storedSafeTop);
+                console.log('[SafeArea] rotation: env()=0, keeping inline stored=' + storedSafeTop + 'px');
+            }
+        }, 500);
+    }
+    
+    // После сворачивания/разворачивания
+    function onVisibilityChange() {
+        if (document.visibilityState === 'visible') {
+            // Только пере-применяем сохранённое значение, env() не читаем
+            if (storedSafeTop > 0) {
+                applySafeTop(storedSafeTop);
+                console.log('[SafeArea] visible: re-applied stored=' + storedSafeTop + 'px');
+            }
+            // Через 300мс пробуем перечитать
+            setTimeout(function() {
+                var env = measureEnv();
+                if (env > 0 && !safeTopLocked && env < storedSafeTop) {
+                    storedSafeTop = env;
+                    applySafeTop(storedSafeTop);
+                    console.log('[SafeArea] visible: found smaller env=' + env + 'px');
+                } else if (env > 0 && env >= storedSafeTop) {
+                    // env() совпадает или больше — убираем инлайн
+                    clearInlineSafeTop();
+                    console.log('[SafeArea] visible: env() ok (' + env + 'px), cleared inline');
+                }
+            }, 300);
+        }
+    }
+    
+    // Запуск после загрузки DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSafeTop);
+    } else {
+        initSafeTop();
+    }
+    
+    window.addEventListener('orientationchange', onRotation);
+    window.addEventListener('resize', function() {
+        // Дебаунс для resize
+        clearTimeout(rotationTimeout);
+        rotationTimeout = setTimeout(onRotation, 150);
+    });
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('focus', function() {
+        if (storedSafeTop > 0) {
+            applySafeTop(storedSafeTop);
+            console.log('[SafeArea] focus: re-applied stored=' + storedSafeTop + 'px');
+        }
+    });
+    window.addEventListener('pageshow', function(e) {
+        if (e.persisted && storedSafeTop > 0) {
+            applySafeTop(storedSafeTop);
+            console.log('[SafeArea] pageshow(bfcache): re-applied stored=' + storedSafeTop + 'px');
+        }
+    });
+})();
 
 </script>
 
