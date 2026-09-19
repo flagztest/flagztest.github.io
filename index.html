@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -15,7 +15,6 @@
     <link rel="apple-touch-icon" href="favicon.png?v=godzilla_vMAX">
     <style>
         :root {
-            --safe-top: max(20px, env(safe-area-inset-top, 0px));
             /* 🧪 ЭКСПЕРИМЕНТ: ЗАЛИВАЕМ ЗАДНИЙ ФОН САЙТА КРИСТАЛЬНО БЕЛЫМ ЦВЕТОМ */
             --bg-color: #ffffff;         
             --text-color: #212529;       
@@ -32,7 +31,7 @@
             margin: 0;
             padding: 0;
             /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
-            height: 100vh !important;
+            height: 100dvh !important;
             width: 100vw;
             overflow: hidden !important;
             display: flex;
@@ -40,39 +39,38 @@
         }
         
         .fixed-header {
-            position: sticky;
-            top: var(--safe-top);
-            width: 100%;
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            position: relative;
             background-color: var(--panel-bg);
-            box-shadow: none !important;
+            box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
-            box-sizing: border-box;
-        }
-        
-        #safeAreaSpacer {
-            height: var(--safe-top);
-            width: 100%;
             flex-shrink: 0;
-            background-color: var(--panel-bg);
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: 0px;
         }
-        
-
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 0 4px 40px 4px;
+            padding: 0;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
+            flex-grow: 1; 
+            overflow: hidden;
         }
 
         /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
         .scroll-wrapper {
             width: 100%;
-            flex: 1;
+            height: 100%;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
+            padding: 0px 4px 40px 4px;
             box-sizing: border-box;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
@@ -457,9 +455,11 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 6px 12px;
+         padding: 6px 12px !important;
+         padding-top: 0px !important;
          box-sizing: border-box !important;
      }
+
      .header-content {
          gap: 2px !important; /* Прижали поиск к вкладкам */
      }
@@ -796,9 +796,7 @@
         mix-blend-mode: multiply;">
 </div>
 
-<div class="scroll-wrapper" id="mainScrollContent">
-    <div id="safeAreaSpacer"></div>
-    <div class="fixed-header">
+<div class="fixed-header">
     <div class="header-content">
 <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
@@ -815,7 +813,9 @@
         </div>
     </div>
 </div>
-    <div class="container">
+
+<div class="container">
+    <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ОТКРЫЛИ СЛОЙ СКРОЛЛА -->
         <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
         <div id="dbView" class="view-section active">
         
@@ -897,8 +897,8 @@
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
         </div>
-    </div> <!-- 🌟 ЗАКРЫЛИ КОНТЕЙНЕР -->
-</div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
+    </div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
+</div>
 
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
@@ -916,58 +916,42 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
 
-// ═══ SAFE AREA: чистый CSS max() + toggle trick при старте ═══
-// CSS: --safe-top: max(20px, env(safe-area-inset-top, 0px))
-// В портрете: max(20px, 59px) = 59px ✓
-// В ландшафте: max(20px, 0px) = 20px ✓ (часы не перекрываются)
-// toggle trick при старте — форсирует пересчёт env() в WebKit
-
-function forceEnvRecalc() {
-    var meta = document.querySelector('meta[name="viewport"]');
-    if (!meta) return;
-    var original = meta.getAttribute('content');
-    meta.setAttribute('content', original.replace('viewport-fit=cover', 'viewport-fit=auto'));
-    requestAnimationFrame(function() {
-        meta.setAttribute('content', original);
-    });
-}
-
-function initSafeTop() {
-    // toggle trick — форсирует пересчёт env() при холодном старте
-    forceEnvRecalc();
-    // Повтор через 300мс на случай если первый toggle не сработал
-    setTimeout(forceEnvRecalc, 300);
-}
-
-function onOrientationSafeTop() {
-    // toggle trick — форсирует пересчёт env() для новой ориентации
-    forceEnvRecalc();
-    setTimeout(forceEnvRecalc, 300);
-    setTimeout(forceEnvRecalc, 600);
-}
-
-function onVisibilitySafeTop() {
-    // toggle trick — форсирует пересчёт env() после возврата из фона
-    forceEnvRecalc();
-    setTimeout(forceEnvRecalc, 300);
-}
-
+// 🍏 ИИ-СТАБИЛИЗАТОР И ДАТЧИК ОРИЕНТАЦИИ ЭКРАНА ДЛЯ IOS (PWA)
 let isInitialSplashDone = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
+    let metaViewport = document.querySelector('meta[name="viewport"]');
+    if (!metaViewport) {
+        metaViewport = document.createElement('meta');
+        metaViewport.name = "viewport";
+        document.getElementsByTagName('head')[0].appendChild(metaViewport);
+    }
+    // Сначала на долю миллисекунды полностью очищаем контент для встряски WebKit
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+    // И тут же намертво фиксируем железные 100% масштаба без права изменения
+    setTimeout(() => {
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+    }, 1);
+
+    // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
+        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
     } else {
+        // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
@@ -978,60 +962,37 @@ function checkScreenOrientation() {
 
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
-    initSafeTop();
 
+    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
+    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
+    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
     const splash = document.getElementById('splashScreen');
     if (splash) {
+        // Блокируем стандартный мультитач-зум
         splash.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
         }, { passive: false });
+
+        // Блокируем системный жест масштабирования iOS
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
     }
 
-    // Через 2.5с разрешаем скрывать заставку при возврате из ландшафта
-    setTimeout(function() {
+    // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
+    setTimeout(() => {
         isInitialSplashDone = true;
-        checkScreenOrientation();
+        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
     }, 2500);
 });
 
-// На resize: проверяем ориентацию
-window.addEventListener('resize', function() {
-    checkScreenOrientation();
-    onVisibilitySafeTop();
-});
+// Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
+window.addEventListener('resize', checkScreenOrientation);
+window.addEventListener('orientationchange', checkScreenOrientation);
 
-// На поворот: проверяем ориентацию
-window.addEventListener('orientationchange', () => {
-    checkScreenOrientation();
-    onOrientationSafeTop();
-    setTimeout(function() { checkScreenOrientation(); }, 300);
-});
-
-// При возврате из фона: проверяем ориентацию
-document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && isInitialSplashDone) {
-        checkScreenOrientation();
-        onVisibilitySafeTop();
-    }
-});
-
-window.addEventListener('pageshow', function(event) {
-    checkScreenOrientation();
-    onVisibilitySafeTop();
-});
-
-// Дополнительный триггер: focus срабатывает при возврате из фона
-window.addEventListener('focus', function() {
-    if (isInitialSplashDone) {
-        onVisibilitySafeTop();
-    }
-});
-
+// 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
 
 const specialFlags = {
@@ -2889,6 +2850,153 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
+
+
+// 🍏 SAFE-AREA: без env() в CSS. JS меряет после заставки.
+(function() {
+    'use strict';
+    
+    var storedSafeTop = 0;
+    var safeTopLocked = false;
+    
+    // Зонд с position:absolute (не fixed!) — iOS отдаёт для absolute правильное значение
+    function measureEnv() {
+        var probe = document.createElement('div');
+        probe.style.cssText = 'position:absolute;top:0;left:0;width:0;height:env(safe-area-inset-top);pointer-events:none;visibility:hidden;z-index:-1';
+        document.body.appendChild(probe);
+        var val = probe.offsetHeight;
+        document.body.removeChild(probe);
+        return val;
+    }
+    
+    // Применяет значение как инлайн padding-top на шапку
+    function applySafeTop(val) {
+        var header = document.querySelector('.fixed-header');
+        if (!header) return;
+        if (val > 0) {
+            header.style.setProperty('padding-top', val + 6 + 'px', 'important');
+        } else {
+            // Ландшафт: минимум 20px чтобы не залезать на статус-бар
+            var isLandscape = window.innerWidth > window.innerHeight;
+            if (isLandscape) {
+                header.style.setProperty('padding-top', '20px', 'important');
+            } else {
+                header.style.setProperty('padding-top', '6px', 'important');
+            }
+        }
+    }
+    
+    // Главная функция: измерить и применить
+    function measureAndApply() {
+        var env = measureEnv();
+        console.log('[SafeArea] measure: env=' + env + 'px, landscape=' + (window.innerWidth > window.innerHeight));
+        
+        if (env > 0) {
+            if (storedSafeTop === 0 || env < storedSafeTop) {
+                storedSafeTop = env;
+                console.log('[SafeArea] updated stored=' + storedSafeTop + 'px');
+            }
+        }
+        
+        var isLandscape = window.innerWidth > window.innerHeight;
+        if (isLandscape) {
+            // В ландшафте env() = 0, ставим минимум 20px
+            applySafeTop(0);
+        } else {
+            applySafeTop(storedSafeTop);
+        }
+    }
+    
+    // НЕ запускаем ничего при старте! Ждём пока заставка не исчезнет.
+    // Заставка показана 2.5 секунды, в это время шапка не видна.
+    
+    function initSafeTop() {
+        // Первое измерение после заставки
+        measureAndApply();
+        
+        // Дополнительные замеры с задержкой (iOS может врать первое время)
+        var delays = [100, 300, 500, 1000, 2000];
+        delays.forEach(function(d) {
+            setTimeout(function() {
+                if (!safeTopLocked) {
+                    measureAndApply();
+                }
+            }, d);
+        });
+        
+        // Через 3 секунды — блокировка
+        setTimeout(function() {
+            safeTopLocked = true;
+            console.log('[SafeArea] LOCKED: ' + storedSafeTop + 'px');
+        }, 3000);
+    }
+    
+    // Запуск через 2.5 секунды (когда заставка исчезнет)
+    setTimeout(initSafeTop, 2500);
+    
+    // После поворота
+    var rotationTimeout;
+    function onRotation() {
+        // Мгновенно применяем
+        var isLandscape = window.innerWidth > window.innerHeight;
+        if (isLandscape) {
+            applySafeTop(0);
+        } else {
+            applySafeTop(storedSafeTop);
+        }
+        console.log('[SafeArea] rotation: applied stored=' + storedSafeTop + 'px, landscape=' + isLandscape);
+        
+        // Через 500мс перечитываем
+        clearTimeout(rotationTimeout);
+        rotationTimeout = setTimeout(function() {
+            measureAndApply();
+        }, 500);
+    }
+    
+    // После сворачивания
+    function onVisibilityChange() {
+        if (document.visibilityState === 'visible') {
+            var isLandscape = window.innerWidth > window.innerHeight;
+            if (isLandscape) {
+                applySafeTop(0);
+            } else {
+                applySafeTop(storedSafeTop);
+            }
+            console.log('[SafeArea] visible: re-applied stored=' + storedSafeTop + 'px');
+            
+            setTimeout(function() {
+                if (!safeTopLocked) {
+                    measureAndApply();
+                }
+            }, 300);
+        }
+    }
+    
+    window.addEventListener('orientationchange', onRotation);
+    window.addEventListener('resize', function() {
+        clearTimeout(rotationTimeout);
+        rotationTimeout = setTimeout(onRotation, 150);
+    });
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('focus', function() {
+        var isLandscape = window.innerWidth > window.innerHeight;
+        if (isLandscape) {
+            applySafeTop(0);
+        } else {
+            applySafeTop(storedSafeTop);
+        }
+    });
+    window.addEventListener('pageshow', function(e) {
+        if (e.persisted) {
+            var isLandscape = window.innerWidth > window.innerHeight;
+            if (isLandscape) {
+                applySafeTop(0);
+            } else {
+                applySafeTop(storedSafeTop);
+            }
+        }
+    });
+})();
 
 </script>
 
