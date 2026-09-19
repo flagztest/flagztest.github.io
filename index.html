@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
     <meta name="apple-mobile-web-app-title" content="FlagZilla">
     <meta name="application-name" content="FlagZilla">
@@ -24,22 +24,18 @@
             --panel-bg: #ffffff;         
         }
 
-        @media (orientation: landscape) {
-            body {
-                padding-top: max(32px, env(safe-area-inset-top, 0px)) !important;
-            }
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 0;
-            padding-top: env(safe-area-inset-top, 0px);
-            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top);
+            padding-left: 0;
+            padding-right: 0;
+            padding-bottom: 0;
             /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
-            height: 100vh !important;
+            height: 100dvh !important;
+            box-sizing: border-box;
             width: 100vw;
             overflow: hidden !important;
             display: flex;
@@ -47,36 +43,39 @@
         }
         
         .fixed-header {
-            position: sticky;
-            top: 0;
-            width: 100%;
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            position: relative;
             background-color: var(--panel-bg);
-            box-shadow: none !important;
+            box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
-            box-sizing: border-box;
+            flex-shrink: 0;
         }
-        
-
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 0 4px 40px 4px;
+            padding: 0;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
+            flex-grow: 1; 
+            overflow: hidden;
         }
 
         /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
         .scroll-wrapper {
             width: 100%;
-            flex: 1;
+            height: 100%;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
+            padding: 0px 4px 40px 4px;
             box-sizing: border-box;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
-            scroll-padding-top: 90px;
         }
         .header-content {
             max-width: 1000px;
@@ -358,7 +357,6 @@
         }
 
 
-
         .quiz-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -458,9 +456,10 @@
      
      /* Выравниваем боковые края шапки, чтобы инпут и кнопки совпадали до доли миллиметра */
      .fixed-header {
-         padding: 6px 12px;
+         padding: 6px 12px !important;
          box-sizing: border-box !important;
      }
+
      .header-content {
          gap: 2px !important; /* Прижали поиск к вкладкам */
      }
@@ -742,6 +741,8 @@
    Работает в связке с JavaScript-датчиком, перехватывая горизонтальный режим 
    аппаратно на уровне видеочипа, полностью исключая задержки и моргание верстки! */
 @media (orientation: landscape) {
+    body { padding-top: 0 !important; }
+
     #splashScreen {
         display: flex !important;
         opacity: 1 !important;
@@ -799,8 +800,7 @@
         mix-blend-mode: multiply;">
 </div>
 
-<div class="scroll-wrapper" id="mainScrollContent">
-    <div class="fixed-header">
+<div class="fixed-header">
     <div class="header-content">
 <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchView('db')">🌍<br>База<br>стран</button>
@@ -817,7 +817,9 @@
         </div>
     </div>
 </div>
-    <div class="container">
+
+<div class="container">
+    <div class="scroll-wrapper" id="mainScrollContent"> <!-- 🌟 ОТКРЫЛИ СЛОЙ СКРОЛЛА -->
         <!-- 🌟 ЕДИНЫЙ МАСШТАБНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ТАБЛИЦ И СТРАН МИРА -->
         <div id="dbView" class="view-section active">
         
@@ -899,8 +901,8 @@
             <div class="quiz-stats" id="quizCountryStats">Очки: 0 | Раунд: 1</div>
         </div>
         </div>
-    </div> <!-- 🌟 ЗАКРЫЛИ КОНТЕЙНЕР -->
-</div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
+    </div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
+</div>
 
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
@@ -910,7 +912,6 @@
 </div>
 
 
-
 <script>
 // 🌟 ШАГ ИСПРАВЛЕНИЯ: Намертво отключаем мобильный кэш скролла браузера при жесткой перезагрузке страницы!
 if ('scrollRestoration' in history) {
@@ -918,22 +919,39 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0); // Принудительно выставляем камеру в нулевую точку при старте
 
+// 🍏 ИИ-СТАБИЛИЗАТОР И ДАТЧИК ОРИЕНТАЦИИ ЭКРАНА ДЛЯ IOS (PWA)
 let isInitialSplashDone = false;
 
 function checkScreenOrientation() {
     const splash = document.getElementById('splashScreen');
     if (!splash) return;
 
+    // 🍏 БРОНЕБОЙНЫЙ СБРОС МАСШТАБА IOS (PWA):
+    // При каждом повороте или изменении размеров экрана этот код намертво переписывает 
+    // мета-тег viewport в head сайта, принудительно сбрасывая любой гигантский зум в идеальные 100%!
+    let metaViewport = document.querySelector('meta[name="viewport"]');
+    if (!metaViewport) {
+        metaViewport = document.createElement('meta');
+        metaViewport.name = "viewport";
+        document.getElementsByTagName('head')[0].appendChild(metaViewport);
+    }
+    // Устанавливаем viewport напрямую без промежуточного шага
+    // (промежуточный шаг вызывал пересчёт env() и прыжок шапки)
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+
+    // Если ширина экрана смартфона больше высоты — значит телефон на боку!
     if (window.innerWidth > window.innerHeight) {
         splash.style.opacity = '1';
         splash.style.visibility = 'visible';
         splash.style.pointerEvents = 'all';
+        // Центрируем и ювелирно масштабируем картинку Годзиллы на боку
         const img = splash.querySelector('img');
         if (img) {
             img.style.height = '85vh';
             img.style.width = 'auto';
         }
     } else {
+        // Если телефон вернули вертикально — убираем Годзиллу (но только если прошли стартовые 2.5 секунды)
         if (isInitialSplashDone) {
             splash.style.opacity = '0';
             splash.style.visibility = 'hidden';
@@ -942,14 +960,12 @@ function checkScreenOrientation() {
     }
 }
 
-// 🍏 SAFE AREA: минимальный JS — только для фиксации после поворота
-// CSS env() работает при старте, но обнуляется после поворота на iOS
+// === SAFE AREA: храним правильное значение env() и пере-применяем после поворота/сворачивания ===
 let storedSafeTop = 0;
 
 function measureSafeTop() {
-    // Зонд position:fixed за заставкой — env() для fixed стабилен
     const probe = document.createElement('div');
-    probe.style.cssText = 'position:fixed;top:0;left:-9999px;width:0;height:env(safe-area-inset-top);pointer-events:none;';
+    probe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top);pointer-events:none;visibility:hidden;';
     document.body.appendChild(probe);
     const val = probe.offsetHeight;
     document.body.removeChild(probe);
@@ -957,113 +973,94 @@ function measureSafeTop() {
 }
 
 function applySafeTop() {
-    if (window.innerWidth <= window.innerHeight) {
-        // Портрет: применяем сохранённое значение
-        if (storedSafeTop > 0) {
-            document.body.style.paddingTop = storedSafeTop + 'px';
-        }
-    } else {
-        // Ландшафт: убираем инлайн, CSS @media даёт 32px
+    const isLandscape = window.innerWidth > window.innerHeight;
+    if (isLandscape) {
         document.body.style.paddingTop = '';
+        return;
+    }
+    if (storedSafeTop > 0) {
+        document.body.style.paddingTop = storedSafeTop + 'px';
     }
 }
 
-// Первичный замер после заставки
-setTimeout(function() {
-    const measured = measureSafeTop();
-    if (measured > 0) {
-        storedSafeTop = measured;
-    }
-}, 2800);
-
-// Дополнительные замеры — берём наименьшее (env завышает при старте)
-[3000, 3500, 4000, 4500, 5000].forEach(function(delay) {
-    setTimeout(function() {
-        const m = measureSafeTop();
-        if (m > 0 && (storedSafeTop === 0 || m < storedSafeTop)) {
-            storedSafeTop = m;
-            applySafeTop();
-        }
-    }, delay);
-});
-
-// При повороте: применяем ДО скрытия заставки
-window.addEventListener('orientationchange', function() {
-    applySafeTop();
-    setTimeout(applySafeTop, 100);
-    setTimeout(applySafeTop, 300);
-    setTimeout(applySafeTop, 500);
-});
-
-// При возврате из фона
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        applySafeTop();
-        setTimeout(applySafeTop, 100);
-        setTimeout(applySafeTop, 300);
-    }
-});
-
-window.addEventListener('focus', function() {
-    applySafeTop();
-});
-
-window.addEventListener('pageshow', function() {
-    applySafeTop();
-});
-
+function initSafeTop() {
+    // Несколько замеров с задержкой — env() при старте может быть завышен
+    const measurements = [0, 200, 500, 1000, 1500, 2000, 2500, 3000];
+    let minVal = 0;
+    measurements.forEach((delay, i) => {
+        setTimeout(() => {
+            const val = measureSafeTop();
+            if (val > 0) {
+                if (minVal === 0 || val < minVal) {
+                    minVal = val;
+                    storedSafeTop = val;
+                    applySafeTop();
+                }
+            }
+            // Последний замер — фиксируем
+            if (i === measurements.length - 1 && storedSafeTop === 0) {
+                // Fallback по screen.height
+                const sh = window.screen.height;
+                if (sh >= 852) storedSafeTop = 59;
+                else if (sh >= 844) storedSafeTop = 47;
+                else if (sh >= 780) storedSafeTop = 44;
+                else if (sh >= 667) storedSafeTop = 20;
+                applySafeTop();
+            }
+        }, delay);
+    });
+}
 
 window.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0, 0);
 
+    // 🍏 АППАРАТНЫЙ ЩИТ ОТ ЗУМА SAFARI ДЛЯ РЕЖИМА ДОМОЙ (PWA)
+    // Намертво блокирует жесты масштабирования (раздвигание двумя пальцами) строго внутри заставки,
+    // полностью исключая залипание и деформацию размеров Годзиллы при автоповоротах!
     const splash = document.getElementById('splashScreen');
     if (splash) {
+        // Блокируем стандартный мультитач-зум
         splash.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
         }, { passive: false });
+
+        // Блокируем системный жест масштабирования iOS
         splash.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         }, { passive: false });
     }
 
-    // Через 2.5с разрешаем скрывать заставку при возврате из ландшафта
-    setTimeout(function() {
+    // Стартовый таймер: показывает Годзиллу при запуске в течение 2.5 секунд
+    setTimeout(() => {
         isInitialSplashDone = true;
-        checkScreenOrientation();
+        checkScreenOrientation(); // Сразу сверяем текущее положение телефона
+        initSafeTop(); // Запускаем замер safe area
     }, 2500);
 });
 
-// На resize: проверяем ориентацию
-window.addEventListener('resize', function() {
-    checkScreenOrientation();
-});
-
-// На поворот: проверяем ориентацию
+// Чутко ловим физический разворот корпуса и изменение размеров экрана на iPhone
+window.addEventListener('resize', checkScreenOrientation);
 window.addEventListener('orientationchange', () => {
     checkScreenOrientation();
-    setTimeout(function() { checkScreenOrientation(); }, 300);
+    // Пере-применяем safe area после поворота (env() сбрасывается в 0)
+    setTimeout(applySafeTop, 100);
+    setTimeout(applySafeTop, 300);
+    setTimeout(applySafeTop, 500);
 });
 
-// При возврате из фона: проверяем ориентацию
+// Возврат из фона — env() может быть завышен
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && isInitialSplashDone) {
-        checkScreenOrientation();
+    if (document.visibilityState === 'visible') {
+        setTimeout(applySafeTop, 200);
     }
 });
-
-window.addEventListener('pageshow', function(event) {
-    checkScreenOrientation();
+window.addEventListener('focus', () => {
+    setTimeout(applySafeTop, 200);
 });
 
-// Дополнительный триггер: focus срабатывает при возврате из фона
-window.addEventListener('focus', function() {
-    if (isInitialSplashDone) {
-        checkScreenOrientation();
-    }
-});
-
+// 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ ТЕКУЩЕГО ЭКРАНА РОССИИ
 let currentRuZone = 'main';
 
 const specialFlags = {
@@ -2430,8 +2427,6 @@ function loadQuizFlagRound() {
     flagImgEl.src = highResUrl;
 
 
-
-
     
     let choices = [currentFlagTarget];
     while(choices.length < 4) {
@@ -2771,14 +2766,16 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-         // РАСКРЫТИЕ: Ручной скролл точно под шапку — scrollIntoView на iOS съедает заголовок
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
         setTimeout(() => {
-            const wrapper = document.getElementById('mainScrollContent');
-            if (wrapper && block) {
-                const wRect = wrapper.getBoundingClientRect();
-                const bRect = block.getBoundingClientRect();
-                wrapper.scrollTo({
-                    top: wrapper.scrollTop + bRect.top - wRect.top - 4,
+            const scrollLayer = document.getElementById('mainScrollContent');
+            if (scrollLayer && block) {
+                const rect = block.getBoundingClientRect();
+                const scrollRect = scrollLayer.getBoundingClientRect();
+                // scrollRect.top уже ниже шапки (flex flow),
+                // так -4 ставит блок в 4px ниже шапки
+                scrollLayer.scrollTo({
+                    top: scrollLayer.scrollTop + rect.top - scrollRect.top - 4,
                     behavior: 'smooth'
                 });
             }
@@ -2926,6 +2923,7 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
+
 
 </script>
 
