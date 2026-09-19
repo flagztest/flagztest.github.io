@@ -724,6 +724,9 @@
    Работает в связке с JavaScript-датчиком, перехватывая горизонтальный режим 
    аппаратно на уровне видеочипа, полностью исключая задержки и моргание верстки! */
 @media (orientation: landscape) {
+    .fixed-header {
+        top: max(32px, env(safe-area-inset-top, 0px)) !important;
+    }
     #splashScreen {
         display: flex !important;
         opacity: 1 !important;
@@ -755,13 +758,7 @@
          display: block;
      }
  
-    
-@media (orientation: landscape) {
-    .fixed-header {
-        top: max(32px, env(safe-area-inset-top, 0px)) !important;
-    }
-}
-</style>
+    </style>
 </head>
 <body>
 
