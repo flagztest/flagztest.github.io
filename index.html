@@ -38,7 +38,7 @@
         
         .fixed-header {
             position: sticky;
-            top: 0;
+            top: env(safe-area-inset-top, 0px);
             background-color: var(--panel-bg);
             box-shadow: none !important;
             z-index: 1000;
@@ -755,7 +755,13 @@
          display: block;
      }
  
-    </style>
+    
+@media (orientation: landscape) {
+    .fixed-header {
+        top: max(32px, env(safe-area-inset-top, 0px)) !important;
+    }
+}
+</style>
 </head>
 <body>
 
