@@ -30,19 +30,24 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            padding-top: env(safe-area-inset-top, 0px);
-            box-sizing: border-box;
-            min-height: 100dvh;
+            /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
+            height: 100dvh !important;
             width: 100vw;
+            overflow: hidden !important;
+            display: flex;
+            flex-direction: column;
         }
         
         .fixed-header {
-            position: sticky;
-            top: env(safe-area-inset-top, 0px);
+            /* 🍏 БЕЗ FIXED: Теперь шапка — это жесткий монолитный потолок, она физически не способна уплыть на часы! */
+            position: relative;
             background-color: var(--panel-bg);
-            box-shadow: none !important;
+            box-shadow: none !important;      
             z-index: 1000;
             padding: 8px 16px 4px 16px;
+            flex-shrink: 0;
+            /* Умный отступ iOS динамически добавит место под челку и часы на экране Домой */
+            padding-top: calc(env(safe-area-inset-top) + 8px);
         }
 
         .container {
@@ -51,13 +56,24 @@
             margin: 0 auto;
             padding: 0;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* Растягиваем контейнер на всю оставшуюся чистую высоту экрана под меню */
+            flex-grow: 1; 
+            overflow: hidden;
         }
 
         /* 🌟 ИЗОЛИРОВАННАЯ КОРОБКА СКРОЛЛА: Листаются только таблицы и квизы */
         .scroll-wrapper {
             width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Бархатный скролл Apple */
+            /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
             padding: 0px 4px 40px 4px;
             box-sizing: border-box;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
         .header-content {
             max-width: 1000px;
@@ -171,7 +187,7 @@
             border-bottom: none !important; 
             box-shadow: none !important; 
             /* 🍏 БАМПЕР ДЛЯ СКРОЛЛА: прикажет iOS при автоподлёте останавливать блок строго на отметке 4px */
-            scroll-margin-top: 180px !important;
+            scroll-margin-top: 4px !important;
         }
 .continent-header {
     background-color: #f1f3f5;
@@ -447,9 +463,7 @@
          gap: 2px !important; /* Прижали поиск к вкладкам */
      }
       body {
-         padding-left: 0 !important;
-         padding-right: 0 !important;
-         padding-bottom: 0 !important;
+         padding: 0 !important;
      }
 
      .controls-row {
@@ -724,9 +738,6 @@
    Работает в связке с JavaScript-датчиком, перехватывая горизонтальный режим 
    аппаратно на уровне видеочипа, полностью исключая задержки и моргание верстки! */
 @media (orientation: landscape) {
-    .fixed-header {
-        top: max(32px, env(safe-area-inset-top, 0px)) !important;
-    }
     #splashScreen {
         display: flex !important;
         opacity: 1 !important;
@@ -888,7 +899,7 @@
     </div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
 </div>
 
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
 <!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
@@ -1989,7 +2000,10 @@ function switchView(viewId) {
     if (clearBtn) clearBtn.style.display = 'none';
     
     // 🍏 АНТИ-ЗАЛИПАНИЕ СЛОЕВ: принудительно сбрасываем скролл изолированной коробки в ноль при смене вкладок!
-    window.scrollTo({ top: 0 });
+    const scrollLayer = document.getElementById('mainScrollContent');
+    if (scrollLayer) {
+        scrollLayer.scrollTo({ top: 0 });
+    }
     
     currentRuZone = 'main'; // 🌟 САЙТ СБРОСИЛ ПАМЯТЬ ЗОНЫ ПРИ ПЕРЕХОДЕ НА ДРУГИЕ ВКЛАДКИ
 
@@ -2106,7 +2120,8 @@ function toggleAllContinents() {
 
       if (allCollapsed) {
           setTimeout(() => {
-              window.scrollTo({top: 0, behavior: 'smooth'});
+              const sl = document.getElementById('mainScrollContent');
+              if (sl) sl.scrollTo({top: 0, behavior: 'smooth'});
         }, 50);
     }
 }
@@ -2121,7 +2136,10 @@ function runSearch() {
         clearBtn.style.display = 'block';
         
         // 🍏 ФИКС ПОИСКА: принудительно возвращаем скролл изолированной коробки наверх при вводе текста!
-        window.scrollTo({ top: 0 });
+        const scrollLayer = document.getElementById('mainScrollContent');
+        if (scrollLayer) {
+            scrollLayer.scrollTo({ top: 0 });
+        }
     } else {
         clearBtn.style.display = 'none';
     }
@@ -2267,7 +2285,10 @@ function clearSearch() {
     const toggleAllBtn = document.getElementById('toggleAllBtn');
     if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
     // Ждем 320мс, пока завершится CSS-анимация сжатия таблиц, и плавно катим наверх
-    setTimeout(() => { window.scrollTo({top: 0, behavior: 'smooth'}); }, 320);
+    const scrollLayer = document.getElementById('mainScrollContent');
+    setTimeout(() => {
+        if (scrollLayer) scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
+    }, 320);
     searchInput.focus();
 }
 
@@ -2278,18 +2299,26 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
         allCollapsed = true;
         const toggleAllBtn = document.getElementById('toggleAllBtn');
         if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
-        setTimeout(() => { window.scrollTo({top: 0, behavior: 'smooth'}); }, 320);
+        const scrollLayer = document.getElementById('mainScrollContent');
+        setTimeout(() => {
+            if (scrollLayer) scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
+        }, 320);
     }
 });
 
 // 🌟 СВЕРХТОЧНЫЙ ТРЕКЕР: следит за движением пальца внутри изолированного контейнера!
-window.addEventListener('scroll', () => {
-    const btn = document.getElementById('scrollTopBtn');
-    if (btn) {
-        if (window.scrollY > 300) btn.style.display = 'flex';
-        else btn.style.display = 'none';
+setTimeout(() => {
+    const scrollBox = document.getElementById('mainScrollContent');
+    if (scrollBox) {
+        scrollBox.addEventListener('scroll', (e) => {
+            const btn = document.getElementById('scrollTopBtn');
+            if (btn) {
+                if (e.target.scrollTop > 300) btn.style.display = 'flex';
+                else btn.style.display = 'none';
+            }
+        });
     }
-});
+}, 100);
 
 function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
@@ -2661,7 +2690,13 @@ function toggleBlock(id) {
             
             // 🍏 БАРХАТНЫЙ АВТО-ВОЗВРАТ: катит изолированный контейнер в абсолютный верхний ноль!
             setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const scrollLayer = document.getElementById('mainScrollContent');
+                if (scrollLayer) {
+                    scrollLayer.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
             }, 40); // 40мс — идеальное время, чтобы Safari успел схлопнуть DOM-структуру таблицы
             return;
         } else {
@@ -2670,12 +2705,9 @@ function toggleBlock(id) {
 
          // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
         setTimeout(() => {
-            const header = document.querySelector('.fixed-header');
-            const headerHeight = header ? header.offsetHeight : 0;
-            const rect = block.getBoundingClientRect();
-            window.scrollTo({
-                top: window.scrollY + rect.top - headerHeight - 4,
-                behavior: 'smooth'
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
         }, 80);                  
     }
