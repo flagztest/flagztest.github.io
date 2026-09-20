@@ -899,7 +899,7 @@
     </div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
 </div>
 
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="smoothScrollTop(document.getElementById('mainScrollContent'))">▲</button>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
 
 <!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
@@ -2120,7 +2120,10 @@ function toggleAllContinents() {
 
       if (allCollapsed) {
           setTimeout(() => {
-              smoothScrollTop(document.getElementById('mainScrollContent'));
+              window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth' /* Плавная и мягкая прокрутка наверх */
+            });
         }, 50); // Микро-задержка, чтобы браузер успел скрыть таблицы до начала движения
     }
 }
@@ -2279,37 +2282,22 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    
-    // 🌟 СВОРАЧИВАЕМ ВСЕ ПЛАШКИ
-    allCollapsed = true;
-    const toggleAllBtn = document.getElementById('toggleAllBtn');
-    if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
-    document.querySelectorAll('.continent-block').forEach(b => {
-        b.classList.add('collapsed');
-        const c = b.querySelector('.continent-content');
-        if (c) c.style.display = 'none';
-    });
-    
-    // ПЛАВНЫЙ ВОЗВРАТ НАЗАД
+    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Ждем 320мс, пока полностью завершится CSS-анимация сжатия таблиц, и плавно катим наверх
     setTimeout(() => {
-        smoothScrollTop(document.getElementById('mainScrollContent'));
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }, 320);
+    searchInput.focus();
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
     runSearch();
-    // 🌟 Если стёрли текст — сворачиваем все плашки и плавно возвращаем наверх
+    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Если пользователь стёр текст до конца, ждем окончания анимации сжатия и плавно катим наверх
     if (e.target.value.trim() === '') {
-        allCollapsed = true;
-        const toggleAllBtn = document.getElementById('toggleAllBtn');
-        if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
-        document.querySelectorAll('.continent-block').forEach(b => {
-            b.classList.add('collapsed');
-            const c = b.querySelector('.continent-content');
-            if (c) c.style.display = 'none';
-        });
         setTimeout(() => {
-            smoothScrollTop(document.getElementById('mainScrollContent'));
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }, 320);
     }
 });
@@ -2685,46 +2673,39 @@ function generateRussiaSubjectsTables() {
 }
 
 
-function smoothScrollTop(el) {
-    if (!el) return;
-    var start = el.scrollTop;
-    var startTime = performance.now();
-    var duration = 350;
-    function step(now) {
-        var elapsed = now - startTime;
-        var t = Math.min(elapsed / duration, 1);
-        var eased = 1 - Math.pow(1 - t, 3);
-        el.scrollTop = start * (1 - eased);
-        if (t < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-}
-
 function toggleBlock(id) {
     const block = document.getElementById(id);
     if (!block) return;
     
     block.classList.toggle('collapsed');
     const content = block.querySelector('.continent-content');
-    const scrollLayer = document.getElementById('mainScrollContent');
     
     if (content) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    smoothScrollTop(scrollLayer);
-                });
-            });
+            
+            // 🍏 БАРХАТНЫЙ АВТО-ВОЗВРАТ: катит изолированный контейнер в абсолютный верхний ноль!
+            setTimeout(() => {
+                const scrollLayer = document.getElementById('mainScrollContent');
+                if (scrollLayer) {
+                    scrollLayer.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 40); // 40мс — идеальное время, чтобы Safari успел схлопнуть DOM-структуру таблицы
             return;
         } else {
             content.style.display = 'block';
-            setTimeout(() => {
-                requestAnimationFrame(() => {
-                    smoothScrollTop(scrollLayer);
-                });
-            }, 50);
         }
+
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
+        setTimeout(() => {
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);                  
     }
 }
 
