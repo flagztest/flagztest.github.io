@@ -2120,10 +2120,10 @@ function toggleAllContinents() {
 
       if (allCollapsed) {
           setTimeout(() => {
-              window.scrollTo({
-                  top: 0,
-                  behavior: 'smooth' /* Плавная и мягкая прокрутка наверх */
-            });
+              const scrollLayer = document.getElementById('mainScrollContent');
+              if (scrollLayer) {
+                  scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
+              }
         }, 50); // Микро-задержка, чтобы браузер успел скрыть таблицы до начала движения
     }
 }
@@ -2282,22 +2282,43 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Ждем 320мс, пока полностью завершится CSS-анимация сжатия таблиц, и плавно катим наверх
+    
+    // 🌟 СВОРАЧИВАЕМ ВСЕ ПЛАШКИ
+    allCollapsed = true;
+    const toggleAllBtn = document.getElementById('toggleAllBtn');
+    if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
+    document.querySelectorAll('.continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const c = b.querySelector('.continent-content');
+        if (c) c.style.display = 'none';
+    });
+    
+    // 🌟 ПЛАВНЫЙ ВОЗВРАТ НАЗАД
     setTimeout(() => {
-        window.scrollTo({top: 0, behavior: 'smooth'});
+        const scrollLayer = document.getElementById('mainScrollContent');
+        if (scrollLayer) {
+            scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
+        }
     }, 320);
-    searchInput.focus();
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
     runSearch();
-    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Если пользователь стёр текст до конца, ждем окончания анимации сжатия и плавно катим наверх
+    // 🌟 Если стёрли текст — сворачиваем все плашки и плавно возвращаем наверх
     if (e.target.value.trim() === '') {
+        allCollapsed = true;
+        const toggleAllBtn = document.getElementById('toggleAllBtn');
+        if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
+        document.querySelectorAll('.continent-block').forEach(b => {
+            b.classList.add('collapsed');
+            const c = b.querySelector('.continent-content');
+            if (c) c.style.display = 'none';
+        });
         setTimeout(() => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            const scrollLayer = document.getElementById('mainScrollContent');
+            if (scrollLayer) {
+                scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
+            }
         }, 320);
     }
 });
@@ -2699,12 +2720,17 @@ function toggleBlock(id) {
             content.style.display = 'block';
         }
 
-         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
+         // РАСКРЫТИЕ: Плавно подтягиваем плашку к шапке
         setTimeout(() => {
-            block.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            const scrollLayer = document.getElementById('mainScrollContent');
+            const header = document.querySelector('.fixed-header');
+            if (scrollLayer && header) {
+                const blockRect = block.getBoundingClientRect();
+                const scrollRect = scrollLayer.getBoundingClientRect();
+                const headerHeight = header.offsetHeight;
+                const targetTop = scrollLayer.scrollTop + blockRect.top - scrollRect.top - headerHeight - 4;
+                scrollLayer.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+            }
         }, 80);                  
     }
 }
