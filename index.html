@@ -2281,24 +2281,55 @@ if (isRussiaDbActive) {
 function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
-    runSearch();
-    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Ждем 320мс, пока полностью завершится CSS-анимация сжатия таблиц, и плавно катим наверх
-    setTimeout(() => {
-        window.scrollTo({top: 0, behavior: 'smooth'});
-    }, 320);
-    searchInput.focus();
-}
+    
+    // 1. Принудительно сворачиваем абсолютно все плашки
+    document.querySelectorAll('.continent-block').forEach(block => {
+        block.classList.add('collapsed');
+        const content = block.querySelector('.continent-content');
+        if (content) content.style.display = 'none';
+    });
 
-document.getElementById('searchInput').addEventListener('input', (e) => {
+    // 2. Восстанавливаем дефолтное отображение структуры через фильтр
     runSearch();
-    // 🌟 ХАК ДЛЯ ТЕЛЕФОНА: Если пользователь стёр текст до конца, ждем окончания анимации сжатия и плавно катим наверх
-    if (e.target.value.trim() === '') {
+    
+    // 3. Плавно катим к первой плашке внутри изолированного скролл-бокса
+    const scrollLayer = document.getElementById('mainScrollContent');
+    if (scrollLayer) {
         setTimeout(() => {
-            window.scrollTo({
+            scrollLayer.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
-        }, 320);
+        }, 50);
+    }
+    
+    searchInput.focus();
+}
+
+// 🌟 ИСПРАВЛЕННЫЙ СЛУШАТЕЛЬ СТИРАНИЯ ТЕКСТА КЛАВИАТУРОЙ:
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    runSearch();
+    
+    // Если пользователь стёр весь текст бэкспейсом, дублируем логику закрытия и скролла
+    if (e.target.value.trim() === '') {
+        document.querySelectorAll('.continent-block').forEach(block => {
+            block.classList.add('collapsed');
+            const content = block.querySelector('.continent-content');
+            if (content) content.style.display = 'none';
+        });
+        
+        // Повторно обновляем фильтр для пустой строки
+        runSearch();
+
+        const scrollLayer = document.getElementById('mainScrollContent');
+        if (scrollLayer) {
+            setTimeout(() => {
+                scrollLayer.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }, 50);
+        }
     }
 });
 
