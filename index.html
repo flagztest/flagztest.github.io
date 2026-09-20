@@ -899,7 +899,7 @@
     </div> <!-- 🌟 ЗАКРЫЛИ СЛОЙ scroll-wrapper -->
 </div>
 
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="document.getElementById('mainScrollContent').scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="smoothScrollTop(document.getElementById('mainScrollContent'))">▲</button>
 
 <!-- Контейнер для полноэкранного просмотра флага -->
 <div id="flagModal" class="flag-modal" onclick="closeFlagModal()">
@@ -2120,10 +2120,7 @@ function toggleAllContinents() {
 
       if (allCollapsed) {
           setTimeout(() => {
-              window.scrollTo({
-                  top: 0,
-                  behavior: 'smooth' /* Плавная и мягкая прокрутка наверх */
-            });
+              smoothScrollTop(document.getElementById('mainScrollContent'));
         }, 50); // Микро-задержка, чтобы браузер успел скрыть таблицы до начала движения
     }
 }
@@ -2282,26 +2279,38 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    // Ждём 350мс пока все плашки схлопнутся, потом плавно катим наверх
+    
+    // 🌟 СВОРАЧИВАЕМ ВСЕ ПЛАШКИ
+    allCollapsed = true;
+    const toggleAllBtn = document.getElementById('toggleAllBtn');
+    if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
+    document.querySelectorAll('.continent-block').forEach(b => {
+        b.classList.add('collapsed');
+        const c = b.querySelector('.continent-content');
+        if (c) c.style.display = 'none';
+    });
+    
+    // ПЛАВНЫЙ ВОЗВРАТ НАЗАД
     setTimeout(() => {
-        const scrollLayer = document.getElementById('mainScrollContent');
-        if (scrollLayer) {
-            scrollLayer.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    }, 350);
-    searchInput.focus();
+        smoothScrollTop(document.getElementById('mainScrollContent'));
+    }, 320);
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
     runSearch();
-    // Если пользователь стёр текст до конца, ждём 350мс и плавно катим наверх
+    // 🌟 Если стёрли текст — сворачиваем все плашки и плавно возвращаем наверх
     if (e.target.value.trim() === '') {
+        allCollapsed = true;
+        const toggleAllBtn = document.getElementById('toggleAllBtn');
+        if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
+        document.querySelectorAll('.continent-block').forEach(b => {
+            b.classList.add('collapsed');
+            const c = b.querySelector('.continent-content');
+            if (c) c.style.display = 'none';
+        });
         setTimeout(() => {
-            const scrollLayer = document.getElementById('mainScrollContent');
-            if (scrollLayer) {
-                scrollLayer.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }, 350);
+            smoothScrollTop(document.getElementById('mainScrollContent'));
+        }, 320);
     }
 });
 
@@ -2676,40 +2685,46 @@ function generateRussiaSubjectsTables() {
 }
 
 
+function smoothScrollTop(el) {
+    if (!el) return;
+    var start = el.scrollTop;
+    var startTime = performance.now();
+    var duration = 350;
+    function step(now) {
+        var elapsed = now - startTime;
+        var t = Math.min(elapsed / duration, 1);
+        var eased = 1 - Math.pow(1 - t, 3);
+        el.scrollTop = start * (1 - eased);
+        if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
 function toggleBlock(id) {
     const block = document.getElementById(id);
     if (!block) return;
     
     block.classList.toggle('collapsed');
     const content = block.querySelector('.continent-content');
+    const scrollLayer = document.getElementById('mainScrollContent');
     
     if (content) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
-            
-            // СВОРАЧИВАНИЕ: плавно катим наверх к первой плашке
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    const scrollLayer = document.getElementById('mainScrollContent');
-                    if (scrollLayer) {
-                        scrollLayer.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
+                    smoothScrollTop(scrollLayer);
                 });
             });
             return;
         } else {
             content.style.display = 'block';
+            setTimeout(() => {
+                requestAnimationFrame(() => {
+                    smoothScrollTop(scrollLayer);
+                });
+            }, 50);
         }
-
-        // РАСКРЫТИЕ: ждём 350мс пока CSS transition (0.3s) завершится, потом плавно катим наверх
-        setTimeout(() => {
-            requestAnimationFrame(() => {
-                const scrollLayer = document.getElementById('mainScrollContent');
-                if (scrollLayer) {
-                    scrollLayer.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            });
-        }, 350);
     }
 }
 
