@@ -2120,10 +2120,10 @@ function toggleAllContinents() {
 
       if (allCollapsed) {
           setTimeout(() => {
-              const scrollLayer = document.getElementById('mainScrollContent');
-              if (scrollLayer) {
-                  scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
-              }
+              window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth' /* Плавная и мягкая прокрутка наверх */
+            });
         }, 50); // Микро-задержка, чтобы браузер успел скрыть таблицы до начала движения
     }
 }
@@ -2282,44 +2282,26 @@ function clearSearch() {
     const searchInput = document.getElementById('searchInput');
     searchInput.value = '';
     runSearch();
-    
-    // 🌟 СВОРАЧИВАЕМ ВСЕ ПЛАШКИ
-    allCollapsed = true;
-    const toggleAllBtn = document.getElementById('toggleAllBtn');
-    if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
-    document.querySelectorAll('.continent-block').forEach(b => {
-        b.classList.add('collapsed');
-        const c = b.querySelector('.continent-content');
-        if (c) c.style.display = 'none';
-    });
-    
-    // 🌟 ПЛАВНЫЙ ВОЗВРАТ НАЗАД
+    // Ждём 350мс пока все плашки схлопнутся, потом плавно катим наверх
     setTimeout(() => {
         const scrollLayer = document.getElementById('mainScrollContent');
         if (scrollLayer) {
-            scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
+            scrollLayer.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    }, 320);
+    }, 350);
+    searchInput.focus();
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
     runSearch();
-    // 🌟 Если стёрли текст — сворачиваем все плашки и плавно возвращаем наверх
+    // Если пользователь стёр текст до конца, ждём 350мс и плавно катим наверх
     if (e.target.value.trim() === '') {
-        allCollapsed = true;
-        const toggleAllBtn = document.getElementById('toggleAllBtn');
-        if (toggleAllBtn) toggleAllBtn.textContent = "Развернуть всё";
-        document.querySelectorAll('.continent-block').forEach(b => {
-            b.classList.add('collapsed');
-            const c = b.querySelector('.continent-content');
-            if (c) c.style.display = 'none';
-        });
         setTimeout(() => {
             const scrollLayer = document.getElementById('mainScrollContent');
             if (scrollLayer) {
-                scrollLayer.scrollTo({top: 0, behavior: 'smooth'});
+                scrollLayer.scrollTo({ top: 0, behavior: 'smooth' });
             }
-        }, 320);
+        }, 350);
     }
 });
 
@@ -2704,6 +2686,8 @@ function toggleBlock(id) {
     if (content) {
         if (block.classList.contains('collapsed')) {
             content.style.display = 'none';
+            
+            // СВОРАЧИВАНИЕ: плавно катим наверх к первой плашке
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     const scrollLayer = document.getElementById('mainScrollContent');
@@ -2715,15 +2699,17 @@ function toggleBlock(id) {
             return;
         } else {
             content.style.display = 'block';
-            setTimeout(() => {
-                requestAnimationFrame(() => {
-                    const scrollLayer = document.getElementById('mainScrollContent');
-                    if (scrollLayer) {
-                        scrollLayer.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-            }, 300);
         }
+
+        // РАСКРЫТИЕ: ждём 350мс пока CSS transition (0.3s) завершится, потом плавно катим наверх
+        setTimeout(() => {
+            requestAnimationFrame(() => {
+                const scrollLayer = document.getElementById('mainScrollContent');
+                if (scrollLayer) {
+                    scrollLayer.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        }, 350);
     }
 }
 
