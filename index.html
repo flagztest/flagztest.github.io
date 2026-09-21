@@ -602,7 +602,7 @@
            height: 42px !important; 
            object-fit: fill !important; 
      }
-/* 🌟 1. ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ ЧЕРКЕССКА: убираем и подложку, и тень герба-щита */
+/* 🌟 1. ДЛЯ ГЕРБА ЧЕРКЕССКА: убираем и подложку, и тень герба-щита */
 .flag-img[src*="Cherkessia"], 
 .flag-img[src*="Cherkessk"], 
 .flag-img[alt*="Черкесск"] {
@@ -612,7 +612,8 @@
     border: none !important;
 }
 
-/* 🌟 2. ХАК ДЛЯ ИРКУТСКА, МУРМАНСКА И ВЛАДИКАВКАЗА: стираем только белые поля, а тень НЕ трогаем */
+/* 🌟 2. ДЛЯ ИРКУТСКА, МУРМАНСКА И ВЛАДИКАВКАЗА: убираем белые рамки, 
+   а тень пускаем строго по контуру ткани через drop-shadow (без белых полей) */
 .flag-img[src*="Murmansk"],
 .flag-img[alt*="Мурманск"],
 .flag-img[src*="North_Ossetia"],
@@ -621,8 +622,9 @@
 .flag-img[alt*="Иркутск"] {
     background-color: transparent !important;
     background: transparent !important;
-    /* Убираем рамку-границу, но саму дефолтную тень оставляем родной! */
     border: none !important;
+    box-shadow: none !important; /* Гасим старую прямоугольную тень, которая создавала белый фон */
+    filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important; /* Умная тень по контуру флага */
 }
 
 /* Полностью очищаем фон ячеек-контейнеров для всей четверки */
@@ -2623,15 +2625,14 @@ function openFlagModal(imgSrc) {
     
     modal.style.setProperty('background-color', '#1a1a1a', 'important');
     
-    /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ ДЛЯ НЕПАЛА И КОНКРЕТНЫХ ГОРОДОВ РФ */
+    /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ ТОЛЬКО ДЛЯ НЕПАЛА И ЧЕРКЕССКА */
     if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg') || 
-        imgSrc.includes('Cherkessia') || imgSrc.includes('Cherkessk') || 
-        imgSrc.includes('Murmansk') || imgSrc.includes('North_Ossetia') || 
-        imgSrc.includes('Irkutsk')) {
+        imgSrc.includes('Cherkessia') || imgSrc.includes('Cherkessk')) {
         modalImg.style.setProperty('mix-blend-mode', 'multiply', 'important');
         modalImg.style.setProperty('background-color', 'transparent', 'important');
         modalImg.style.setProperty('opacity', '1', 'important');
     } else {
+        // Иркутск, Мурманск, Владикавказ и все остальные страны открываются идеально яркими
         modalImg.style.setProperty('mix-blend-mode', 'unset', 'important');
         modalImg.style.setProperty('display', 'block', 'important');
         modalImg.style.setProperty('opacity', '1', 'important');
