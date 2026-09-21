@@ -602,14 +602,16 @@
            height: 42px !important; 
            object-fit: fill !important; 
      }
-/* 🌟 ТОТАЛЬНОЕ СТИРАНИЕ БЕЛОГО ФОНА И ТЕНЕЙ ДЛЯ ЧЕРКЕССКА И МУРМАНСКА */
+/* 🌟 ТОТАЛЬНОЕ СТИРАНИЕ БЕЛОГО ФОНА И ТЕНЕЙ ДЛЯ ЧЕРКЕССКА, МУРМАНСКА, Владикавказа и Иркутска */
 .flag-img[src*="Cherkessia"], 
 .flag-img[src*="Cherkessk"], 
 .flag-img[alt*="Черкесск"],
 .flag-img[src*="Murmansk"],
 .flag-img[alt*="Мурманск"],
 .flag-img[src*="Vladikavkaz"],
-.flag-img[alt*="Владикавказ"] {
+.flag-img[alt*="Владикавказ"],
+.flag-img[src*="Irkutsk"],
+.flag-img[alt*="Иркутск"] {
     background-color: transparent !important;
     background: transparent !important;
     box-shadow: none !important;
@@ -619,7 +621,8 @@
 /* Полностью очищаем фон ячеек и контейнеров для этих городов */
 tr[data-name*="черкесск"] .flag-wrapper,
 tr[data-name*="мурманск"] .flag-wrapper,
-tr[data-name*="владикавказ"] .flag-wrapper {
+tr[data-name*="владикавказ"] .flag-wrapper,
+tr[data-name*="иркутск"] .flag-wrapper {
     background-color: transparent !important;
     background: transparent !important;
 }
