@@ -2625,17 +2625,25 @@ function openFlagModal(imgSrc) {
     
     modal.style.setProperty('background-color', '#1a1a1a', 'important');
     
-    /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ ТОЛЬКО ДЛЯ НЕПАЛА И ЧЕРКЕССКА */
-    if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg') || 
-        imgSrc.includes('Cherkessia') || imgSrc.includes('Cherkessk')) {
+    /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ СТРОГО ДЛЯ НЕПАЛА */
+    if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg')) {
         modalImg.style.setProperty('mix-blend-mode', 'multiply', 'important');
         modalImg.style.setProperty('background-color', 'transparent', 'important');
         modalImg.style.setProperty('opacity', '1', 'important');
+        modalImg.style.setProperty('filter', 'none', 'important');
+    } else if (imgSrc.includes('Cherkessia') || imgSrc.includes('Cherkessk')) {
+        // 🌟 ДЛЯ ЧЕРКЕССКА: отключаем затемнение, возвращаем сочные цвета и идеальную прозрачность
+        modalImg.style.setProperty('mix-blend-mode', 'unset', 'important');
+        modalImg.style.setProperty('display', 'block', 'important');
+        modalImg.style.setProperty('background-color', 'transparent', 'important');
+        modalImg.style.setProperty('opacity', '1', 'important');
+        modalImg.style.setProperty('filter', 'drop-shadow(0px 4px 8px rgba(0,0,0,0.3))', 'important'); // Добавляем гербу объем на темном фоне
     } else {
         // Иркутск, Мурманск, Владикавказ и все остальные страны открываются идеально яркими
         modalImg.style.setProperty('mix-blend-mode', 'unset', 'important');
         modalImg.style.setProperty('display', 'block', 'important');
         modalImg.style.setProperty('opacity', '1', 'important');
+        modalImg.style.setProperty('filter', 'none', 'important');
     }
     
     modalImg.style.setProperty('border', 'none', 'important');
