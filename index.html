@@ -602,10 +602,17 @@
            height: 42px !important; 
            object-fit: fill !important; 
      }
-/* 🌟 ТОТАЛЬНОЕ СТИРАНИЕ БЕЛОГО ФОНА И ТЕНЕЙ ДЛЯ ЧЕРКЕССКА, МУРМАНСКА, ВЛАДИКАВКАЗА И ИРКУТСКА */
+/* 🌟 1. ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ ЧЕРКЕССКА: убираем и подложку, и тень герба-щита */
 .flag-img[src*="Cherkessia"], 
 .flag-img[src*="Cherkessk"], 
-.flag-img[alt*="Черкесск"],
+.flag-img[alt*="Черкесск"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* 🌟 2. ХАК ДЛЯ ИРКУТСКА, МУРМАНСКА И ВЛАДИКАВКАЗА: стираем только белые поля, а тень НЕ трогаем */
 .flag-img[src*="Murmansk"],
 .flag-img[alt*="Мурманск"],
 .flag-img[src*="North_Ossetia"],
@@ -614,11 +621,11 @@
 .flag-img[alt*="Иркутск"] {
     background-color: transparent !important;
     background: transparent !important;
-    box-shadow: none !important;
+    /* Убираем рамку-границу, но саму дефолтную тень оставляем родной! */
     border: none !important;
 }
 
-/* Полностью очищаем фон ячеек и контейнеров для этих городов */
+/* Полностью очищаем фон ячеек-контейнеров для всей четверки */
 tr[data-name*="черкесск"] .flag-wrapper,
 tr[data-name*="мурманск"] .flag-wrapper,
 tr[data-name*="владикавказ"] .flag-wrapper,
