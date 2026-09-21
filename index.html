@@ -602,18 +602,21 @@
            height: 42px !important; 
            object-fit: fill !important; 
      }
-/* 🌟 ТОТАЛЬНОЕ СТИРАНИЕ БЕЛОГО ФОНА И ТЕНЕЙ ДЛЯ ГЕРБА ЧЕРКЕССКА */
+/* 🌟 ТОТАЛЬНОЕ СТИРАНИЕ БЕЛОГО ФОНА И ТЕНЕЙ ДЛЯ ЧЕРКЕССКА И МУРМАНСКА */
 .flag-img[src*="Cherkessia"], 
 .flag-img[src*="Cherkessk"], 
-.flag-img[alt*="Черкесск"] {
+.flag-img[alt*="Черкесск"],
+.flag-img[src*="Murmansk"],
+.flag-img[alt*="Мурманск"] {
     background-color: transparent !important;
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
 }
 
-/* На всякий случай зачищаем сам мобильный контейнер ячейки для этого ряда */
-tr[data-name*="черкесск"] .flag-wrapper {
+/* Полностью очищаем фон ячеек и контейнеров для этих городов */
+tr[data-name*="черкесск"] .flag-wrapper,
+tr[data-name*="мурманск"] .flag-wrapper {
     background-color: transparent !important;
     background: transparent !important;
 }
@@ -1288,7 +1291,7 @@ const cityFlags = {
     "Курск": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Flag_of_Kursk.svg/1280px-Flag_of_Kursk.svg.png",
     "Липецк": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Flag_of_Lipetsk.svg",
     "Магадан": "https://upload.wikimedia.org/wikipedia/commons/5/54/Flag_of_Magadan.svg",
-    "Мурманск": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Flag_of_Murmansk_Oblast_%28large%29.svg/1280px-Flag_of_Murmansk_Oblast_%28large%29.svg.png",
+    "Мурманск": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/ba/RUS_Murmansk_COA.svg/960px-RUS_Murmansk_COA.svg.png",
     "Нижний Новгород": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Flag_of_Nizhny_Novgorod.svg/1280px-Flag_of_Nizhny_Novgorod.svg.png",
     "Великий Новгород": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Veliky_Novgorod.svg",
     "Новосибирск": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Flag_of_Novosibirsk.svg/1280px-Flag_of_Novosibirsk.svg.png",
