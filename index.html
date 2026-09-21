@@ -607,7 +607,9 @@
 .flag-img[src*="Cherkessk"], 
 .flag-img[alt*="Черкесск"],
 .flag-img[src*="Murmansk"],
-.flag-img[alt*="Мурманск"] {
+.flag-img[alt*="Мурманск"],
+.flag-img[src*="Vladikavkaz"],
+.flag-img[alt*="Владикавказ"] {
     background-color: transparent !important;
     background: transparent !important;
     box-shadow: none !important;
@@ -616,7 +618,8 @@
 
 /* Полностью очищаем фон ячеек и контейнеров для этих городов */
 tr[data-name*="черкесск"] .flag-wrapper,
-tr[data-name*="мурманск"] .flag-wrapper {
+tr[data-name*="мурманск"] .flag-wrapper,
+tr[data-name*="владикавказ"] .flag-wrapper {
     background-color: transparent !important;
     background: transparent !important;
 }
@@ -1254,7 +1257,7 @@ const cityFlags = {
     "Йошкар-Ола": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Flag_of_Yoshkar-Ola_%28Mariy-El%29.png",
     "Саранск": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Flag_of_Saransk.svg",
     "Якутск": "https://upload.wikimedia.org/wikipedia/commons/4/40/Flag_of_Yakutsk.svg",
-    "Владикавказ": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Flag_of_North_Ossetia.svg/1280px-Flag_of_North_Ossetia.svg.png",
+    "Владикавказ": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Coat_of_arms_of_Vladikavkaz.png",
     "Казань": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Flag_of_Kazan.svg/1280px-Flag_of_Kazan.svg.png",
     "Кызыл": "https://upload.wikimedia.org/wikipedia/commons/1/18/Flag_of_Kyzyl.svg",
     "Ижевск": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Flag_of_Izhevsk_%28Udmurtia%29.svg/1280px-Flag_of_Izhevsk_%28Udmurtia%29.svg.png",
