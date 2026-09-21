@@ -602,13 +602,13 @@
            height: 42px !important; 
            object-fit: fill !important; 
      }
-/* 🌟 ТОТАЛЬНОЕ СТИРАНИЕ БЕЛОГО ФОНА И ТЕНЕЙ ДЛЯ ЧЕРКЕССКА, МУРМАНСКА, Владикавказа и Иркутска */
+/* 🌟 ТОТАЛЬНОЕ СТИРАНИЕ БЕЛОГО ФОНА И ТЕНЕЙ ДЛЯ ЧЕРКЕССКА, МУРМАНСКА, ВЛАДИКАВКАЗА И ИРКУТСКА */
 .flag-img[src*="Cherkessia"], 
 .flag-img[src*="Cherkessk"], 
 .flag-img[alt*="Черкесск"],
 .flag-img[src*="Murmansk"],
 .flag-img[alt*="Мурманск"],
-.flag-img[src*="Vladikavkaz"],
+.flag-img[src*="North_Ossetia"],
 .flag-img[alt*="Владикавказ"],
 .flag-img[src*="Irkutsk"],
 .flag-img[alt*="Иркутск"] {
@@ -626,7 +626,6 @@ tr[data-name*="иркутск"] .flag-wrapper {
     background-color: transparent !important;
     background: transparent !important;
 }
-
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
@@ -2615,21 +2614,22 @@ function openFlagModal(imgSrc) {
     const modalImg = document.getElementById('flagModalImg');
     modalImg.src = imgSrc;
     
-    // 🌟 Намертво возвращаем окну его родной глубокий темный цвет
     modal.style.setProperty('background-color', '#1a1a1a', 'important');
     
-    /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ НЕПАЛА */
-    if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg')) {
+    /* 🌟 ТОЧЕЧНОЕ РАСТВОРЕНИЕ БЕЛЫХ ПОЛЕЙ ДЛЯ НЕПАЛА И КОНКРЕТНЫХ ГОРОДОВ РФ */
+    if (imgSrc.includes('NP.svg') || imgSrc.includes('np.svg') || 
+        imgSrc.includes('Cherkessia') || imgSrc.includes('Cherkessk') || 
+        imgSrc.includes('Murmansk') || imgSrc.includes('North_Ossetia') || 
+        imgSrc.includes('Irkutsk')) {
         modalImg.style.setProperty('mix-blend-mode', 'multiply', 'important');
+        modalImg.style.setProperty('background-color', 'transparent', 'important');
         modalImg.style.setProperty('opacity', '1', 'important');
     } else {
-        // 🌟 ИСПРАВЛЕНО ДЛЯ МИРОВЫХ ФЛАГОВ: сбрасываем смешивание и принудительно включаем видимость
         modalImg.style.setProperty('mix-blend-mode', 'unset', 'important');
         modalImg.style.setProperty('display', 'block', 'important');
         modalImg.style.setProperty('opacity', '1', 'important');
     }
     
-    // Убираем рамки и тени, чтобы картинка была чистой
     modalImg.style.setProperty('border', 'none', 'important');
     modalImg.style.setProperty('box-shadow', 'none', 'important');
     modalImg.style.setProperty('clip-path', 'none', 'important');
@@ -2639,7 +2639,6 @@ function openFlagModal(imgSrc) {
     modal.style.display = 'flex';
     setTimeout(() => {
         modal.classList.add('open');
-        /* 🌟 ПРАВИЛЬНОЕ СКРЫТИЕ: Мягко гасим прозрачность сайта, чтобы он не просвечивал под панелью Safari */
         const header = document.querySelector('.fixed-header');
         const container = document.querySelector('.container');
         if (header) header.classList.add('site-fade');
