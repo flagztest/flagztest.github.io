@@ -602,6 +602,22 @@
            height: 42px !important; 
            object-fit: fill !important; 
      }
+/* 🌟 ТОТАЛЬНОЕ СТИРАНИЕ БЕЛОГО ФОНА И ТЕНЕЙ ДЛЯ ГЕРБА ЧЕРКЕССКА */
+.flag-img[src*="Cherkessia"], 
+.flag-img[src*="Cherkessk"], 
+.flag-img[alt*="Черкесск"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* На всякий случай зачищаем сам мобильный контейнер ячейки для этого ряда */
+tr[data-name*="черкесск"] .flag-wrapper {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
