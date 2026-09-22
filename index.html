@@ -589,19 +589,7 @@
            height: 42px !important; 
            object-fit: fill !important; 
      }
-/* 🌟 1. ДЛЯ ГЕРБА ЧЕРКЕССКА: убираем и подложку, и тень герба-щита */
-.flag-img[src*="Cherkessia"], 
-.flag-img[src*="Cherkessk"], 
-.flag-img[alt*="Черкесск"] {
-    background-color: transparent !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-}
-
-/* 🌟 2А. ДЛЯ МУРМАНСКА И ВЛАДИКАВКАЗА: оставляем только умную тень по контуру */
-.flag-img[src*="Murmansk"],
-.flag-img[alt*="Мурманск"],
+/* 🌟 1. ДЛЯ ВЛАДИКАВКАЗА: чистая контурная тень */
 .flag-img[src*="North_Ossetia"],
 .flag-img[alt*="Владикавказ"] {
     background-color: transparent !important;
@@ -609,6 +597,21 @@
     border: none !important;
     box-shadow: none !important;
     filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important;
+}
+
+/* 🌟 2. ДЛЯ ЧЕРКЕССКА И МУРМАНСКА: ювелирная рамка 1px + мягкая тень строго по форме ГЕРБА-ЩИТА */
+.flag-img[src*="Cherkessia"], 
+.flag-img[src*="Cherkessk"], 
+.flag-img[alt*="Черкесск"],
+.flag-img[src*="Murmansk"],
+.flag-img[alt*="Мурманск"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    /* 1 слой создает тонкий и четкий серый кант 1px вокруг герба, 2 слой — мягкую аккуратную тень */
+    filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.35)) 
+            drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.15)) !important;
 }
 
 /* 🌟 ЧЕТКИЙ КОНТУР И ОБЪЕМНАЯ ТЕНЬ ДЛЯ ИРКУТСКА */
