@@ -2407,28 +2407,51 @@ function loadQuizFlagRound() {
     const flagImgEl = document.getElementById('quizFlagImg');
     const flagContainerEl = document.querySelector('.quiz-flag-container');
     
-    /* 🌟 ЖЕЛЕЗНАЯ JS-ЗАЩИТА НЕПАЛА ОТ ПРЯМОУГОЛЬНЫХ РАМОК И ТЕНЕЙ */
+    /* 🌟 ТОТАЛЬНАЯ JS-ЗАЧИСТКА ВСЕХ ВНЕШНИХ РАМОК И ПОДЛОЖЕК НЕПАЛА */
     if (currentFlagTarget.iso.toLowerCase() === 'np') {
-        flagContainerEl.style.backgroundColor = 'transparent';
-        flagContainerEl.style.boxShadow = 'none';
-        flagContainerEl.style.border = 'none';
+        // 1. Полностью гасим фон и границы на контейнере картинки
+        if (flagContainerEl) {
+            flagContainerEl.style.setProperty('background-color', 'transparent', 'important');
+            flagContainerEl.style.setProperty('background', 'transparent', 'important');
+            flagContainerEl.style.setProperty('box-shadow', 'none', 'important');
+            flagContainerEl.style.setProperty('border', 'none', 'important');
+            
+            // Хак: Если у контейнера есть родительский элемент (внешняя карточка), гасим фон и у него
+            if (flagContainerEl.parentElement) {
+                flagContainerEl.parentElement.style.setProperty('background-color', 'transparent', 'important');
+                flagContainerEl.parentElement.style.setProperty('background', 'transparent', 'important');
+                flagContainerEl.parentElement.style.setProperty('box-shadow', 'none', 'important');
+                flagContainerEl.parentElement.style.setProperty('border', 'none', 'important');
+            }
+        }
         
-        flagImgEl.className = 'quiz-flag-img';
-        flagImgEl.style.mixBlendMode = 'multiply';
-        flagImgEl.style.border = 'none';
-        flagImgEl.style.boxShadow = 'none';
-        // Насильно обводим только треугольники прямо через инлайн-стиль:
-        flagImgEl.style.filter = 'drop-shadow(0px 0px 1px rgba(0,0,0,0.35)) drop-shadow(0px 2px 4px rgba(0,0,0,0.15))';
+        // 2. Гасим прямоугольные рамки на самой картинке флага
+        flagImgEl.style.setProperty('border', 'none', 'important');
+        flagImgEl.style.setProperty('box-shadow', 'none', 'important');
+        flagImgEl.style.setProperty('background-color', 'transparent', 'important');
+        flagImgEl.style.setProperty('background', 'transparent', 'important');
+        flagImgEl.style.setProperty('mix-blend-mode', 'multiply', 'important');
+        
+        // 3. Ювелирно обводим только физический силуэт треугольников Непала
+        flagImgEl.style.setProperty('filter', 'drop-shadow(0px 0px 1px rgba(0,0,0,0.35)) drop-shadow(0px 2px 4px rgba(0,0,0,0.15))', 'important');
     } else {
-        // Стандартный режим с рамками и тенями для всех обычных стран мира
-        flagContainerEl.style.backgroundColor = '#ffffff';
-        flagContainerEl.style.boxShadow = ''; 
-        flagContainerEl.style.border = '';
+        // Стандартный сплошной режим для всех остальных классических флагов мира
+        if (flagContainerEl) {
+            flagContainerEl.style.backgroundColor = '#ffffff';
+            flagContainerEl.style.boxShadow = '';
+            flagContainerEl.style.border = '';
+            
+            if (flagContainerEl.parentElement) {
+                flagContainerEl.parentElement.style.backgroundColor = '';
+                flagContainerEl.parentElement.style.boxShadow = '';
+                flagContainerEl.parentElement.style.border = '';
+            }
+        }
         
-        flagImgEl.className = 'quiz-flag-img';
         flagImgEl.style.mixBlendMode = 'normal';
         flagImgEl.style.border = '';
         flagImgEl.style.boxShadow = '';
+        flagImgEl.style.backgroundColor = '';
         flagImgEl.style.filter = 'none';
     }
     
