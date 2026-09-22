@@ -270,12 +270,11 @@
         .flag-img {
             max-height: 100%;
             max-width: 100%;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 2px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.15);
             border: 1px solid rgba(0,0,0,0.08);
             box-sizing: border-box;
-            transform: scale(1.02);
         }
         
         /* ВЫНЕСЛИ НЕПАЛ В ОТДЕЛЬНОЕ НЕУБИВАЕМОЕ ПРАВИЛО: */
@@ -553,50 +552,40 @@
             font-size: 14px !important;
      }
 
-     /* 1. ПЕРЕНОСИМ РАМКУ И ТЕНЬ НА МОНОЛИТНЫЙ КОНТЕЙНЕР ЯЧЕЙКИ */
+     /* 3. НАСТРОЙКА ФЛАГОВ: Выравнивание всех флагов по центру относительно Катара */
      .flag-wrapper {
+           /* 🌟 ЦЕНТРИРОВАНИЕ ПО КАТАРУ: Заперли контейнер в 100px (максимальная длина Катара) */
            width: 100px !important;         
            height: 42px !important; 
            display: inline-flex !important;
            align-items: center !important;
+           /* 🌟 Намертво выравниваем все короткие флаги строго по центру контейнера Катара */
            justify-content: center !important; 
-           
-           /* 🌟 ТЕНЬ И РАМКА ТЕПЕРЬ ТУТ (они жесткие и не зависят от рендера картинки): */
-           box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
-           border: 1px solid rgba(0,0,0,0.08) !important;
-           border-radius: 2px !important;
-           box-sizing: border-box !important;
-           overflow: hidden !important; /* Намертво срезает всё, что вылезает за рамку */
+           overflow: visible !important;
      }
 
-     /* 2. КАРТИНКА: РАСТЯГИВАЕМ С НАХЛЕСТОМ, ЧТОБЫ ВЫЖАТЬ ВОЗДУХ ИЗ ЩЕЛЕЙ */
      .flag-img {
-           /* Насильно делаем её чуть больше контейнера во все 4 стороны на 1 пиксель, 
-              чтобы она зашла ПОД рамку и закрыла любые микро-зазоры */
-           width: calc(100% + 2px) !important;
-           height: calc(100% + 2px) !important;
-           margin: -1px !important; 
-           
-           object-fit: cover !important; 
-           background-color: transparent !important;
-           
-           /* Полностью гасим рамки и тени на самой картинке, чтобы они не дублировались: */
-           border: none !important;
-           box-shadow: none !important;
-           transform: none !important; /* scale больше не нужен, нахлест сделан через размеры */
+           height: 100% !important;        
+           width: auto !important;         
+           object-fit: cover !important;
+           border-radius: 2px !important;
+           box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
+           border: 1px solid rgba(0,0,0,0.08) !important;
+           box-sizing: border-box !important;
+           margin-left: 0px !important;
+           margin-right: 0px !important;
      }
 
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
      .flag-img[src*="QA.svg"], .flag-img[src*="qa.svg"], .flag-img[alt*="Катар"] {
            max-width: none !important;     
-           width: calc(100% + 2px) !important;        
-           height: calc(100% + 2px) !important; 
-           margin: -1px !important;
+           margin-left: 0px !important;    
+           margin-right: 0px !important;   
+           /* 🌟 Занимает ровно весь 100px контейнер ячейки, рамка горит, наезд исключен! */
+           width: 100px !important;        
+           height: 42px !important; 
            object-fit: fill !important; 
-           border: none !important;
-           box-shadow: none !important;
      }
-
 /* 🌟 1. ДЛЯ ГЕРБА ЧЕРКЕССКА: убираем и подложку, и тень герба-щита */
 .flag-img[src*="Cherkessia"], 
 .flag-img[src*="Cherkessk"], 
