@@ -2393,7 +2393,7 @@ function loadQuizFlagRound() {
         flagImgEl.style.boxShadow = 'none';
         flagImgEl.style.filter = 'none';
     } else {
-        // Швейцария, Австрия, Беларусь, Андорра и все остальные теперь идут по общему стандарту с рамками
+        // Швейцария, Австрия, Беларусь, Андорра получили стандартные обводки
         flagContainerEl.style.backgroundColor = '#ffffff';
         flagImgEl.className = 'quiz-flag-img';
         flagImgEl.style.mixBlendMode = 'normal';
@@ -2402,34 +2402,6 @@ function loadQuizFlagRound() {
         flagImgEl.style.boxShadow = '';
         flagImgEl.style.filter = 'none';
     }
-    
-    flagImgEl.src = highResUrl;
-    
-    let choices = [currentFlagTarget];
-    while(choices.length < 4) {
-        let rand = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
-        if(!choices.some(c => c.name === rand.name)) choices.push(rand);
-    }
-    shuffle(choices);
-    
-    const container = document.getElementById('quizFlagOptions');
-    container.innerHTML = '';
-    choices.forEach(c => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerHTML = `${c.name} <span style="font-weight:normal; font-size:13px; opacity:0.85;">(${c.capital})</span>`;
-        btn.onclick = () => checkFlagAnswer(btn, c.name);
-        container.appendChild(btn);
-    });
-    const bestFlag = localStorage.getItem('highScore_flags') || 0;
-    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
-}
-    
-    flagImgEl.src = highResUrl;
-
-
-
-
     
     let choices = [currentFlagTarget];
     while(choices.length < 4) {
