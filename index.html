@@ -2394,7 +2394,7 @@ function loadQuizFlagRound() {
     const flagImgEl = document.getElementById('quizFlagImg');
     const flagContainerEl = document.querySelector('.quiz-flag-container');
     
-    /* 🌟 ОЖИВЛЕНИЕ РАМКИ И ТЕНИ НЕПАЛА В КВИЗАХ */
+    /* 🌟 СВЕРХТОЧНАЯ ЗАЩИТА, РАМКА И ТЕНЬ ДЛЯ НЕПАЛА В КВИЗАХ */
     if (currentFlagTarget.iso.toLowerCase() === 'np') {
         flagContainerEl.style.backgroundColor = 'transparent';
         flagImgEl.className = 'quiz-flag-img';
@@ -2402,10 +2402,10 @@ function loadQuizFlagRound() {
         flagImgEl.style.border = 'none';
         flagImgEl.style.borderWidth = '0px';
         flagImgEl.style.boxShadow = 'none';
-        // Применяем целые пиксели для Safari:
+        // Накатываем бритвенно-ровную контурную рамку 1px со сглаживанием:
         flagImgEl.style.filter = 'drop-shadow(0px 0px 1px rgba(0,0,0,0.35)) drop-shadow(0px 2px 4px rgba(0,0,0,0.15))';
-    }else {
-        // Швейцария, Австрия, Беларусь, Андорра получили стандартные обводки
+    } else {
+        // Все остальные флаги мира идут по вашему стандартному дефолту с прямоугольными рамками
         flagContainerEl.style.backgroundColor = '#ffffff';
         flagImgEl.className = 'quiz-flag-img';
         flagImgEl.style.mixBlendMode = 'normal';
