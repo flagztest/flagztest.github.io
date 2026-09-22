@@ -761,6 +761,19 @@ tr[data-name*="иркутск"] .flag-wrapper {
          letter-spacing: 0.3px !important;
      } 
 
+     /* 🌟 ТОТАЛЬНОЕ УНИЧТОЖЕНИЕ ПРЯМОУГОЛЬНОЙ РАМКИ НЕПАЛА В КВИЗЕ НА МОБИЛЬНЫХ */
+     .quiz-flag-img[src*="NP.svg"], 
+     .quiz-flag-img[src*="np.svg"], 
+     .quiz-flag-img[alt*="Непал"] {
+         border: none !important;
+         border-width: 0px !important;
+         box-shadow: none !important;
+         background-color: transparent !important;
+         /* Рисуем рамку и тень СТРОГО по форме треугольников: */
+         filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.35)) 
+                 drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.15)) !important;
+     }
+
 } /* 🌟 ГЛАВНАЯ СКОБКА: Намертво и правильно закрывает весь мобильный режим @media */
 
 /* 🍏 МГНОВЕННЫЙ CSS-ЩИТ ОТ ПРОСВЕЧИВАНИЯ САЙТА ПРИ ПОВОРОТЕ (0 МИЛЛИСЕКУНД)
@@ -2394,25 +2407,16 @@ function loadQuizFlagRound() {
     const flagImgEl = document.getElementById('quizFlagImg');
     const flagContainerEl = document.querySelector('.quiz-flag-container');
     
-    /* 🌟 СВЕРХТОЧНАЯ ЗАЩИТА, РАМКА И ТЕНЬ ДЛЯ НЕПАЛА В КВИЗАХ */
+    /* 🌟 СВЕРХТОЧНАЯ ЗАЩИТА НЕПАЛА ОТ БЕЛОГО ФОНА В КВИЗЕ */
     if (currentFlagTarget.iso.toLowerCase() === 'np') {
         flagContainerEl.style.backgroundColor = 'transparent';
         flagImgEl.className = 'quiz-flag-img';
         flagImgEl.style.mixBlendMode = 'multiply';
-        flagImgEl.style.border = 'none';
-        flagImgEl.style.borderWidth = '0px';
-        flagImgEl.style.boxShadow = 'none';
-        // Накатываем бритвенно-ровную контурную рамку 1px со сглаживанием:
-        flagImgEl.style.filter = 'drop-shadow(0px 0px 1px rgba(0,0,0,0.35)) drop-shadow(0px 2px 4px rgba(0,0,0,0.15))';
     } else {
-        // Все остальные флаги мира идут по вашему стандартному дефолту с прямоугольными рамками
+        // Стандартный режим для всех остальных прямоугольных флагов мира
         flagContainerEl.style.backgroundColor = '#ffffff';
         flagImgEl.className = 'quiz-flag-img';
         flagImgEl.style.mixBlendMode = 'normal';
-        flagImgEl.style.border = '';
-        flagImgEl.style.borderWidth = '';
-        flagImgEl.style.boxShadow = '';
-        flagImgEl.style.filter = 'none';
     }
     
     // 🌟 ВОЗВРАЩАЕМ ПРОПАВШУЮ МАГИЮ ГРАФИКИ:
