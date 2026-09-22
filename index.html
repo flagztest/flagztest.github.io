@@ -2407,16 +2407,29 @@ function loadQuizFlagRound() {
     const flagImgEl = document.getElementById('quizFlagImg');
     const flagContainerEl = document.querySelector('.quiz-flag-container');
     
-    /* 🌟 СВЕРХТОЧНАЯ ЗАЩИТА НЕПАЛА ОТ БЕЛОГО ФОНА В КВИЗЕ */
+    /* 🌟 ЖЕЛЕЗНАЯ JS-ЗАЩИТА НЕПАЛА ОТ ПРЯМОУГОЛЬНЫХ РАМОК И ТЕНЕЙ */
     if (currentFlagTarget.iso.toLowerCase() === 'np') {
         flagContainerEl.style.backgroundColor = 'transparent';
+        flagContainerEl.style.boxShadow = 'none';
+        flagContainerEl.style.border = 'none';
+        
         flagImgEl.className = 'quiz-flag-img';
         flagImgEl.style.mixBlendMode = 'multiply';
+        flagImgEl.style.border = 'none';
+        flagImgEl.style.boxShadow = 'none';
+        // Насильно обводим только треугольники прямо через инлайн-стиль:
+        flagImgEl.style.filter = 'drop-shadow(0px 0px 1px rgba(0,0,0,0.35)) drop-shadow(0px 2px 4px rgba(0,0,0,0.15))';
     } else {
-        // Стандартный режим для всех остальных прямоугольных флагов мира
+        // Стандартный режим с рамками и тенями для всех обычных стран мира
         flagContainerEl.style.backgroundColor = '#ffffff';
+        flagContainerEl.style.boxShadow = ''; 
+        flagContainerEl.style.border = '';
+        
         flagImgEl.className = 'quiz-flag-img';
         flagImgEl.style.mixBlendMode = 'normal';
+        flagImgEl.style.border = '';
+        flagImgEl.style.boxShadow = '';
+        flagImgEl.style.filter = 'none';
     }
     
     // 🌟 ВОЗВРАЩАЕМ ПРОПАВШУЮ МАГИЮ ГРАФИКИ:
