@@ -267,15 +267,22 @@
             height: 60px;
             width: 120px;
         }
-        .flag-img {
-            max-height: 100%;
-            max-width: 100%;
-            object-fit: contain;
-            border-radius: 2px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-            border: 1px solid rgba(0,0,0,0.08);
-            box-sizing: border-box;
-        }
+/* 🌟 ОБНОВЛЕННЫЙ СТИЛЬ: Тень и рамка по контуру ткани для ВСЕХ флагов мира */
+.flag-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    border-radius: 2px;
+    box-sizing: border-box;
+    
+    /* НАМЕРТВО СТИРАЕМ СТАРЫЕ СЛУЖЕБНЫЕ КОНТУРЫ: */
+    border: none !important;
+    box-shadow: none !important;
+    
+    /* ВКЛЮЧАЕМ УНИВЕРСАЛЬНЫЙ СГЛАЖЕННЫЙ ФИЛЬТР: */
+    filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.35)) 
+            drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.15)) !important;
+}
         
 /* 🌟 ЧЕТКИЙ КОНТУР И ОБЪЕМНАЯ ТЕНЬ ДЛЯ НЕПАЛА */
 .flag-img[src*="/NP.svg"], .flag-img[src*="np.svg"], .flag-img[alt*="Непал"] {
@@ -571,12 +578,15 @@
            height: 100% !important;        
            width: auto !important;         
            object-fit: cover !important;
-           border-radius: 2px !important;
-           box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
-           border: 1px solid rgba(0,0,0,0.08) !important;
-           box-sizing: border-box !important;
            margin-left: 0px !important;
            margin-right: 0px !important;
+           box-sizing: border-box !important;
+           
+           /* Зачищаем мобильные контуры, переводя на drop-shadow: */
+           border: none !important;
+           box-shadow: none !important;
+           filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.35)) 
+                   drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.15)) !important;
      }
 
      /* 🌟 НАШ ПЕРСОНАЛЬНЫЙ ХАК ДЛЯ КАТАРА: */
@@ -611,16 +621,6 @@
     filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important;
 }
 
-/* 🌟 ЧЕТКИЙ КОНТУР И ОБЪЕМНАЯ ТЕНЬ ДЛЯ ИРКУТСКА */
-.flag-img[src*="Irkutsk"], .flag-img[alt*="Иркутск"] {
-    background-color: transparent !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    /* Даем Иркутску точно такой же идеальный баланс рамки и объема */
-    filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.35)) 
-            drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.15)) !important;
-}
 
 
 /* Полностью очищаем фон ячеек-контейнеров для всей четверки */
@@ -653,16 +653,6 @@ tr[data-name*="иркутск"] .flag-wrapper {
          color: #495057 !important;    /* Тот самый красивый темный графит, как у кнопок */
      }
 
-           /* 🌟 ИЗОЛИРОВАННЫЙ МОБИЛЬНЫЙ ЩИТ ДЛЯ НЕПАЛА (В базе и в квизе): */
-     tr[data-name*="непал"] .flag-wrapper, 
-     tr[data-name*="непал"] .flag-img,
-     .quiz-flag-img[alt*="Непал"], .quiz-flag-img[src*="NP.svg"], .quiz-flag-img[src*="np.svg"] {
-           mix-blend-mode: multiply !important; 
-           border: none !important;
-           border-width: 0px !important;
-           border-style: none !important;
-           box-shadow: none !important;
-     }
 
      /* КВИЗЫ: Положение на мобильном */
      .view-section:not(#dbView) {
@@ -681,10 +671,22 @@ tr[data-name*="иркутск"] .flag-wrapper {
          margin-top: 5px !important;
          background: transparent !important;
      }
-     .quiz-flag-img {
-         height: 100px !important;        
-         width: auto !important;          
-     }
+.quiz-flag-img {
+    height: 120px;                
+    width: auto;                  
+    object-fit: contain;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #ffffff;    
+    
+    /* Стираем прямоугольные рамки на ПК: */
+    border: none !important;
+    box-shadow: none !important;
+    
+    /* Заменяем на умный drop-shadow: */
+    filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.35)) 
+            drop-shadow(0px 3px 6px rgba(0,0,0,0.15)) !important;
+}
 
      .option-btn {
          padding: 10px 15px !important;
