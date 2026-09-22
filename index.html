@@ -277,16 +277,17 @@
             box-sizing: border-box;
         }
         
-/* 🌟 ИДЕАЛЬНО ПЛОСКИЙ КОНТУР И МЯГКАЯ ТЕНЬ ДЛЯ НЕПАЛА */
+/* 🌟 ЧЕТКИЙ КОНТУР И ОБЪЕМНАЯ ТЕНЬ ДЛЯ НЕПАЛА */
 .flag-img[src*="/NP.svg"], .flag-img[src*="np.svg"], .flag-img[alt*="Непал"] {
     mix-blend-mode: multiply !important;
     border: none !important;
     box-shadow: none !important;
     background: transparent !important;
-    /* Оставляем всего два сглаженных drop-shadow: 1-й делает тонкую обводку, 2-й — аккуратную тень */
-    filter: drop-shadow(0px 0px 0.5px rgba(0,0,0,0.25)) 
-            drop-shadow(0px 1px 2px rgba(0,0,0,0.15)) !important;
+    /* 1-й слой делает четкий ровный контур вокруг треугольников, 2-й — мягкую тень под флагом */
+    filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.35)) 
+            drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.15)) !important;
 }
+
        
         tr.hidden { display: none; }
         .count-badge {
@@ -610,15 +611,15 @@
     filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important;
 }
 
-/* 🌟 ИДЕАЛЬНО РОЙНЫЙ КОНТУР И ТЕНЬ ДЛЯ ИРКУТСКА */
+/* 🌟 ЧЕТКИЙ КОНТУР И ОБЪЕМНАЯ ТЕНЬ ДЛЯ ИРКУТСКА */
 .flag-img[src*="Irkutsk"], .flag-img[alt*="Иркутск"] {
     background-color: transparent !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    /* Избавляемся от 5 тяжелых слоев, заменяя их на чистый бритвенный контур + мягкий объем флага */
-    filter: drop-shadow(0px 0px 0.5px rgba(0,0,0,0.25)) 
-            drop-shadow(0px 1px 2px rgba(0,0,0,0.15)) !important;
+    /* Даем Иркутску точно такой же идеальный баланс рамки и объема */
+    filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.35)) 
+            drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.15)) !important;
 }
 
 
@@ -2393,7 +2394,7 @@ function loadQuizFlagRound() {
     const flagImgEl = document.getElementById('quizFlagImg');
     const flagContainerEl = document.querySelector('.quiz-flag-container');
     
-    /* 🌟 СГЛАЖЕННАЯ СВЕРХТОЧНАЯ ЗАЩИТА ДЛЯ НЕПАЛА В КВИЗАХ */
+    /* 🌟 ОЖИВЛЕНИЕ РАМКИ И ТЕНИ НЕПАЛА В КВИЗАХ */
     if (currentFlagTarget.iso.toLowerCase() === 'np') {
         flagContainerEl.style.backgroundColor = 'transparent';
         flagImgEl.className = 'quiz-flag-img';
@@ -2401,8 +2402,8 @@ function loadQuizFlagRound() {
         flagImgEl.style.border = 'none';
         flagImgEl.style.borderWidth = '0px';
         flagImgEl.style.boxShadow = 'none';
-        // Накатываем чистый сглаженный контур и мягкую тень:
-        flagImgEl.style.filter = 'drop-shadow(0px 0px 0.5px rgba(0,0,0,0.25)) drop-shadow(0px 1px 3px rgba(0,0,0,0.15))';
+        // Применяем целые пиксели для Safari:
+        flagImgEl.style.filter = 'drop-shadow(0px 0px 1px rgba(0,0,0,0.35)) drop-shadow(0px 2px 4px rgba(0,0,0,0.15))';
     }else {
         // Швейцария, Австрия, Беларусь, Андорра получили стандартные обводки
         flagContainerEl.style.backgroundColor = '#ffffff';
