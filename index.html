@@ -277,13 +277,17 @@
             box-sizing: border-box;
         }
         
-      .flag-img[src*="/CH.svg"], 
-        .flag-img[src*="Austria"], 
-        .flag-img[src*="Andorra"], 
-        .flag-img[src*="Belarus"] {
-            border: none !important;
-            box-shadow: none !important;
-        }
+ /* 🌟 ИСПРАВЛЕННЫЙ МОБИЛЬНЫЙ БЛОК: Игнорирует регистр букв и делает тень квадратной */
+.flag-img[src*="ch.svg" i], 
+.flag-img[src*="switzerland" i],
+.flag-img[src*="austria" i], 
+.flag-img[src*="andorra" i], 
+.flag-img[src*="belarus" i] {
+    border: none !important; /* Убираем рамки */
+    box-shadow: none !important; /* Намертво убираем прямоугольные тени-кирпичи */
+    /* Включаем идеальную тень строго по форме флага (для Швейцарии она станет строго квадратной!) */
+    filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important; 
+}
         /* ВЫНЕСЛИ НЕПАЛ В ОТДЕЛЬНОЕ НЕУБИВАЕМОЕ ПРАВИЛО: */
         .flag-img[src*="/NP.svg"], .flag-img[src*="np.svg"], .flag-img[alt*="Непал"] {
             mix-blend-mode: multiply !important;
@@ -339,15 +343,7 @@
             box-sizing: border-box;
             background-color: #ffffff;    /* Защитный слой для белых элементов флагов */
         }
-
-
-        
-        /* Защита Швейцарии от рамок (Ватикан отсюда убрали, чтобы вернуть ему контур) */
-        .quiz-flag-img[src*="/CH.svg"] {
-            border: none !important;
-            box-shadow: none !important;
-        }
-
+     
         /* Персональная очистка Непала для квизов на ПК */
         .quiz-flag-img[src*="/NP.svg"], .quiz-flag-img[src*="np.svg"] {
             border: none !important;
@@ -2398,25 +2394,39 @@ function loadQuizFlagRound() {
     const flagImgEl = document.getElementById('quizFlagImg');
     const flagContainerEl = document.querySelector('.quiz-flag-container');
     
-    /* 🌟 НАША ИСПРАВЛЕННАЯ СВЕРХТОЧНАЯ ЗАЩИТА НЕПАЛА: */
+    /* 🌟 НАЧАЛО ВСТАВКИ: СВЕРХТОЧНАЯ РАЗДЕЛЬНАЯ ЗАЩИТА В КВИЗАХ НА СМАРТФОНАХ */
+    const flagUrlLower = highResUrl.toLowerCase();
+    
     if (currentFlagTarget.iso.toLowerCase() === 'np') {
+        // 1. Для Непала оставляем multiply, чтобы растворить белый зазор
         flagContainerEl.style.backgroundColor = 'transparent';
-        flagImgEl.className = 'quiz-flag-img'; /* МАСШТАБ ВОЗВРАЩАЕМ: Теперь он не взорвет экран! */
-        flagImgEl.style.mixBlendMode = 'multiply'; /* Стирает белую коробку Википедии */
-        
-        /* ЮВЕЛИРНО УДАЛЯЕМ ЖЕСТКИЕ СЕРЫЕ КОНТУРЫ И ТЕНИ: */
+        flagImgEl.className = 'quiz-flag-img';
+        flagImgEl.style.mixBlendMode = 'multiply';
         flagImgEl.style.border = 'none';
         flagImgEl.style.borderWidth = '0px';
         flagImgEl.style.boxShadow = 'none';
+        flagImgEl.style.filter = 'none';
+    } else if (flagUrlLower.includes('ch.svg') || flagUrlLower.includes('switzerland') || 
+               flagUrlLower.includes('austria') || flagUrlLower.includes('belarus') || 
+               flagUrlLower.includes('andorra')) {
+        
+        // 2. ДЛЯ ШВЕЙЦАРИИ И СТРАН-ИСКЛЮЧЕНИЙ: сочные цвета и умная тень по форме ткани флага
+        flagContainerEl.style.backgroundColor = 'transparent';
+        flagImgEl.className = 'quiz-flag-img';
+        flagImgEl.style.mixBlendMode = 'normal'; // Яркие цвета без затемнения
+        flagImgEl.style.border = 'none';
+        flagImgEl.style.borderWidth = '0px';
+        flagImgEl.style.boxShadow = 'none'; // Убираем вытянутый кирпич тени
+        flagImgEl.style.filter = 'drop-shadow(0px 2px 4px rgba(0,0,0,0.15))'; // Тень строго по контуру
     } else {
+        // 3. Стандартный режим для всех остальных классических флагов мира
         flagContainerEl.style.backgroundColor = '#ffffff';
         flagImgEl.className = 'quiz-flag-img';
         flagImgEl.style.mixBlendMode = 'normal';
-        
-        /* СБРАСЫВАЕМ СТИЛИ В ДЕФОЛТ ДЛЯ ОСТАЛЬНЫХ СТРАН МИРА (ЯПОНИЯ, ВАТИКАН): */
         flagImgEl.style.border = '';
         flagImgEl.style.borderWidth = '';
         flagImgEl.style.boxShadow = '';
+        flagImgEl.style.filter = 'none';
     }
     
     flagImgEl.src = highResUrl;
