@@ -2403,6 +2403,9 @@ function loadQuizFlagRound() {
         flagImgEl.style.filter = 'none';
     }
     
+    // 🌟 ВОЗВРАЩАЕМ ПРОПАВШУЮ МАГИЮ ГРАФИКИ:
+    flagImgEl.src = highResUrl;
+    
     let choices = [currentFlagTarget];
     while(choices.length < 4) {
         let rand = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
@@ -2422,6 +2425,7 @@ function loadQuizFlagRound() {
     const bestFlag = localStorage.getItem('highScore_flags') || 0;
     document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
 }
+
 function checkFlagAnswer(selectedBtn, chosenName) {
     document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => b.disabled = true);
     
