@@ -277,13 +277,19 @@
             box-sizing: border-box;
         }
         
-        /* ВЫНЕСЛИ НЕПАЛ В ОТДЕЛЬНОЕ НЕУБИВАЕМОЕ ПРАВИЛО: */
-        .flag-img[src*="/NP.svg"], .flag-img[src*="np.svg"], .flag-img[alt*="Непал"] {
-            mix-blend-mode: multiply !important;
-            border: none !important;
-            box-shadow: none !important;
-            background: transparent !important;
-        }
+/* 🌟 УМНЫЙ КОНТУР + ТЕНЬ ДЛЯ НЕПАЛА (В таблице) */
+.flag-img[src*="/NP.svg"], .flag-img[src*="np.svg"], .flag-img[alt*="Непал"] {
+    mix-blend-mode: multiply !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    /* 1-4: Серая рамка по контуру треугольников, 5: Мягкая объемная тень ткани флага */
+    filter: drop-shadow(1px 0px 0px rgba(0,0,0,0.08)) 
+            drop-shadow(-1px 0px 0px rgba(0,0,0,0.08)) 
+            drop-shadow(0px 1px 0px rgba(0,0,0,0.08)) 
+            drop-shadow(0px -1px 0px rgba(0,0,0,0.08))
+            drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important;
+}
 
         
         tr.hidden { display: none; }
@@ -596,19 +602,31 @@
     border: none !important;
 }
 
-/* 🌟 2. ДЛЯ ИРКУТСКА, МУРМАНСКА И ВЛАДИКАВКАЗА: убираем белые рамки, 
-   а тень пускаем строго по контуру ткани через drop-shadow (без белых полей) */
+/* 🌟 2А. ДЛЯ МУРМАНСКА И ВЛАДИКАВКАЗА: оставляем только умную тень по контуру */
 .flag-img[src*="Murmansk"],
 .flag-img[alt*="Мурманск"],
 .flag-img[src*="North_Ossetia"],
-.flag-img[alt*="Владикавказ"],
+.flag-img[alt*="Владикавказ"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important;
+}
+
+/* 🌟 2Б. ДЛЯ ИРКУТСКА: включаем И контурную серую рамку, И мягкую тень вместе */
 .flag-img[src*="Irkutsk"],
 .flag-img[alt*="Иркутск"] {
     background-color: transparent !important;
     background: transparent !important;
     border: none !important;
-    box-shadow: none !important; /* Гасим старую прямоугольную тень, которая создавала белый фон */
-    filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important; /* Умная тень по контуру флага */
+    box-shadow: none !important;
+    /* 1-4 слои создают серую рамку со всех сторон, 5 слой — объемную тень ткани */
+    filter: drop-shadow(1px 0px 0px rgba(0,0,0,0.08)) 
+            drop-shadow(-1px 0px 0px rgba(0,0,0,0.08)) 
+            drop-shadow(0px 1px 0px rgba(0,0,0,0.08)) 
+            drop-shadow(0px -1px 0px rgba(0,0,0,0.08))
+            drop-shadow(0px 1px 3px rgba(0,0,0,0.15)) !important;
 }
 
 /* Полностью очищаем фон ячеек-контейнеров для всей четверки */
@@ -2382,7 +2400,7 @@ function loadQuizFlagRound() {
     const flagImgEl = document.getElementById('quizFlagImg');
     const flagContainerEl = document.querySelector('.quiz-flag-container');
     
-    /* 🌟 СВЕРХТОЧНАЯ ЗАЩИТА ТОЛЬКО ДЛЯ НЕПАЛА */
+    /* 🌟 СВЕРХТОЧНАЯ ЗАЩИТА, РАМКА И ТЕНЬ ДЛЯ НЕПАЛА В КВИЗАХ */
     if (currentFlagTarget.iso.toLowerCase() === 'np') {
         flagContainerEl.style.backgroundColor = 'transparent';
         flagImgEl.className = 'quiz-flag-img';
@@ -2390,8 +2408,9 @@ function loadQuizFlagRound() {
         flagImgEl.style.border = 'none';
         flagImgEl.style.borderWidth = '0px';
         flagImgEl.style.boxShadow = 'none';
-        flagImgEl.style.filter = 'none';
-    } else {
+        // Накатываем рамку со всех сторон + тень в одну строчку через пробелы:
+        flagImgEl.style.filter = 'drop-shadow(1px 0px 0px rgba(0,0,0,0.08)) drop-shadow(-1px 0px 0px rgba(0,0,0,0.08)) drop-shadow(0px 1px 0px rgba(0,0,0,0.08)) drop-shadow(0px -1px 0px rgba(0,0,0,0.08)) drop-shadow(0px 2px 4px rgba(0,0,0,0.15))';
+    }else {
         // Швейцария, Австрия, Беларусь, Андорра получили стандартные обводки
         flagContainerEl.style.backgroundColor = '#ffffff';
         flagImgEl.className = 'quiz-flag-img';
