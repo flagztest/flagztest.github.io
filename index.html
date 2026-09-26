@@ -2705,26 +2705,25 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (С ПОДДЕРЖКОЙ МОНАКО) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
     
-    // Список столиц, чьи имена намертво совпадают с названиями их государств
-    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург'];
+    // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако'];
     
     if (strictCities.includes(capitalName.toLowerCase().trim())) {
-        // Если это Гватемала, насильно заставляем карты искать Гватемалу как город в стране Гватемала
+        // Насильно отправляем карты в городскую черту, минуя масштаб границ регионов
         searchQuery = `${capitalName} city, ${countryName}`;
     } else {
-        // Для всех остальных стран пишем связку "Город, Страна", чтобы не путалось с мелкими деревнями
+        // Дефолтный режим для всех стандартных столиц мира
         searchQuery = `${capitalName}, ${countryName}`;
     }
     
-    // Генерируем идеальную ссылку и открываем её в новой чистой вкладке Safari
+    // Открываем карты в Safari / Chrome в новой вкладке
     const finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     window.open(finalUrl, '_blank');
 }
-
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
 function generateRussiaSubjectsTables() {
