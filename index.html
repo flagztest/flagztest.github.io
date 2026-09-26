@@ -2527,6 +2527,11 @@ function loadQuizCapitalRound() {
     }
     
     document.getElementById('nextCapitalBtn').style.display = 'none';
+    const questionEl = document.getElementById('quizCapitalQuestionTarget');
+    if (questionEl) {
+        questionEl.style.textDecoration = 'none';
+        questionEl.onclick = null;
+    }
     currentCapTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
     document.getElementById('quizCapitalQuestionTarget').textContent = currentCapTarget.name;
     
@@ -2550,7 +2555,8 @@ function loadQuizCapitalRound() {
     document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
 }
 function checkCapitalAnswer(selectedBtn, chosenCapital) {
-    document.querySelectorAll('#quizCapitalOptions .option-btn').forEach(b => b.disabled = true);
+    const options = document.querySelectorAll('#quizCapitalOptions .option-btn');
+    options.forEach(b => b.disabled = true);
     
     let isCorrect = (chosenCapital === currentCapTarget.capital);
     
@@ -2559,10 +2565,26 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         capScore++;
     } else {
         selectedBtn.classList.add('wrong');
-        document.querySelectorAll('#quizCapitalOptions .option-btn').forEach(b => {
+        options.forEach(b => {
             if(b.textContent === currentCapTarget.capital) b.classList.add('correct');
         });
     }
+
+    // 🌟 ОЖИВЛЯЕМ ВОПРОС (СТРАНУ): делаем кликабельной после ответа
+    const questionEl = document.getElementById('quizCapitalQuestionTarget');
+    questionEl.style.textDecoration = 'underline';
+    questionEl.style.cursor = 'pointer';
+    questionEl.onclick = () => {
+        window.open(`https://google.com/maps/search/?api=1&query=${encodeURIComponent(currentCapTarget.name)}`, '_blank');
+    };
+
+    // 🌟 ОЖИВЛЯЕМ ВАРИАНТЫ (СТОЛИЦЫ): привязываем openSmartMap к каждой кнопке
+    options.forEach(b => {
+        b.style.cursor = 'pointer';
+        // Находим объект страны для этого конкретного города-кнопки
+        const matchedCountry = allCountriesList.find(c => c.capital === b.textContent) || currentCapTarget;
+        b.onclick = () => openSmartMap(b.textContent, matchedCountry.name);
+    });
     
     let bestCap = localStorage.getItem('highScore_capitals') || 0;
     if (capScore > parseInt(bestCap)) {
@@ -2570,13 +2592,12 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         bestCap = capScore;
     }
     
-    // Показываем финальный счёт, на котором споткнулись
     document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
     
     const nextBtn = document.getElementById('nextCapitalBtn');
     if (!isCorrect) {
         nextBtn.textContent = 'Начать заново';
-        capRound = 1; // Готовим сброс в 1 на следующий раунд
+        capRound = 1;
     } else {
         nextBtn.textContent = 'Следующий вопрос';
         capRound++;
@@ -2592,6 +2613,11 @@ function loadQuizCountryRound() {
     }
     
     document.getElementById('nextCountryBtn').style.display = 'none';
+    const questionEl = document.getElementById('quizCountryQuestionTarget');
+    if (questionEl) {
+        questionEl.style.textDecoration = 'none';
+        questionEl.onclick = null;
+    }
     currentCountryTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
     document.getElementById('quizCountryQuestionTarget').textContent = currentCountryTarget.capital;
     
@@ -2615,7 +2641,8 @@ function loadQuizCountryRound() {
     document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
 }
 function checkCountryAnswer(selectedBtn, chosenName) {
-    document.querySelectorAll('#quizCountryOptions .option-btn').forEach(b => b.disabled = true);
+    const options = document.querySelectorAll('#quizCountryOptions .option-btn');
+    options.forEach(b => b.disabled = true);
     
     let isCorrect = (chosenName === currentCountryTarget.name);
     
@@ -2624,10 +2651,26 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         countryScore++;
     } else {
         selectedBtn.classList.add('wrong');
-        document.querySelectorAll('#quizCountryOptions .option-btn').forEach(b => {
+        options.forEach(b => {
             if(b.textContent === currentCountryTarget.name) b.classList.add('correct');
         });
     }
+
+    // 🌟 ОЖИВЛЯЕМ ВОПРОС (СТОЛИЦУ): Клик по тексту ведет на УМНЫЕ карты городов-тезок
+    const questionEl = document.getElementById('quizCountryQuestionTarget');
+    questionEl.style.textDecoration = 'underline';
+    questionEl.style.cursor = 'pointer';
+    questionEl.onclick = () => {
+        openSmartMap(currentCountryTarget.capital, currentCountryTarget.name);
+    };
+
+    // 🌟 ОЖИВЛЯЕМ ВАРИАНТЫ (СТРАНЫ): Клик по заблокированным кнопкам ведет на карты стран
+    options.forEach(b => {
+        b.style.cursor = 'pointer';
+        b.onclick = () => {
+            window.open(`https://google.com/maps/search/?api=1&query=${encodeURIComponent(b.textContent)}`, '_blank');
+        };
+    });
     
     let bestCountry = localStorage.getItem('highScore_countries') || 0;
     if (countryScore > parseInt(bestCountry)) {
@@ -2635,20 +2678,18 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         bestCountry = countryScore;
     }
     
-    // Показываем финальный счёт, на котором споткнулись
     document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
     
     const nextBtn = document.getElementById('nextCountryBtn');
     if (!isCorrect) {
         nextBtn.textContent = 'Начать заново';
-        countryRound = 1; // Готовим сброс в 1 на следующий раунд
+        countryRound = 1;
     } else {
         nextBtn.textContent = 'Следующий вопрос';
         countryRound++;
     }
     nextBtn.style.display = 'inline-block';
 }
-
 
 // 🌟 ПЕРЕМЕННАЯ ДЛЯ ПАМЯТИ СКРОЛЛА SAFARI
 let lastScrollPosition = 0;
