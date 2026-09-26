@@ -1947,15 +1947,14 @@ function createContinentBlock(continent, countries) {
                     </a>
                     ${subText}
                 </td>
-/* 🌟 ИСПРАВЛЕНО: Умный клик по столице, защищающий Гватемалу от путаницы со страной */
-<td>
-    <span onclick="openSmartMap('${c.capital}', '${c.name}')" 
-          style="color: inherit; text-decoration: none; cursor: pointer;">
-        ${c.capital}
-    </span> 
-</td>
+                <td>
+                    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
+                          style="color: inherit; text-decoration: none; cursor: pointer;">
+                        ${c.capital}
+                    </span> 
+                </td>
             </tr>`;
-    }); // 🌟 Убрали из цикла строки globalCounter++ и localCounter++
+    });
 
     block.innerHTML = `
         <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
@@ -1966,7 +1965,6 @@ function createContinentBlock(continent, countries) {
             <table>
                 <thead>
                     <tr>
-                        <!-- 🌟 Полностью удалили скрытый заголовок th class="col-num" -->
                         <th class="col-flag">Флаг</th>
                         <th>Страна</th>
                         <th>Столица</th>
