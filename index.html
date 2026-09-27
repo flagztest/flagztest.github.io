@@ -1946,13 +1946,26 @@ function createContinentBlock(continent, countries) {
                        <img class="flag-img" src="${flagSrc}" alt="${c.name}" loading="lazy" onclick="openFlagModal(this.src)">
                    </div>
                 </td>
+        // 🎯 СБРОС КЭША СЕССИИ: Генерируем уникальный живой ID времени прямо в момент клика по стране
+        const part1 = "https://www.";
+        const part2 = "google.com";
+        const part3 = "/maps/search/";
+        const dynamicMapsUrl = part1 + part2 + part3 + `?api=1&query=\${encodeURIComponent(mapQuery)}&hl=ru&cache_id=` + Date.now();
+
+        rowsHtml += `
+            <tr data-name="c.name.toLowerCase()" data-capital="{c.capital.toLowerCase()}">
+                <td class="col-flag">
+                   <div class="flag-wrapper">
+                       <img class="flag-img" src="flagSrc" alt="{c.name}" loading="lazy" onclick="openFlagModal(this.src)">
+                   </div>
+                </td>
                 <td>
-                    <a href="${"https://www." + "google.com" + "/maps/search/"}?api=1&query=${encodeURIComponent(mapQuery)}&hl=ru&cache_id=${Date.now()}" 
+                    <a href="\${dynamicMapsUrl}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
-                        <strong>${c.name}</strong>
+                        <strong>\${c.name}</strong>
                     </a>
-                    ${subText}
+                    \${subText}
                 </td>
                 <td>
                     <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
