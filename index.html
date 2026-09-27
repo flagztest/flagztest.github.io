@@ -2745,30 +2745,28 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (С ИСПРАВЛЕНИЕМ ДЛЯ ПРИДНЕСТРОВЬЯ) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (С ПОДДЕРЖКОЙ ПРИДНЕСТРОВЬЯ И МОНАКО) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
-    
-    // Переводим имя страны в нижний регистр для точной проверки
     const currentCountry = countryName.toLowerCase().trim();
     
-    // 🌟 ХАК ДЛЯ ПРИДНЕСТРОВЬЯ: Заставляем карты искать регион / долину реки, а не здание
     if (currentCountry === 'приднестровье') {
+        // Для Приднестровья разворачиваем масштаб карт на весь географический регион, а не на здание
         searchQuery = "Приднестровье регион";
     } else {
-        // Наш прошлый список столиц-тезок и городов-государств
+        // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
         const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако'];
         
         if (strictCities.includes(capitalName.toLowerCase().trim())) {
-            // Насильно отправляем карты в городскую черту
+            // Насильно отправляем карты в городскую черту, минуя границы стран
             searchQuery = `${capitalName} city, ${countryName}`;
         } else {
-            // Дефолтный режим для всех стандартных столиц мира
+            // Дефолтный режим "Город, Страна" для всех стандартных столиц мира
             searchQuery = `${capitalName}, ${countryName}`;
         }
     }
     
-    // Открываем карты в новой вкладке браузера
+    // Открываем Google Maps в новой чистой вкладке браузера
     const finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     window.open(finalUrl, '_blank');
 }
