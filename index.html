@@ -1939,14 +1939,13 @@ function createContinentBlock(continent, countries) {
                        <img class="flag-img" src="${flagSrc}" alt="${c.name}" loading="lazy" onclick="openFlagModal(this.src)">
                    </div>
                 </td>
-/* 🌟 ИСПРАВЛЕНО: Клик по названию страны тоже идет через SmartMap для защиты Приднестровья */
-<td>
-    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
-          style="color: inherit; text-decoration: none; cursor: pointer;">
-        <strong>${c.name}</strong>
-    </span>
-    ${subText}
-</td>
+                <td>
+                    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
+                          style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <strong>${c.name}</strong>
+                    </span>
+                    ${subText}
+                </td>
                 <td>
                     <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
                           style="color: inherit; text-decoration: none; cursor: pointer;">
