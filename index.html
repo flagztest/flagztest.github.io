@@ -2756,10 +2756,12 @@ function openSmartMap(capitalName, countryName) {
 
     if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
         // 🎯 СБОРКА АППАРАТНОЙ ССЫЛКИ ДЛЯ SAFARI: жестко фиксируем зум 11z ровно по центру города
-        const p1 = "https://www.google.com/maps/";
-        const p2 = "@46.8368,29.6277,11z"; // 11z — идеальный масштаб (видны Тирасполь, Бендеры и река)
+        const part1 = "https://www.google.com/maps/";
+        const part2 = "search/?api=1&query=46.8368,29.6277";
+        const part3 = "&center=46.8368,29.6277";
+        const part4 = "&zoom=11";
         
-        finalUrl = p1 + p2;
+        finalUrl = part1 + part2 + part3 + part4;
 
     } else {
         // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
