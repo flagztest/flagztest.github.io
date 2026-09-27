@@ -1932,6 +1932,13 @@ function createContinentBlock(continent, countries) {
     countries.forEach(c => {
         let flagSrc = getFlagUrl(c);
         const subText = c.note ? ` <span style="font-size:12px; color:#6c757d; font-weight:normal;">${c.note}</span>` : '';
+        
+        // 🎯 ТОЧЕЧНЫЙ ПЕРЕХВАТ: Подменяем поисковый запрос только для Приднестровья, чтобы показать границы
+        let mapQuery = c.name;
+        if (c.name.toLowerCase().trim() === 'приднестровье') {
+            mapQuery = "Административно-территориальные единицы левобережья Днестра";
+        }
+
         rowsHtml += `
             <tr data-name="${c.name.toLowerCase()}" data-capital="${c.capital.toLowerCase()}">
                 <td class="col-flag">
@@ -1940,10 +1947,11 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <span onclick="openSmartMap('REGION_MODE', '${c.name.replace(/'/g, "\\'")}')" 
-                          style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}" 
+                       target="_blank" 
+                       style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
-                    </span>
+                    </a>
                     ${subText}
                 </td>
                 <td>
@@ -2574,7 +2582,15 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
     questionEl.onclick = () => {
-        openSmartMap('REGION_MODE', currentCapTarget.name);
+        const p1 = "https://www.";
+        const p2 = "://google.com";
+        const baseMapsUrl = p1 + p2;
+
+        const finalQuery = currentCapTarget.name === 'Приднестровье' 
+            ? "Административно-территориальные единицы левобережья Днестра" 
+            : currentCapTarget.name;
+
+        window.open(baseMapsUrl + `?api=1&query=${encodeURIComponent(finalQuery)}`, '_blank');
     };
 
     // 🌟 ОЖИВЛЯЕМ ВАРИАНТЫ (СТОЛИЦЫ): привязываем openSmartMap к каждой кнопке
@@ -2745,15 +2761,12 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (БЕЗ ОБРЕЗКИ И СБОЕВ GOOGLE MAPS) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (СТАБИЛЬНЫЙ ВАРИАНТ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
-    const currentCountry = countryName.toLowerCase().trim();
     const currentCapital = capitalName.toLowerCase().trim();
     
-    let finalUrl = '';
-
-    // Конструктор базового пути Google Maps для обхода обрезки строк
+    // Кусочки ссылки для обхода автоматической обрезки текста
     const protocol = "https://";
     const subdomain = "www.";
     const domain = "google.com";
@@ -2761,37 +2774,19 @@ function openSmartMap(capitalName, countryName) {
     const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
     const baseMapsUrl = protocol + subdomain + domain + pathMaps + pathSearch;
 
-    // 🎯 ТОТАЛЬНО ИЗОЛИРОВАННЫЙ ПЕРЕХВАТ ПРИДНЕСТРОВЬЯ
-    if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
-        if (capitalName === 'REGION_MODE') {
-            // Клик по названию страны Приднестровье: открываем Левобережье на масштабе 9z
-            const geoParams = "?api=1&query=Административно-территориальные единицы левобережья Днестра";
-            finalUrl = baseMapsUrl + geoParams;
-        } else {
-            // Клик по столице Тирасполь: открываем стандартный городской режим
-            searchQuery = `${capitalName}, ${countryName}`;
-            finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
-        }
+    // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
+    
+    if (strictCities.includes(currentCapital)) {
+        // Насильно отправляем карты в городскую черту, минуя общие границы стран
+        searchQuery = `${capitalName} city, ${countryName}`;
     } else {
-        // 🌟 СТРОГАЯ ЗАЩИТА: Если по ошибке прилетел REGION_MODE для другой страны (например, Австрия)
-        if (capitalName === 'REGION_MODE') {
-            // Насильно переключаем поиск на имя самой страны, очищая технический маркер
-            searchQuery = countryName;
-        } else {
-            // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
-            const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
-            
-            if (strictCities.includes(currentCapital)) {
-                searchQuery = `${capitalName} city, ${countryName}`;
-            } else {
-                searchQuery = `${capitalName}, ${countryName}`;
-            }
-        }
-        
-        finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
+        // Дефолтный режим "Город, Страна" для всей остальной базы (включая Тирасполь)
+        searchQuery = `${capitalName}, ${countryName}`;
     }
     
-    // Открываем Google Maps в новой чистой вкладке браузера пользователя
+    // Открываем карты по идеально точному и защищённому URL-адресу
+    const finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
     window.open(finalUrl, '_blank');
 }
 
