@@ -2754,14 +2754,8 @@ function openSmartMap(capitalName, countryName) {
     // Единый URL для открытия в браузере
     let finalUrl = '';
 
-    if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
-        // 🎯 СБОРКА АППАРАТНОЙ ССЫЛКИ ДЛЯ SAFARI: жестко фиксируем зум 11z ровно по центру города
-        const part1 = "https://www.google.com/maps/";
-        const part2 = "search/?api=1&query=46.8368,29.6277";
-        const part3 = "&center=46.8368,29.6277";
-        const part4 = "&zoom=11";
-        
-        finalUrl = part1 + part2 + part3 + part4;
+if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
+    finalUrl = "https://www.google.com/maps/@47.4,29.5,8z";
 
     } else {
         // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
