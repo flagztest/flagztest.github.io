@@ -1939,12 +1939,11 @@ function createContinentBlock(continent, countries) {
                        <img class="flag-img" src="${flagSrc}" alt="${c.name}" loading="lazy" onclick="openFlagModal(this.src)">
                    </div>
                 </td>
-                <td>
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.name)}" 
-                       target="_blank" 
-                       style="color: inherit; text-decoration: none; cursor: pointer;">
+                               <td>
+                    <span onclick="openSmartMap('REGION_MODE', '${c.name.replace(/'/g, "\\'")}')" 
+                          style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
-                    </a>
+                    </span>
                     ${subText}
                 </td>
                 <td>
@@ -2575,7 +2574,7 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
     questionEl.onclick = () => {
-        window.open(`https://google.com/maps/search/?api=1&query=${encodeURIComponent(currentCapTarget.name)}`, '_blank');
+        openSmartMap('REGION_MODE', currentCapTarget.name);
     };
 
     // 🌟 ОЖИВЛЯЕМ ВАРИАНТЫ (СТОЛИЦЫ): привязываем openSmartMap к каждой кнопке
@@ -2746,23 +2745,42 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (С ПОДДЕРЖКОЙ МОНАКО) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (БЕЗ ОБРЕЗКИ И СБОЕВ GOOGLE MAPS) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
+    const currentCountry = countryName.toLowerCase().trim();
+    const currentCapital = capitalName.toLowerCase().trim();
     
-    // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
-    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
-    
-    if (strictCities.includes(capitalName.toLowerCase().trim())) {
-        // Насильно отправляем карты в городскую черту, минуя масштаб границ регионов
-        searchQuery = `${capitalName} city, ${countryName}`;
+    let finalUrl = '';
+
+    // 🎯 ТОЧЕЧНЫЙ ХАК ТОЛЬКО ДЛЯ СТРАНЫ ПРИДНЕСТРОВЬЕ
+    if (capitalName === 'REGION_MODE' && currentCountry === 'приднестровье') {
+        const protocol = "https://";
+        const subdomain = "www.";
+        const domain = "google.com";
+        const pathMaps = "/" + "m" + "a" + "p" + "s" + "/";
+        const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
+        
+        // Передаем координаты центра региона и фиксируем зум 9z, чтобы были видны границы и Тирасполь
+        const geoParams = "?api=1&query=46.8425,29.5352&zoom=9";
+        
+        finalUrl = protocol + subdomain + domain + pathMaps + pathSearch + geoParams;
     } else {
-        // Дефолтный режим для всех стандартных столиц мира
-        searchQuery = `${capitalName}, ${countryName}`;
+        // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+        const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
+        
+        if (strictCities.includes(currentCapital)) {
+            // Насильно отправляем карты в городскую черту, минуя общие границы стран
+            searchQuery = `${capitalName} city, ${countryName}`;
+        } else {
+            // Ваша дефолтная связка для всех стандартных столиц и городов (включая Тирасполь)
+            searchQuery = `${capitalName}, ${countryName}`;
+        }
+        
+        finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     }
     
-    // Открываем карты в Safari / Chrome в новой вкладке
-    const finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
+    // Открываем Google Maps в новой чистой вкладке браузера пользователя
     window.open(finalUrl, '_blank');
 }
 
