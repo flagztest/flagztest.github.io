@@ -324,17 +324,18 @@
             margin-bottom: 25px;
             background: transparent !important; /* Убираем фоновый прямоугольник сзади флага */
         }
-        .quiz-flag-img {
-            height: 120px;                /* Жестко фиксируем высоту на ПК для одинакового масштаба */
-            width: auto;                  /* Ширина пропорционально растянется сама по форме флага */
-            object-fit: contain;
-            border-radius: 4px;
-            /* Рамка и тень теперь обнимают СТРОГО саму ткань флага, а не пустой воздух! */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border: 1px solid rgba(0,0,0,0.1);
-            box-sizing: border-box;
-            background-color: #ffffff;    /* Защитный слой для белых элементов флагов */
-        }
+.quiz-flag-img {
+    height: 120px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    background-color: #ffffff;
+    opacity: 0;                             /* 🌟 Скрываем флаг по умолчанию при создании раунда */
+    transition: opacity 0.12s ease-in-out;  /* 🌟 Делаем появление нового флага плавным и дорогим */
+}
      
         /* Персональная очистка Непала для квизов на ПК */
         .quiz-flag-img[src*="/NP.svg"], .quiz-flag-img[src*="np.svg"] {
@@ -685,8 +686,10 @@ tr[data-name*="иркутск"] .flag-wrapper {
          background: transparent !important;
      }
      .quiz-flag-img {
-         height: 100px !important;        
+         height: 100% !important;        
          width: auto !important;          
+         opacity: 0;                             /* 🌟 Тоже прячем флаг на смартфонах */
+         transition: opacity 0.12s ease-in-out;  /* 🌟 Включаем плавное проявление на смартфонах */
      }
 
      .option-btn {
@@ -2403,7 +2406,7 @@ function shuffle(arr) {
 
 let flagScore = 0, flagRound = 1, currentFlagTarget;
 function loadQuizFlagRound() {
-    /* 🌟 ОБНУЛЯЕМ СЧЁТ СТРОГО ПРИ НАЖАТИИ «НАЧАТЬ ЗАНОВО» */
+    /* ОБНУЛЯЕМ СЧЁТ СТРОГО ПРИ НАЖАТИИ «НАЧАТЬ ЗАНОВО» */
     if (flagRound === 1) {
         flagScore = 0;
     }
@@ -2415,16 +2418,22 @@ function loadQuizFlagRound() {
     const flagImgEl = document.getElementById('quizFlagImg');
     const flagContainerEl = document.querySelector('.quiz-flag-container');
     
-    /* 🌟 ТОТАЛЬНАЯ JS-ЗАЧИСТКА ВСЕХ ВНЕШНИХ РАМОК И ПОДЛОЖЕК НЕПАЛА */
+    /* 🌟 МГНОВЕННО ГАСИМ КАРТИНКУ ПЕРЕД ЗАГРУЗКОЙ НОВОГО ФЛАГА */
+    flagImgEl.style.opacity = '0';
+    
+    /* 🌟 ОЖИВАЕМ КАРТИНКУ ТОЛЬКО ТОГДА, КОГДА ОНА НА 100% СКАЧАЛАСЬ ИЗ СЕТИ */
+    flagImgEl.onload = () => {
+        flagImgEl.style.opacity = '1';
+    };
+    
+    /* ТОТАЛЬНАЯ JS-ЗАЧИСТКА ВСЕХ ВНЕШНИХ РАМОК И ПОДЛОЖЕК НЕПАЛА */
     if (currentFlagTarget.iso.toLowerCase() === 'np') {
-        // 1. Полностью гасим фон и границы на контейнере картинки
         if (flagContainerEl) {
             flagContainerEl.style.setProperty('background-color', 'transparent', 'important');
             flagContainerEl.style.setProperty('background', 'transparent', 'important');
             flagContainerEl.style.setProperty('box-shadow', 'none', 'important');
             flagContainerEl.style.setProperty('border', 'none', 'important');
             
-            // Хак: Если у контейнера есть родительский элемент (внешняя карточка), гасим фон и у него
             if (flagContainerEl.parentElement) {
                 flagContainerEl.parentElement.style.setProperty('background-color', 'transparent', 'important');
                 flagContainerEl.parentElement.style.setProperty('background', 'transparent', 'important');
@@ -2433,17 +2442,13 @@ function loadQuizFlagRound() {
             }
         }
         
-        // 2. Гасим прямоугольные рамки на самой картинке флага
         flagImgEl.style.setProperty('border', 'none', 'important');
         flagImgEl.style.setProperty('box-shadow', 'none', 'important');
         flagImgEl.style.setProperty('background-color', 'transparent', 'important');
         flagImgEl.style.setProperty('background', 'transparent', 'important');
         flagImgEl.style.setProperty('mix-blend-mode', 'multiply', 'important');
-        
-        // 3. Ювелирно обводим только физический силуэт треугольников Непала
         flagImgEl.style.setProperty('filter', 'drop-shadow(0px 0px 1px rgba(0,0,0,0.35)) drop-shadow(0px 2px 4px rgba(0,0,0,0.15))', 'important');
     } else {
-        // Стандартный сплошной режим для всех остальных классических флагов мира
         if (flagContainerEl) {
             flagContainerEl.style.backgroundColor = '#ffffff';
             flagContainerEl.style.boxShadow = '';
@@ -2463,7 +2468,7 @@ function loadQuizFlagRound() {
         flagImgEl.style.filter = 'none';
     }
     
-    // 🌟 ВОЗВРАЩАЕМ ПРОПАВШУЮ МАГИЮ ГРАФИКИ:
+    // Запускаем асинхронное скачивание файла из Википедии
     flagImgEl.src = highResUrl;
     
     let choices = [currentFlagTarget];
