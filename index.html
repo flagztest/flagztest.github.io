@@ -1948,7 +1948,7 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <a href="https://google.com{encodeURIComponent(mapQuery)}" 
+                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
@@ -2762,14 +2762,12 @@ function openSmartMap(capitalName, countryName) {
     const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
     
     if (strictCities.includes(capitalName.toLowerCase().trim())) {
-        // Насильно отправляем карты в городскую черту, минуя масштаб границ регионов
         searchQuery = `${capitalName} city, ${countryName}`;
     } else {
-        // Дефолтный режим для всех стандартных столиц мира
         searchQuery = `${capitalName}, ${countryName}`;
     }
     
-    // Открываем карты в Safari / Chrome в новой вкладке
+    // Открываем карты в Safari / Chrome в новой вкладке через прямой поисковый интерфейс
     const finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     window.open(finalUrl, '_blank');
 }
