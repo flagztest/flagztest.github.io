@@ -1932,6 +1932,12 @@ function createContinentBlock(continent, countries) {
     countries.forEach(c => {
         let flagSrc = getFlagUrl(c);
         const subText = c.note ? ` <span style="font-size:12px; color:#6c757d; font-weight:normal;">${c.note}</span>` : '';
+        
+        // 🎯 ТОЧЕЧНЫЙ ПЕРЕХВАТ: Подменяем поисковый запрос только для Приднестровья, чтобы показать границы
+        let mapQuery = c.name;
+        if (c.name.toLowerCase().trim() === 'приднестровье') {
+            mapQuery = "Административно-территориальные единицы левобережья Днестра";
+        }
 
         rowsHtml += `
             <tr data-name="${c.name.toLowerCase()}" data-capital="${c.capital.toLowerCase()}">
@@ -1941,10 +1947,11 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <span onclick="openLiveCountryMap('${c.name.replace(/'/g, "\\'")}')" 
-                          style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}" 
+                       target="_blank" 
+                       style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
-                    </span>
+                    </a>
                     ${subText}
                 </td>
                 <td>
@@ -2757,14 +2764,12 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (С АППАРАТНЫМ СБРОСОМ КЭША И ЗУМА) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (СТАБИЛЬНЫЙ ВАРИАНТ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
-    const currentCountry = countryName.toLowerCase().trim();
     const currentCapital = capitalName.toLowerCase().trim();
     
-    let finalUrl = '';
-
+    // Кусочки ссылки для обхода автоматической обрезки текста
     const protocol = "https://";
     const subdomain = "www.";
     const domain = "google.com";
@@ -2772,38 +2777,20 @@ function openSmartMap(capitalName, countryName) {
     const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
     const baseMapsUrl = protocol + subdomain + domain + pathMaps + pathSearch;
 
-    // 🎯 ТОЧЕЧНЫЙ ПЕРЕХВАТ ДЛЯ КЛИКА ПО СТРАНЕ ПРИДНЕСТРОВЬЕ
-    if (capitalName === 'REGION_MODE' && currentCountry === 'приднестровье') {
-        const geoParams = "?api=1&query=Административно-территориальные единицы левобережья Днестра&hl=ru&source=flagzilla";
-        finalUrl = baseMapsUrl + geoParams;
+    // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
+    
+    if (strictCities.includes(currentCapital)) {
+        // Насильно отправляем карты в городскую черту, минуя общие границы стран
+        searchQuery = `${capitalName} city, ${countryName}`;
     } else {
-        const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
-        if (strictCities.includes(currentCapital)) {
-            searchQuery = `${capitalName} city, ${countryName}`;
-        } else {
-            searchQuery = `${capitalName}, ${countryName}`;
-        }
-        // Вливаем hl=ru для сброса зависшего зума прошлой сессии при кликах на столицы
-        finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}&hl=ru&source=flagzilla`;
+        // Дефолтный режим "Город, Страна" для всей остальной базы (включая Тирасполь)
+        searchQuery = `${capitalName}, ${countryName}`;
     }
     
+    // Открываем карты по идеально точному и защищённому URL-адресу
+    const finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
     window.open(finalUrl, '_blank');
-}
-/* 🌟 ЖИВОЙ СБРОС КЭША ДЛЯ СТРАН МИРА: обнуляет зум прошлой сессии при каждом тапе пальца */
-function openLiveCountryMap(countryName) {
-    let mapQuery = countryName;
-    if (countryName.toLowerCase().trim() === 'приднестровье') {
-        mapQuery = "Административно-территориальные единицы левобережья Днестра";
-    }
-
-    // Собираем ссылку по буквам, внедряя Date.now() прямо в момент клика
-    const p1 = "https://";
-    const p2 = "www.";
-    const p3 = "google.com";
-    const p4 = "/maps/search/";
-    
-    const liveUrl = p1 + p2 + p3 + p4 + "?api=1&query=" + encodeURIComponent(mapQuery) + "&hl=ru&cache_id=" + Date.now();
-    window.open(liveUrl, '_blank');
 }
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
