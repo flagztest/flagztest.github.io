@@ -2756,8 +2756,8 @@ function openSmartMap(capitalName, countryName) {
 
     if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
         // 🎯 КООРДИНАТНЫЙ ХАК: ставим булавку точно в центре города, исключая уход в поля или новостные сайты
-        const part1 = "https://google.com/maps/";
-        const part2 = "search/?api=1&query=46.8368,29.6277";
+        const part1 = "https://google.com/maps";
+        const part2 = "/search/?api=1&query=46.8368,29.6277";
         const part3 = "&zoom=12";
         
         finalUrl = part1 + part2 + part3;
