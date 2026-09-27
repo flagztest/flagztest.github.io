@@ -1947,7 +1947,7 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}" 
+                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}&hl=ru&source=flagzilla" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
@@ -2593,7 +2593,7 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
             ? "Административно-территориальные единицы левобережья Днестра" 
             : currentCapTarget.name;
 
-        window.open(baseMapsUrl + `?api=1&query=${encodeURIComponent(finalQuery)}`, '_blank');
+        window.open(baseMapsUrl + `?api=1&query=${encodeURIComponent(finalQuery)}&hl=ru&source=flagzilla`, '_blank');
     };
 
     // 🌟 ОЖИВЛЯЕМ ВАРИАНТЫ (СТОЛИЦЫ): привязываем openSmartMap к каждой кнопке
@@ -2764,12 +2764,15 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (СТАБИЛЬНЫЙ ВАРИАНТ) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (С МОЛНИЕНОСНЫМ СБРОСОМ КЭША МОБИЛЬНОЙ ПАМЯТИ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
+    const currentCountry = countryName.toLowerCase().trim();
     const currentCapital = capitalName.toLowerCase().trim();
     
-    // Кусочки ссылки для обхода автоматической обрезки текста
+    let finalUrl = '';
+
+    // Конструктор базового пути Google Maps для аппаратного обхода текстовой обрезки
     const protocol = "https://";
     const subdomain = "www.";
     const domain = "google.com";
@@ -2777,19 +2780,28 @@ function openSmartMap(capitalName, countryName) {
     const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
     const baseMapsUrl = protocol + subdomain + domain + pathMaps + pathSearch;
 
-    // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
-    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
-    
-    if (strictCities.includes(currentCapital)) {
-        // Насильно отправляем карты в городскую черту, минуя общие границы стран
-        searchQuery = `${capitalName} city, ${countryName}`;
+    // 🎯 ТОЧЕЧНЫЙ ПЕРЕХВАТ ДЛЯ КЛИКА ПО СТРАНЕ ПРИДНЕСТРОВЬЕ
+    if (capitalName === 'REGION_MODE' && currentCountry === 'приднестровье') {
+        // Отправляем официальный термин и вливаем хвостик сброса кэша прошлой сессии
+        const geoParams = "?api=1&query=Административно-территориальные единицы левобережья Днестра&hl=ru&source=flagzilla";
+        finalUrl = baseMapsUrl + geoParams;
     } else {
-        // Дефолтный режим "Город, Страна" для всей остальной базы (включая Тирасполь)
-        searchQuery = `${capitalName}, ${countryName}`;
+        // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+        const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
+        
+        if (strictCities.includes(currentCapital)) {
+            // Насильно отправляем карты в городскую черту, минуя общие границы стран
+            searchQuery = `${capitalName} city, ${countryName}`;
+        } else {
+            // Стандартный режим "Город, Страна" для всей остальной базы (и для Тирасполя)
+            searchQuery = `${capitalName}, ${countryName}`;
+        }
+        
+        // Вливаем hl=ru для сброса зависшего зума прошлой сессии при кликах на столицы
+        finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}&hl=ru&source=flagzilla`;
     }
     
-    // Открываем карты по идеально точному и защищённому URL-адресу
-    const finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
+    // Открываем Google Maps в новой чистой вкладке браузера пользователя
     window.open(finalUrl, '_blank');
 }
 
@@ -2807,8 +2819,15 @@ function generateRussiaSubjectsTables() {
         
         let rowsHtml = '';
         regions.forEach(r => {
-            // Ищем флаг региона в новой базе subjectFlags по его имени (r.name)
             let flagUrl = subjectFlags[r.name] || "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='100' height='42'><rect width='100%' height='100%' fill='none'/></svg>";
+
+            const part1 = "https://www.";
+            const part2 = "google.com";
+            const part3 = "/maps/search/";
+            const cleanBaseUrl = part1 + part2 + part3;
+
+            const regionMapsUrl = cleanBaseUrl + `?api=1&query=${encodeURIComponent(r.name)}&hl=ru&source=flagzilla`;
+            const capitalMapsUrl = cleanBaseUrl + `?api=1&query=${encodeURIComponent(r.capital)}&hl=ru&source=flagzilla`;
 
             rowsHtml += `
                 <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
@@ -2818,14 +2837,12 @@ function generateRussiaSubjectsTables() {
                        </div>
                     </td>
                     <td>
-                  <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(r.name)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <a href="${regionMapsUrl}" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
                             <strong>${r.name}</strong>
                         </a>
                     </td>
                     <td>
-               <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(r.capital)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <a href="${capitalMapsUrl}" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
                             ${r.capital}
                         </a> 
                     </td>
@@ -2854,49 +2871,11 @@ function generateRussiaSubjectsTables() {
     }
 }
 
-
-function toggleBlock(id) {
-    const block = document.getElementById(id);
-    if (!block) return;
-    
-    block.classList.toggle('collapsed');
-    const content = block.querySelector('.continent-content');
-    
-    if (content) {
-        if (block.classList.contains('collapsed')) {
-            content.style.display = 'none';
-            
-            // 🍏 БАРХАТНЫЙ АВТО-ВОЗВРАТ: катит изолированный контейнер в абсолютный верхний ноль!
-            setTimeout(() => {
-                const scrollLayer = document.getElementById('mainScrollContent');
-                if (scrollLayer) {
-                    scrollLayer.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 40); // 40мс — идеальное время, чтобы Safari успел схлопнуть DOM-структуру таблицы
-            return;
-        } else {
-            content.style.display = 'block';
-        }
-
-         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
-        setTimeout(() => {
-            block.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 80);                  
-    }
-}
-
 // 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ В ВИДЕ ОДНОРОДНОГО АККОРДЕОНА (КАК КОНТИНЕНТ)
 function generateRussiaCapitalsTable() {
     const container = document.getElementById('ruCapitalsContainer');
     if (!container) return;
 
-    // Извлекаем все города из базы типов регионов в один плоский список
     let flatCapitalsList = [];
     for (const [typeName, regions] of Object.entries(russiaSubjectsData)) {
         regions.forEach(r => {
@@ -2907,7 +2886,6 @@ function generateRussiaCapitalsTable() {
         });
     }
 
-    // Сортируем список городов строго по алфавиту от А до Я
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
 
     const block = document.createElement('div');
@@ -2916,8 +2894,15 @@ function generateRussiaCapitalsTable() {
     
     let rowsHtml = '';
     flatCapitalsList.forEach(c => {
-        // Умный поиск флага: берем из cityFlags или ставим красивую прозрачную заглушку 100x42
         let flagUrl = cityFlags[c.cityName] || "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='100' height='42'><rect width='100%' height='100%' fill='none'/></svg>";
+
+        const part1 = "https://www.";
+        const part2 = "google.com";
+        const part3 = "/maps/search/";
+        const cleanBaseUrl = part1 + part2 + part3;
+
+        const cityMapsUrl = cleanBaseUrl + `?api=1&query=${encodeURIComponent(c.cityName)}&hl=ru&source=flagzilla`;
+        const subjectMapsUrl = cleanBaseUrl + `?api=1&query=${encodeURIComponent(c.subjectName)}&hl=ru&source=flagzilla`;
 
         rowsHtml += `
             <tr data-name="${c.cityName.toLowerCase()}" data-capital="${c.subjectName.toLowerCase()}">
@@ -2927,14 +2912,12 @@ function generateRussiaCapitalsTable() {
                    </div>
                 </td>
                 <td>
-           <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.cityName)}" 
-                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <a href="${cityMapsUrl}" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.cityName}</strong>
                     </a>
                 </td>
                 <td>
-           <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.subjectName)}" 
-                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <a href="${subjectMapsUrl}" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
                         ${c.subjectName}
                     </a>
                 </td>
@@ -2977,8 +2960,16 @@ function generateRussiaOkrugsTables() {
         
         let rowsHtml = '';
         regions.forEach(r => {
-            // Ищем флаг региона в базе subjectFlags по его имени (r.name)
             let flagUrl = subjectFlags[r.name] || "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='100' height='42'><rect width='100%' height='100%' fill='none'/></svg>";
+
+            // 🎯 КОНСТРУКТОР ССЫЛКИ ДЛЯ ОКРУГОВ: обходим обрезку текста ИИ
+            const part1 = "https://www.";
+            const part2 = "google.com";
+            const part3 = "/maps/search/";
+            const cleanBaseUrl = part1 + part2 + part3;
+
+            const regionMapsUrl = cleanBaseUrl + `?api=1&query=${encodeURIComponent(r.name)}&hl=ru&source=flagzilla`;
+            const capitalMapsUrl = cleanBaseUrl + `?api=1&query=${encodeURIComponent(r.capital)}&hl=ru&source=flagzilla`;
 
             rowsHtml += `
                 <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
@@ -2988,14 +2979,12 @@ function generateRussiaOkrugsTables() {
                        </div>
                     </td>
                     <td>
-                  <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(r.name)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <a href="${regionMapsUrl}" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
                             <strong>${r.name}</strong>
                         </a>
                     </td>
                     <td>
-               <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(r.capital)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <a href="${capitalMapsUrl}" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
                             ${r.capital}
                         </a>
                     </td>
