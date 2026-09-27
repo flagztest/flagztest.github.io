@@ -1939,14 +1939,14 @@ function createContinentBlock(continent, countries) {
                        <img class="flag-img" src="${flagSrc}" alt="${c.name}" loading="lazy" onclick="openFlagModal(this.src)">
                    </div>
                 </td>
-                <td>
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.name)}" 
-                       target="_blank" 
-                       style="color: inherit; text-decoration: none; cursor: pointer;">
-                        <strong>${c.name}</strong>
-                    </a>
-                    ${subText}
-                </td>
+/* 🌟 ИСПРАВЛЕНО: Клик по названию страны тоже идет через SmartMap для защиты Приднестровья */
+<td>
+    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
+          style="color: inherit; text-decoration: none; cursor: pointer;">
+        <strong>${c.name}</strong>
+    </span>
+    ${subText}
+</td>
                 <td>
                     <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
                           style="color: inherit; text-decoration: none; cursor: pointer;">
@@ -2746,22 +2746,30 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (С ПОДДЕРЖКОЙ МОНАКО) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (С ИСПРАВЛЕНИЕМ ДЛЯ ПРИДНЕСТРОВЬЯ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
     
-    // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
-    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако'];
+    // Переводим имя страны в нижний регистр для точной проверки
+    const currentCountry = countryName.toLowerCase().trim();
     
-    if (strictCities.includes(capitalName.toLowerCase().trim())) {
-        // Насильно отправляем карты в городскую черту, минуя масштаб границ регионов
-        searchQuery = `${capitalName} city, ${countryName}`;
+    // 🌟 ХАК ДЛЯ ПРИДНЕСТРОВЬЯ: Заставляем карты искать регион / долину реки, а не здание
+    if (currentCountry === 'приднестровье') {
+        searchQuery = "Приднестровье регион";
     } else {
-        // Дефолтный режим для всех стандартных столиц мира
-        searchQuery = `${capitalName}, ${countryName}`;
+        // Наш прошлый список столиц-тезок и городов-государств
+        const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако'];
+        
+        if (strictCities.includes(capitalName.toLowerCase().trim())) {
+            // Насильно отправляем карты в городскую черту
+            searchQuery = `${capitalName} city, ${countryName}`;
+        } else {
+            // Дефолтный режим для всех стандартных столиц мира
+            searchQuery = `${capitalName}, ${countryName}`;
+        }
     }
     
-    // Открываем карты в Safari / Chrome в новой вкладке
+    // Открываем карты в новой вкладке браузера
     const finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     window.open(finalUrl, '_blank');
 }
