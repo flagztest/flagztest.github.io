@@ -1932,11 +1932,6 @@ function createContinentBlock(continent, countries) {
     countries.forEach(c => {
         let flagSrc = getFlagUrl(c);
         const subText = c.note ? ` <span style="font-size:12px; color:#6c757d; font-weight:normal;">${c.note}</span>` : '';
-        
-        let mapQuery = c.name;
-        if (c.name.toLowerCase().trim() === 'приднестровье') {
-            mapQuery = "Административно-территориальные единицы левобережья Днестра";
-        }
 
         rowsHtml += `
             <tr data-name="${c.name.toLowerCase()}" data-capital="${c.capital.toLowerCase()}">
@@ -1946,11 +1941,10 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <a href="${"https://www." + "google.com" + "/maps/search/"}?api=1&query=${encodeURIComponent(mapQuery)}&hl=ru&cache_id=${Date.now()}" 
-                       target="_blank" 
-                       style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <span onclick="openLiveCountryMap('${c.name.replace(/'/g, "\\'")}')" 
+                          style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
-                    </a>
+                    </span>
                     ${subText}
                 </td>
                 <td>
@@ -2794,6 +2788,22 @@ function openSmartMap(capitalName, countryName) {
     }
     
     window.open(finalUrl, '_blank');
+}
+/* 🌟 ЖИВОЙ СБРОС КЭША ДЛЯ СТРАН МИРА: обнуляет зум прошлой сессии при каждом тапе пальца */
+function openLiveCountryMap(countryName) {
+    let mapQuery = countryName;
+    if (countryName.toLowerCase().trim() === 'приднестровье') {
+        mapQuery = "Административно-территориальные единицы левобережья Днестра";
+    }
+
+    // Собираем ссылку по буквам, внедряя Date.now() прямо в момент клика
+    const p1 = "https://";
+    const p2 = "www.";
+    const p3 = "google.com";
+    const p4 = "/maps/search/";
+    
+    const liveUrl = p1 + p2 + p3 + p4 + "?api=1&query=" + encodeURIComponent(mapQuery) + "&hl=ru&cache_id=" + Date.now();
+    window.open(liveUrl, '_blank');
 }
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
