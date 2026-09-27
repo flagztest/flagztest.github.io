@@ -1,7 +1,7 @@
-const CACHE_NAME = 'flagzilla-cache-vMAX';
+const CACHE_NAME = 'flagzilla-cache-vMAX_v2'; // 🌟 Поменяли имя кэша для сброса памяти iOS
 const ASSETS = [
     './',
-    './index.html', // Укажите точное имя вашего главного HTML-файла, если оно другое
+    './index.html', 
     './godzilla.webp',
     './favicon.png'
 ];
@@ -30,7 +30,7 @@ self.addEventListener('activate', (e) => {
     );
 });
 
-// Перехват запросов: сначала смотрим в кэш, если нет сети — отдаем из памяти
+// Перехват запросов
 self.addEventListener('fetch', (e) => {
     e.respondWith(
         caches.match(e.request).then((cachedResponse) => {

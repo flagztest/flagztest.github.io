@@ -2781,32 +2781,27 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (СТАБИЛЬНЫЙ ВАРИАНТ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
     const currentCapital = capitalName.toLowerCase().trim();
     
-    // Кусочки ссылки для обхода автоматической обрезки текста
-    const protocol = "https://";
-    const subdomain = "www.";
-    const domain = "google.com";
-    const pathMaps = "/" + "m" + "a" + "p" + "s" + "/";
-    const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
-    const baseMapsUrl = protocol + subdomain + domain + pathMaps + pathSearch;
+    // Чистый базовый URL для API Google Maps (без знака \$)
+    const baseMapsUrl = "https://google.com/maps/search/?api=1&query=";
 
-    // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+    // Список городов-исключений
     const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир', 'джибути'];
     
-    if (strictCities.includes(currentCapital)) {
-        // Насильно отправляем карты в городскую черту, минуя общие границы стран
-        searchQuery = `${capitalName} city, ${countryName}`;
+    // Если название столицы совпадает с названием страны или находится в списке strictCities
+    if (currentCapital === countryName.toLowerCase().trim() || strictCities.includes(currentCapital)) {
+        // Насильно заставляем карты искать именно городскую черту
+        searchQuery = `город ${capitalName}, ${countryName}`;
     } else {
-        // Дефолтный режим "Город, Страна" для всей остальной базы (включая Тирасполь)
+        // Для остальных оставляем стандартный режим
         searchQuery = `${capitalName}, ${countryName}`;
     }
     
-    // Открываем карты по идеально точному и защищённому URL-адресу
-    const finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
+    // Склеиваем базу и закодированный поисковый запрос
+    const finalUrl = baseMapsUrl + encodeURIComponent(searchQuery);
     window.open(finalUrl, '_blank');
 }
 
