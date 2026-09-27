@@ -1947,7 +1947,7 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}" 
+                    <a href="${"https://www." + "google.com" + "/maps/search/"}?api=1&query=${encodeURIComponent(mapQuery)}&hl=ru&cache_id=${Date.now()}" 
                        target="_blank" 
                        style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
@@ -2764,12 +2764,14 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (СТАБИЛЬНЫЙ ВАРИАНТ) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (С АППАРАТНЫМ СБРОСОМ КЭША И ЗУМА) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
+    const currentCountry = countryName.toLowerCase().trim();
     const currentCapital = capitalName.toLowerCase().trim();
     
-    // Кусочки ссылки для обхода автоматической обрезки текста
+    let finalUrl = '';
+
     const protocol = "https://";
     const subdomain = "www.";
     const domain = "google.com";
@@ -2777,19 +2779,21 @@ function openSmartMap(capitalName, countryName) {
     const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
     const baseMapsUrl = protocol + subdomain + domain + pathMaps + pathSearch;
 
-    // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
-    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
-    
-    if (strictCities.includes(currentCapital)) {
-        // Насильно отправляем карты в городскую черту, минуя общие границы стран
-        searchQuery = `${capitalName} city, ${countryName}`;
+    // 🎯 ТОЧЕЧНЫЙ ПЕРЕХВАТ ДЛЯ КЛИКА ПО СТРАНЕ ПРИДНЕСТРОВЬЕ
+    if (capitalName === 'REGION_MODE' && currentCountry === 'приднестровье') {
+        const geoParams = "?api=1&query=Административно-территориальные единицы левобережья Днестра&hl=ru&source=flagzilla";
+        finalUrl = baseMapsUrl + geoParams;
     } else {
-        // Дефолтный режим "Город, Страна" для всей остальной базы (включая Тирасполь)
-        searchQuery = `${capitalName}, ${countryName}`;
+        const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
+        if (strictCities.includes(currentCapital)) {
+            searchQuery = `${capitalName} city, ${countryName}`;
+        } else {
+            searchQuery = `${capitalName}, ${countryName}`;
+        }
+        // Вливаем hl=ru для сброса зависшего зума прошлой сессии при кликах на столицы
+        finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}&hl=ru&source=flagzilla`;
     }
     
-    // Открываем карты по идеально точному и защищённому URL-адресу
-    const finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
     window.open(finalUrl, '_blank');
 }
 
