@@ -2785,25 +2785,33 @@ function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
     const currentCapital = capitalName.toLowerCase().trim();
     
-    // Чистый базовый URL для API Google Maps (без знака \$)
+    // Чистый базовый URL API Google Maps
     const baseMapsUrl = "https://google.com/maps/search/?api=1&query=";
 
     // Список городов-исключений
     const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир', 'джибути'];
     
-    // Если название столицы совпадает с названием страны или находится в списке strictCities
+    // Проверка на совпадение или вхождение в список исключений
     if (currentCapital === countryName.toLowerCase().trim() || strictCities.includes(currentCapital)) {
-        // Насильно заставляем карты искать именно городскую черту
         searchQuery = `город ${capitalName}, ${countryName}`;
     } else {
-        // Для остальных оставляем стандартный режим
         searchQuery = `${capitalName}, ${countryName}`;
     }
     
-    // Склеиваем базу и закодированный поисковый запрос
+    // Склеиваем финальную ссылку
     const finalUrl = baseMapsUrl + encodeURIComponent(searchQuery);
-    window.open(finalUrl, '_blank');
+    
+    // 🌟 ХАК ОТ ОШИБКИ SAFARI: Создаем виртуальную ссылку и эмулируем реальный клик пальцем
+    const link = document.createElement('a');
+    link.href = finalUrl;
+    link.target = '_blank'; // Откроет в новой вкладке/приложении карт без алертов
+    link.rel = 'noopener noreferrer'; // Защита WebKit
+    
+    document.body.appendChild(link);
+    link.click(); // Имитируем физическое нажатие
+    document.body.removeChild(link); // Сразу удаляем из разметки
 }
+
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
 function generateRussiaSubjectsTables() {

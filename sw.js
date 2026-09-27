@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flagzilla-cache-vMAX_v2'; // 🌟 Поменяли имя кэша для сброса памяти iOS
+const CACHE_NAME = 'flagzilla-cache-vMAX_v3'; // 🌟 Поменяли имя кэша для сброса памяти iOS
 const ASSETS = [
     './',
     './index.html', 
