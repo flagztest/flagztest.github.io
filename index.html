@@ -2582,10 +2582,13 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
     questionEl.onclick = () => {
+        // 🎯 КОНСТРУКТОР ССЫЛКИ ДЛЯ КВИЗА: собираем чистый поисковый адрес API Google Maps
         const p1 = "https://www.";
-        const p2 = "://google.com";
-        const baseMapsUrl = p1 + p2;
+        const p2 = "google.com";
+        const p3 = "/maps/search/";
+        const baseMapsUrl = p1 + p2 + p3;
 
+        // Если вопрос про Приднестровье, отправляем официальный термин, иначе — обычное имя страны
         const finalQuery = currentCapTarget.name === 'Приднестровье' 
             ? "Административно-территориальные единицы левобережья Днестра" 
             : currentCapTarget.name;
