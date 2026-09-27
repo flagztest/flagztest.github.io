@@ -2870,7 +2870,41 @@ function generateRussiaSubjectsTables() {
         container.appendChild(block);
     }
 }
+function toggleBlock(id) {
+    const block = document.getElementById(id);
+    if (!block) return;
+    
+    block.classList.toggle('collapsed');
+    const content = block.querySelector('.continent-content');
+    
+    if (content) {
+        if (block.classList.contains('collapsed')) {
+            content.style.display = 'none';
+            
+            // 🍏 БАРХАТНЫЙ АВТО-ВОЗВРАТ: катит изолированный контейнер в абсолютный верхний ноль!
+            setTimeout(() => {
+                const scrollLayer = document.getElementById('mainScrollContent');
+                if (scrollLayer) {
+                    scrollLayer.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 40); // 40мс — идеальное время, чтобы Safari успел схлопнуть DOM-структуру таблицы
+            return;
+        } else {
+            content.style.display = 'block';
+        }
 
+         // РАСКРЫТИЕ: Аппаратный метод iOS плавно и идеально ровно подтягивает плашку к бамперу поиска!
+        setTimeout(() => {
+            block.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 80);                  
+    }
+}                
 // 🌟 СБОРКА ТАБЛИЦЫ АДМИНИСТРАТИВНЫХ ЦЕНТРОВ В ВИДЕ ОДНОРОДНОГО АККОРДЕОНА (КАК КОНТИНЕНТ)
 function generateRussiaCapitalsTable() {
     const container = document.getElementById('ruCapitalsContainer');
