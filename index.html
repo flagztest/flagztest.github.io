@@ -2755,8 +2755,13 @@ function openSmartMap(capitalName, countryName) {
     let finalUrl = '';
 
     if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
-        // 🎯 ЖЕСТКИЙ КООРДИНАТНЫЙ УДАР: бьем точно по центру региона (Тирасполь/Бендеры) и выставляем зум 11
-        finalUrl = "https://www.google.com/maps/@46.8425,29.5352423,9z";
+        // 🎯 КОНСТРУКТОР ССЫЛКИ В ОБХОД БАГА: склеиваем точный поисковый адрес API Google Maps из кусочков
+        const part1 = "https://google.com/maps/search";
+        const part2 = "?api=1&query=46.8425,29.5352";
+        const part3 = "&zoom=9";
+        
+        finalUrl = part1 + part2 + part3;
+
     } else {
         // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
         const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако'];
