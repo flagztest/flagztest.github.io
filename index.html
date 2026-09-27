@@ -644,8 +644,8 @@ tr[data-name*="иркутск"] .flag-wrapper {
      
      .quiz-panel {
          padding: 10px !important;
-         /* 🍏 БРОНЕБОЙНЫЙ ОТСТУП: Смещает флаги и вопросы вниз ровно под поисковую строку */
-         padding-top: 135px !important; 
+         /* 🍏 УМНЫЙ ОТСТУП: динамически добавляет место под челку и габариты шапки сайта */
+         padding-top: calc(env(safe-area-inset-top) + 95px) !important; 
          margin: 0px auto !important;
          border: none !important;
          box-shadow: none !important;
