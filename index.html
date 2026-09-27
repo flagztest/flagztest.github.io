@@ -2753,7 +2753,7 @@ function openSmartMap(capitalName, countryName) {
     
     let finalUrl = '';
 
-    // Базовые части адреса для аппаратного обхода текстовой обрезки ИИ
+    // Конструктор базового пути Google Maps для обхода обрезки строк
     const protocol = "https://";
     const subdomain = "www.";
     const domain = "google.com";
@@ -2761,21 +2761,31 @@ function openSmartMap(capitalName, countryName) {
     const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
     const baseMapsUrl = protocol + subdomain + domain + pathMaps + pathSearch;
 
-    // 🎯 ТОЧЕЧНЫЙ ПЕРЕХВАТ ДЛЯ КЛИКА ПО СТРАНЕ ПРИДНЕСТРОВЬЕ
-    if (capitalName === 'REGION_MODE' && currentCountry === 'приднестровье') {
-        // Отправляем официальный географический маркер региона для отображения всех границ
-        const geoParams = "?api=1&query=Административно-территориальные единицы левобережья Днестра";
-        finalUrl = baseMapsUrl + geoParams;
-    } else {
-        // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
-        const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
-        
-        if (strictCities.includes(currentCapital)) {
-            // Насильно отправляем карты в городскую черту, минуя общие границы стран
-            searchQuery = `${capitalName} city, ${countryName}`;
+    // 🎯 ТОТАЛЬНО ИЗОЛИРОВАННЫЙ ПЕРЕХВАТ ПРИДНЕСТРОВЬЯ
+    if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
+        if (capitalName === 'REGION_MODE') {
+            // Клик по названию страны Приднестровье: открываем Левобережье на масштабе 9z
+            const geoParams = "?api=1&query=Административно-территориальные единицы левобережья Днестра";
+            finalUrl = baseMapsUrl + geoParams;
         } else {
-            // Стандартный режим "Город, Страна" для всей остальной базы (и для Тирасполя)
+            // Клик по столице Тирасполь: открываем стандартный городской режим
             searchQuery = `${capitalName}, ${countryName}`;
+            finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
+        }
+    } else {
+        // 🌟 СТРОГАЯ ЗАЩИТА: Если по ошибке прилетел REGION_MODE для другой страны (например, Австрия)
+        if (capitalName === 'REGION_MODE') {
+            // Насильно переключаем поиск на имя самой страны, очищая технический маркер
+            searchQuery = countryName;
+        } else {
+            // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+            const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
+            
+            if (strictCities.includes(currentCapital)) {
+                searchQuery = `${capitalName} city, ${countryName}`;
+            } else {
+                searchQuery = `${capitalName}, ${countryName}`;
+            }
         }
         
         finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
