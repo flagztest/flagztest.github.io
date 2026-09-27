@@ -2745,29 +2745,34 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (ЖЕЛЕЗНЫЙ ХАК ДЛЯ ПРИДНЕСТРОВЬЯ) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (КООРДИНАТНЫЙ ХАК ДЛЯ ПРИДНЕСТРОВЬЯ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
     const currentCountry = countryName.toLowerCase().trim();
+    const currentCapital = capitalName.toLowerCase().trim();
     
-    if (currentCountry === 'приднестровье' || capitalName.toLowerCase().trim() === 'тирасполь') {
-        // Используем международный географический идентификатор региона, чтобы обойти редирект на Молдову
-        searchQuery = "Transnistria";
+    // Единый URL для открытия в браузере
+    let finalUrl = '';
+
+    if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
+        // 🎯 ЖЕСТКИЙ КООРДИНАТНЫЙ УДАР: бьем точно по центру региона (Тирасполь/Бендеры) и выставляем зум 11
+        finalUrl = "https://www.google.com/maps/@46.8425,29.5352423,9z";
     } else {
         // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
         const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако'];
         
-        if (strictCities.includes(capitalName.toLowerCase().trim())) {
+        if (strictCities.includes(currentCapital)) {
             // Насильно отправляем карты в городскую черту, минуя границы стран
             searchQuery = `${capitalName} city, ${countryName}`;
         } else {
-            // Дефолтный режим "Город, Страна" для всех стандартных столиц мира
+            // Дефолтный режим "Город, Страна" для всей остальной базы мира
             searchQuery = `${capitalName}, ${countryName}`;
         }
+        
+        finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     }
     
-    // Открываем Google Maps в новой чистой вкладке браузера
-    const finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
+    // Открываем Google Maps в новой чистой вкладке браузера пользователя
     window.open(finalUrl, '_blank');
 }
 
