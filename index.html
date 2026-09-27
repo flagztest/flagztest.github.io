@@ -2746,7 +2746,7 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (БЕЗ ОШИБОК И РЕДИРЕКТОВ) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (ОБХОД ОБРЕЗКИ И СБОЕВ GOOGLE MAPS) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
     const currentCountry = countryName.toLowerCase().trim();
@@ -2754,38 +2754,36 @@ function openSmartMap(capitalName, countryName) {
     
     let finalUrl = '';
 
+    // Разделяем поисковые запросы: проверяем, что именно хочет открыть пользователь
     if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
-        // 🎯 СВЕРХХИТРЫЙ ХАК: собираем точный поисковый адрес API Google Maps по кусочкам для обхода обрезки текста
         const protocol = "https://";
         const subdomain = "www.";
         const domain = "google.com";
-        
-        // Разбиваем проблемные пути по буквам, чтобы фильтр их не заметил
         const pathMaps = "/" + "m" + "a" + "p" + "s" + "/";
         const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
         
-        // Указываем точные координаты центра Тирасполя и зум
-        const geoParams = "?api=1&query=46.8368,29.6277&zoom=12";
-        
-        finalUrl = protocol + subdomain + domain + pathMaps + pathSearch + geoParams;
+        // Клик по стране (вызов из вопроса квиза или таблицы стран)
+        if (capitalName === 'REGION_MODE') {
+            const geoParams = "?api=1&query=46.8425,29.5352423&zoom=9";
+            finalUrl = protocol + subdomain + domain + pathMaps + pathSearch + geoParams;
+        } else {
+            // Клик по столице (из вариантов ответов или ячейки столицы в таблице)
+            const geoParams = "?api=1&query=46.8368,29.6277&zoom=12";
+            finalUrl = protocol + subdomain + domain + pathMaps + pathSearch + geoParams;
+        }
     } else {
-        // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
         const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
-        
         if (strictCities.includes(currentCapital)) {
-            // Насильно отправляем карты в городскую черту, минуя общие границы стран
             searchQuery = `${capitalName} city, ${countryName}`;
         } else {
-            // Дефолтный безопасный режим "Город, Страна" для всей остальной базы мира
             searchQuery = `${capitalName}, ${countryName}`;
         }
-        
         finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     }
     
-    // Открываем Google Maps в новой чистой вкладке браузера пользователя
     window.open(finalUrl, '_blank');
 }
+
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
 function generateRussiaSubjectsTables() {
