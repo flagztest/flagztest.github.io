@@ -2915,9 +2915,9 @@ function generateRussiaCapitalsTable() {
     // Сортируем список городов строго по алфавиту от А до Я
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
 
-    const block = document.createElement('div');
-    block.className = 'continent-block collapsed';
-    block.id = 'block-ru-capital-alphabet';
+    // 🌟 ИСПРАВЛЕНИЕ: Превращаем сам зашитый в HTML контейнер в полноценный аккордеон
+    container.className = 'continent-block collapsed';
+    container.id = 'block-ru-capital-alphabet'; 
     
     let rowsHtml = '';
     flatCapitalsList.forEach(c => {
@@ -2946,10 +2946,10 @@ function generateRussiaCapitalsTable() {
             </tr>`;
     });
 
-    block.innerHTML = `
-        <h2 class="continent-header" onclick="toggleBlock('${block.id}')">
+    container.innerHTML = `
+        <h2 class="continent-header" onclick="toggleBlock('${container.id}')">
             <span>Административные центры</span>
-            <span class="count-badge" id="badge-${block.id}">${flatCapitalsList.length}</span>
+            <span class="count-badge" id="badge-${container.id}">${flatCapitalsList.length}</span>
         </h2>
         <div class="continent-content">
             <table>
@@ -2964,9 +2964,7 @@ function generateRussiaCapitalsTable() {
             </table>
         </div>
     `;
-    container.appendChild(block);
 }
-
 
 // 🌟 АВТОМАТИЧЕСКАЯ СБОРКА ТАБЛИЦ ФЕДЕРАЛЬНЫХ ОКРУГОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ
 function generateRussiaOkrugsTables() {
