@@ -1940,10 +1940,11 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
-                          style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.name)}" 
+                       target="_blank" 
+                       style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
-                    </span>
+                    </a>
                     ${subText}
                 </td>
                 <td>
@@ -2745,34 +2746,23 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (КООРДИНАТНЫЙ ХАК ДЛЯ ПРИДНЕСТРОВЬЯ) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (С ПОДДЕРЖКОЙ МОНАКО) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
-    const currentCountry = countryName.toLowerCase().trim();
-    const currentCapital = capitalName.toLowerCase().trim();
     
-    // Единый URL для открытия в браузере
-    let finalUrl = '';
-
-if (currentCountry === 'приднестровье') {
-    finalUrl = "https://www.google.com/maps/@47.4,29.5,8z";
-
+    // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
+    
+    if (strictCities.includes(capitalName.toLowerCase().trim())) {
+        // Насильно отправляем карты в городскую черту, минуя масштаб границ регионов
+        searchQuery = `${capitalName} city, ${countryName}`;
     } else {
-        // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
-        const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако'];
-        
-        if (strictCities.includes(currentCapital)) {
-            // Насильно отправляем карты в городскую черту, минуя границы стран
-            searchQuery = `${capitalName} city, ${countryName}`;
-        } else {
-            // Дефолтный режим "Город, Страна" для всей остальной базы мира
-            searchQuery = `${capitalName}, ${countryName}`;
-        }
-        
-        finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
+        // Дефолтный режим для всех стандартных столиц мира
+        searchQuery = `${capitalName}, ${countryName}`;
     }
     
-    // Открываем Google Maps в новой чистой вкладке браузера пользователя
+    // Открываем карты в Safari / Chrome в новой вкладке
+    const finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     window.open(finalUrl, '_blank');
 }
 
