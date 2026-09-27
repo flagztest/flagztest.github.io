@@ -2915,9 +2915,10 @@ function generateRussiaCapitalsTable() {
     // Сортируем список городов строго по алфавиту от А до Я
     flatCapitalsList.sort((a, b) => a.cityName.localeCompare(b.cityName));
 
-    // 🌟 ИСПРАВЛЕНИЕ: Превращаем сам зашитый в HTML контейнер в полноценный аккордеон
-    container.className = 'continent-block collapsed';
-    container.id = 'block-ru-capital-alphabet'; 
+    // 🌟 ВОЗВРАЩАЕМ СОЗДАНИЕ ВНУТРЕННЕГО БЛОКА (чтобы не ломать вкладки PWA)
+    const block = document.createElement('div');
+    block.className = 'continent-block collapsed';
+    block.id = 'block-ru-capital-alphabet'; // ID остается уникальным для поиска
     
     let rowsHtml = '';
     flatCapitalsList.forEach(c => {
@@ -2932,13 +2933,13 @@ function generateRussiaCapitalsTable() {
                    </div>
                 </td>
                 <td>
-           <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.cityName)}" 
+           <a href="https://google.com{encodeURIComponent(c.cityName)}" 
                        target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.cityName}</strong>
                     </a>
                 </td>
                 <td>
-           <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.subjectName)}" 
+           <a href="https://google.com{encodeURIComponent(c.subjectName)}" 
                        target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
                         ${c.subjectName}
                     </a>
@@ -2946,10 +2947,11 @@ function generateRussiaCapitalsTable() {
             </tr>`;
     });
 
-    container.innerHTML = `
-        <h2 class="continent-header" onclick="toggleBlock('${container.id}')">
+    // 🌟 ИСПРАВЛЕНИЕ: У заголовка h2 внутри таблицы НЕ должно быть такого же id, как у блока!
+    block.innerHTML = `
+        <h2 class="continent-header" onclick="toggleBlock('block-ru-capital-alphabet')">
             <span>Административные центры</span>
-            <span class="count-badge" id="badge-${container.id}">${flatCapitalsList.length}</span>
+            <span class="count-badge" id="badge-block-ru-capital-alphabet">${flatCapitalsList.length}</span>
         </h2>
         <div class="continent-content">
             <table>
@@ -2964,6 +2966,10 @@ function generateRussiaCapitalsTable() {
             </table>
         </div>
     `;
+    
+    // Очищаем контейнер перед добавлением, чтобы избежать дублирования
+    container.innerHTML = '';
+    container.appendChild(block);
 }
 
 // 🌟 АВТОМАТИЧЕСКАЯ СБОРКА ТАБЛИЦ ФЕДЕРАЛЬНЫХ ОКРУГОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ
