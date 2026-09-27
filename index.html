@@ -2745,16 +2745,16 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (С ПОДДЕРЖКОЙ ПРИДНЕСТРОВЬЯ И МОНАКО) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (ЖЕЛЕЗНЫЙ ХАК ДЛЯ ПРИДНЕСТРОВЬЯ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
     const currentCountry = countryName.toLowerCase().trim();
     
-    if (currentCountry === 'приднестровье') {
-        // Для Приднестровья разворачиваем масштаб карт на весь географический регион, а не на здание
-        searchQuery = "Приднестровье регион";
+    if (currentCountry === 'приднестровье' || capitalName.toLowerCase().trim() === 'тирасполь') {
+        // Используем международный географический идентификатор региона, чтобы обойти редирект на Молдову
+        searchQuery = "Transnistria";
     } else {
-        // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+        // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
         const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако'];
         
         if (strictCities.includes(capitalName.toLowerCase().trim())) {
