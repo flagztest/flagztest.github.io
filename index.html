@@ -2746,23 +2746,37 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (С ПОДДЕРЖКОЙ МОНАКО) */
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ (БЕЗ ОШИБОК И РЕДИРЕКТОВ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
+    const currentCountry = countryName.toLowerCase().trim();
+    const currentCapital = capitalName.toLowerCase().trim();
     
-    // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
-    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
-    
-    if (strictCities.includes(capitalName.toLowerCase().trim())) {
-        // Насильно отправляем карты в городскую черту, минуя масштаб границ регионов
-        searchQuery = `${capitalName} city, ${countryName}`;
+    let finalUrl = '';
+
+    if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
+        // 🎯 КООРДИНАТНЫЙ ХАК: ставим булавку точно в центре города, исключая уход в поля или новостные сайты
+        const part1 = "https://google.com/maps";
+        const part2 = "search/?api=1&query=46.8368,29.6277";
+        const part3 = "&zoom=12";
+        
+        finalUrl = part1 + part2 + part3;
     } else {
-        // Дефолтный режим для всех стандартных столиц мира
-        searchQuery = `${capitalName}, ${countryName}`;
+        // Идеальный список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+        const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир'];
+        
+        if (strictCities.includes(currentCapital)) {
+            // Насильно отправляем карты в городскую черту, минуя общие границы стран
+            searchQuery = `${capitalName} city, ${countryName}`;
+        } else {
+            // Дефолтный безопасный режим "Город, Страна" для всей остальной базы мира
+            searchQuery = `${capitalName}, ${countryName}`;
+        }
+        
+        finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
     }
     
-    // Открываем карты в Safari / Chrome в новой вкладке
-    const finalUrl = `https://google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
+    // Открываем Google Maps в новой чистой вкладке браузера пользователя
     window.open(finalUrl, '_blank');
 }
 
