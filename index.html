@@ -2801,16 +2801,12 @@ function openSmartMap(capitalName, countryName) {
     // Склеиваем финальную ссылку
     const finalUrl = baseMapsUrl + encodeURIComponent(searchQuery);
     
-    // 🌟 ХАК ОТ ОШИБКИ SAFARI: Создаем виртуальную ссылку и эмулируем реальный клик пальцем
-    const link = document.createElement('a');
-    link.href = finalUrl;
-    link.target = '_blank'; // Откроет в новой вкладке/приложении карт без алертов
-    link.rel = 'noopener noreferrer'; // Защита WebKit
-    
-    document.body.appendChild(link);
-    link.click(); // Имитируем физическое нажатие
-    document.body.removeChild(link); // Сразу удаляем из разметки
+    // 🍏 ЖЕСТКИЙ ХАК ДЛЯ IOS PWA: Открываем строго в текущем окне (_self)
+    // Операционная система сама перехватит эту ссылку и бесшовно свернет PWA, 
+    // открыв приложение Google Maps БЕЗ каких-либо предупреждений.
+    window.location.href = finalUrl;
 }
+
 
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
