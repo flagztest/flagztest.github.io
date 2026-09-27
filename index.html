@@ -3045,7 +3045,16 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
-
+// 🍏 АВТОНОМНЫЙ РЕЖИМ PWA: Регистрация сервис-воркера для работы без интернета
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+            console.log('FlagZilla PWA успешно зарегистрирован в системе!', reg.scope);
+        }).catch(err => {
+            console.log('Ошибка регистрации PWA:', err);
+        });
+    });
+}
 </script>
 
 
