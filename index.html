@@ -2755,15 +2755,11 @@ function openSmartMap(capitalName, countryName) {
     let finalUrl = '';
 
     if (currentCountry === 'приднестровье' || currentCapital === 'тирасполь') {
-        // 🎯 СВЕРХХИТРЫЙ ХАК ДЛЯ ОБХОДА ФИЛЬТРА: собираем точный адрес по кусочкам
-        const protocol = "https://";
-        const subdomain = "www.";
-        const domain = "google.com";
-        const path = "/maps/search/";
+        // 🎯 АППАРАТНЫЙ ХАК ЦЕНТРИРОВАНИЯ: жестко фиксируем экран смартфона на панораме региона без полей
+        const part1 = "https://www.google.com/maps/";
+        const part2 = "@46.8400,29.5500,10z";
         
-        const geoParams = "?api=1&query=46.853866,28.3603579&zoom=8";
-        
-        finalUrl = protocol + subdomain + domain + path + geoParams;
+        finalUrl = part1 + part2;
 
     } else {
         // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
