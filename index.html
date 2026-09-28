@@ -2783,10 +2783,10 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     let searchQuery = targetName;
     const currentTarget = targetName.toLowerCase().trim();
     
-    // Список городов-исключений
+    // Список городов-исключений для точного поиска городской черты
     const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир', 'джибути'];
     
-    // Если кликнули по столице, проверяем правила тезок (город Джибути vs страна Джибути)
+    // Проверка правил тезок (город Джибути vs страна Джибути)
     if (!isCountryClick) {
         if (currentTarget === countryName.toLowerCase().trim() || strictCities.includes(currentTarget)) {
             searchQuery = `город ${targetName}, ${countryName}`;
@@ -2795,33 +2795,28 @@ function openSmartMap(targetName, countryName, isCountryClick) {
         }
     }
 
-    // Железная защита от обрезки ссылок: собираем адрес по буквам
-    const webProtocol = "https://";
-    const serviceName = "maps.";
-    const brandName = "apple";
-    const zoneName = ".com";
-    const paramName = "/?q=";
-    const appleBaseUrl = webProtocol + serviceName + brandName + zoneName + paramName;
+    // 🔒 ЖЕЛЕЗНЫЙ ОБХОД ЛЮБОЙ ОБРЕЗКИ ТЕКСТА ПОСЛЕ .COM:
+    // Собираем базовый URL Google Maps API из мелких деталей по буквам
+    const protocolStr = "https://";
+    const subDomainStr = "www.";
+    const domainNameStr = "google";
+    const zoneStr = ".com";
+    const pathStr = "/maps/search/?api=1&query=";
     
-    const googleBaseUrl = "https://google.com";
-
-    // Проверяем, запущено ли приложение на устройстве Apple
-    const isApple = /iPhone|iPad|iPod|Macintosh/i.test(navigator.userAgent);
+    // Полный склеенный URL без риска автоудаления хвоста
+    const finalMapsBaseUrl = protocolStr + subDomainStr + domainNameStr + zoneStr + pathStr;
+    const finalFullUrl = finalMapsBaseUrl + encodeURIComponent(searchQuery);
     
-    let finalUrl = "";
-    if (isApple) {
-        finalUrl = appleBaseUrl + encodeURIComponent(searchQuery);
-    } else {
-        finalUrl = googleBaseUrl + encodeURIComponent(searchQuery);
-    }
+    // 🍏 ХАК ДЛЯ БЕЗОПАСНОСТИ SAFARI В PWA (БЕЗ ПРЕДУПРЕЖДЕНИЙ):
+    // Создаем невидимый тег ссылки и программно имитируем реальный клик пользователя.
+    // Так как домен начинается строго с HTTPS, Safari доверяет ему и перенаправляет в Google Карты чисто.
+    const hiddenLink = document.createElement('a');
+    hiddenLink.href = finalFullUrl;
+    hiddenLink.rel = 'noopener noreferrer';
     
-    // Бесшовное открытие имитацией клика (100% без предупреждений)
-    const secureLink = document.createElement('a');
-    secureLink.href = finalUrl;
-    secureLink.rel = 'noopener noreferrer';
-    document.body.appendChild(secureLink);
-    secureLink.click();
-    document.body.removeChild(secureLink);
+    document.body.appendChild(hiddenLink);
+    hiddenLink.click(); // Симулируем тап по экрану
+    document.body.removeChild(hiddenLink); // Моментально удаляем элемент
 }
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
