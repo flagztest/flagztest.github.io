@@ -2800,15 +2800,18 @@ function openSmartMap(targetName, countryName, isCountryClick) {
         }
     }
 
-    // 🔒 ЖЕЛЕЗНЫЙ ОБХОД ЛЮБОЙ ОБРЕЗКИ ТЕКСТА ПОСЛЕ .COM:
+    // 🔒 ЖЕЛЕЗНЫЙ ОБХОД ОБРЕЗКИ .COM + АНТИ-КЭШ GOOGLE MAPS:
+    // Мы переводим ссылки на шлюз /?q= и добавляем уникальный динамический хвостик времени nocache.
+    // Карты видят новый уникальный URL и ОБЯЗАНЫ выполнить свежий поиск с нуля!
     const scheme = "https://";
     const sub = "www.";
     const core = "google";
     const tld = ".com";
-    const route = "/maps/search/?api=1&query=";
+    const route = "/maps?q=";
+    const antiCache = "&nocache=" + new Date().getTime(); // Генерирует случайное число (миллисекунды времени)
     
-    // Склеиваем и кодируем параметры "на лету" прямо в момент физического тапа
-    const finalFullUrl = scheme + sub + core + tld + route + encodeURIComponent(searchQuery);
+    // Склеиваем финальный адрес на лету
+    const finalFullUrl = scheme + sub + core + tld + route + encodeURIComponent(searchQuery) + antiCache;
     
     // 🍏 ХАК ДЛЯ ВЫТАЛКИВАНИЯ ССЫЛКИ ИЗ ИЗОЛИРОВАННОГО ОКНА PWA ДОМОЙ:
     const hiddenLink = document.createElement('a');
