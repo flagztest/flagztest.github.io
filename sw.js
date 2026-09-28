@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flagzilla-cache-vMAX_v13';
+const CACHE_NAME = 'flagzilla-cache-vMAX_v14';
 const ASSETS = [
     './',
     './index.html', // Укажите точное имя вашего главного HTML-файла, если оно другое
