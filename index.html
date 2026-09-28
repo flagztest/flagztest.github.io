@@ -2789,34 +2789,33 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     // Проверка правил тезок (город Джибути vs страна Джибути)
     if (!isCountryClick) {
         if (currentTarget === countryName.toLowerCase().trim() || strictCities.includes(currentTarget)) {
-            searchQuery = `город ${targetName}, ${countryName}`;
+            searchQuery = "город " + targetName + ", " + countryName;
         } else {
-            searchQuery = `${targetName}, ${countryName}`;
+            searchQuery = targetName + ", " + countryName;
         }
     }
 
     // 🔒 ЖЕЛЕЗНЫЙ ОБХОД ЛЮБОЙ ОБРЕЗКИ ТЕКСТА ПОСЛЕ .COM:
-    // Собираем базовый URL Google Maps API из мелких деталей по буквам
-    const protocolStr = "https://";
-    const subDomainStr = "www.";
-    const domainNameStr = "google";
-    const zoneStr = ".com";
-    const pathStr = "/maps/search/?api=1&query=";
+    // Полноценно разбиваем составные части адреса на изолированные переменные.
+    // Ни один парсер не сможет обрезать параметры, так как они не существуют до клика.
+    const scheme = "https://";
+    const sub = "www.";
+    const core = "google";
+    const tld = ".com";
+    const route = "/maps/search/?api=1&query=";
     
-    // Полный склеенный URL без риска автоудаления хвоста
-    const finalMapsBaseUrl = protocolStr + subDomainStr + domainNameStr + zoneStr + pathStr;
-    const finalFullUrl = finalMapsBaseUrl + encodeURIComponent(searchQuery);
+    // Склеиваем и кодируем параметры "на лету" прямо в момент физического тапа
+    const finalFullUrl = scheme + sub + core + tld + route + encodeURIComponent(searchQuery);
     
-    // 🍏 ХАК ДЛЯ БЕЗОПАСНОСТИ SAFARI В PWA (БЕЗ ПРЕДУПРЕЖДЕНИЙ):
-    // Создаем невидимый тег ссылки и программно имитируем реальный клик пользователя.
-    // Так как домен начинается строго с HTTPS, Safari доверяет ему и перенаправляет в Google Карты чисто.
+    // 🍏 ХАК ДЛЯ ВЫТАЛКИВАНИЯ ССЫЛКИ ИЗ ОКНА PWA ДОМОЙ:
     const hiddenLink = document.createElement('a');
     hiddenLink.href = finalFullUrl;
+    hiddenLink.target = '_blank'; // Вынуждает iOS открыть полноценный браузер или нативное приложение Карт
     hiddenLink.rel = 'noopener noreferrer';
     
     document.body.appendChild(hiddenLink);
-    hiddenLink.click(); // Симулируем тап по экрану
-    document.body.removeChild(hiddenLink); // Моментально удаляем элемент
+    hiddenLink.click(); // Эмулируем системное нажатие
+    document.body.removeChild(hiddenLink); // Стираем временную ссылку из дерева DOM
 }
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
@@ -2833,8 +2832,12 @@ function generateRussiaSubjectsTables() {
         
         let rowsHtml = '';
         regions.forEach(r => {
-            // Ищем флаг региона в новой базе subjectFlags по его имени (r.name)
+            // Ищем флаг региона в базе subjectFlags по его имени (r.name)
             let flagUrl = subjectFlags[r.name] || "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='100' height='42'><rect width='100%' height='100%' fill='none'/></svg>";
+
+            // Экранируем возможные одиночные кавычки в названиях (например, Кот-д'Ивуар, если бы он был тут)
+            const safeName = r.name.replace(/'/g, "\\'");
+            const safeCapital = r.capital.replace(/'/g, "\\'");
 
             rowsHtml += `
                 <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
@@ -2844,16 +2847,16 @@ function generateRussiaSubjectsTables() {
                        </div>
                     </td>
                     <td>
-                  <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(r.name)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                            <strong>${r.name}</strong>
-                        </a>
+                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" 
+                              style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;">
+                            ${r.name}
+                        </span>
                     </td>
                     <td>
-               <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(r.capital)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" 
+                              style="color: inherit; text-decoration: none; cursor: pointer;">
                             ${r.capital}
-                        </a> 
+                        </span> 
                     </td>
                 </tr>`;
         });
@@ -2946,6 +2949,9 @@ function generateRussiaCapitalsTable() {
         // Умный поиск флага: берем из cityFlags или ставим красивую прозрачную заглушку 100x42
         let flagUrl = cityFlags[c.cityName] || "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='100' height='42'><rect width='100%' height='100%' fill='none'/></svg>";
 
+        const safeCity = c.cityName.replace(/'/g, "\\'");
+        const safeSubject = c.subjectName.replace(/'/g, "\\'");
+
         rowsHtml += `
             <tr data-name="${c.cityName.toLowerCase()}" data-capital="${c.subjectName.toLowerCase()}">
                 <td class="col-flag">
@@ -2954,16 +2960,16 @@ function generateRussiaCapitalsTable() {
                    </div>
                 </td>
                 <td>
-           <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.cityName)}" 
-                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                        <strong>${c.cityName}</strong>
-                    </a>
+                    <span onclick="openSmartMap('${safeCity}', 'Россия', false)" 
+                          style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;">
+                        ${c.cityName}
+                    </span>
                 </td>
                 <td>
-           <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(c.subjectName)}" 
-                       target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <span onclick="openSmartMap('${safeSubject}', 'Россия', true)" 
+                          style="color: inherit; text-decoration: none; cursor: pointer;">
                         ${c.subjectName}
-                    </a>
+                    </span>
                 </td>
             </tr>`;
     });
@@ -3010,6 +3016,9 @@ function generateRussiaOkrugsTables() {
             // Ищем флаг региона в базе subjectFlags по его имени (r.name)
             let flagUrl = subjectFlags[r.name] || "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='100' height='42'><rect width='100%' height='100%' fill='none'/></svg>";
 
+            const safeName = r.name.replace(/'/g, "\\'");
+            const safeCapital = r.capital.replace(/'/g, "\\'");
+
             rowsHtml += `
                 <tr data-name="${r.name.toLowerCase()}" data-capital="${r.capital.toLowerCase()}">
                     <td class="col-flag">
@@ -3018,16 +3027,16 @@ function generateRussiaOkrugsTables() {
                        </div>
                     </td>
                     <td>
-                  <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(r.name)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
-                            <strong>${r.name}</strong>
-                        </a>
+                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" 
+                              style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;">
+                            ${r.name}
+                        </span>
                     </td>
                     <td>
-               <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(r.capital)}" 
-                           target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" 
+                              style="color: inherit; text-decoration: none; cursor: pointer;">
                             ${r.capital}
-                        </a>
+                        </span>
                     </td>
                 </tr>`;
         });
