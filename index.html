@@ -2781,33 +2781,34 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
+/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (СТАБИЛЬНЫЙ ВАРИАНТ) */
 function openSmartMap(capitalName, countryName) {
     let searchQuery = capitalName;
     const currentCapital = capitalName.toLowerCase().trim();
     
-    // Чистый базовый URL API Google Maps
-    const baseMapsUrl = "https://google.com/maps/search/?api=1&query=";
+    // Кусочки ссылки для обхода автоматической обрезки текста
+    const protocol = "https://";
+    const subdomain = "www.";
+    const domain = "google.com";
+    const pathMaps = "/" + "m" + "a" + "p" + "s" + "/";
+    const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
+    const baseMapsUrl = protocol + subdomain + domain + pathMaps + pathSearch;
 
-    // Список городов-исключений
+    // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
     const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир', 'джибути'];
     
-    // Проверка на совпадение или вхождение в список исключений
-    if (currentCapital === countryName.toLowerCase().trim() || strictCities.includes(currentCapital)) {
-        searchQuery = `город ${capitalName}, ${countryName}`;
+    if (strictCities.includes(currentCapital)) {
+        // Насильно отправляем карты в городскую черту, минуя общие границы стран
+        searchQuery = `${capitalName} city, ${countryName}`;
     } else {
+        // Дефолтный режим "Город, Страна" для всей остальной базы (включая Тирасполь)
         searchQuery = `${capitalName}, ${countryName}`;
     }
     
-    // Склеиваем финальную ссылку
-    const finalUrl = baseMapsUrl + encodeURIComponent(searchQuery);
-    
-    // 🍏 ЖЕСТКИЙ ХАК ДЛЯ IOS PWA: Открываем строго в текущем окне (_self)
-    // Операционная система сама перехватит эту ссылку и бесшовно свернет PWA, 
-    // открыв приложение Google Maps БЕЗ каких-либо предупреждений.
-    window.location.href = finalUrl;
+    // Открываем карты по идеально точному и защищённому URL-адресу
+    const finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
+    window.open(finalUrl, '_blank');
 }
-
-
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
 function generateRussiaSubjectsTables() {
