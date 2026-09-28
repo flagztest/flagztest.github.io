@@ -1936,7 +1936,6 @@ function createContinentBlock(continent, countries) {
         let flagSrc = getFlagUrl(c);
         const subText = c.note ? ` <span style="font-size:12px; color:#6c757d; font-weight:normal;">${c.note}</span>` : '';
         
-        // 🎯 ТОЧЕЧНЫЙ ПЕРЕХВАТ: Подменяем поисковый запрос только для Приднестровья, чтобы показать границы
         let mapQuery = c.name;
         if (c.name.toLowerCase().trim() === 'приднестровье') {
             mapQuery = "Административно-территориальные единицы левобережья Днестра";
@@ -1950,15 +1949,14 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <a href="https://google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}" 
-                       target="_blank" 
-                       style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <span onclick="openSmartMap('${mapQuery.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}', true)" 
+                          style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
-                    </a>
+                    </span>
                     ${subText}
                 </td>
                 <td>
-                    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')" 
+                    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}', false)" 
                           style="color: inherit; text-decoration: none; cursor: pointer;">
                         ${c.capital}
                     </span> 
@@ -2781,33 +2779,49 @@ function closeFlagModal() {
         modal.style.display = 'none';
     }, 50); 
 }
-/* 🌟 УМНЫЙ НАВИГАТОР ДЛЯ КАРТ ИСКЛЮЧЕНИЙ-ТЕЗОК (СТАБИЛЬНЫЙ ВАРИАНТ) */
-function openSmartMap(capitalName, countryName) {
-    let searchQuery = capitalName;
-    const currentCapital = capitalName.toLowerCase().trim();
+function openSmartMap(targetName, countryName, isCountryClick) {
+    let searchQuery = targetName;
+    const currentTarget = targetName.toLowerCase().trim();
     
-    // Кусочки ссылки для обхода автоматической обрезки текста
-    const protocol = "https://";
-    const subdomain = "www.";
-    const domain = "google.com";
-    const pathMaps = "/" + "m" + "a" + "p" + "s" + "/";
-    const pathSearch = "s" + "e" + "a" + "r" + "c" + "h" + "/";
-    const baseMapsUrl = protocol + subdomain + domain + pathMaps + pathSearch;
-
-    // Список городов-государств и столиц-тезок для защиты от сбоев Google Maps
+    // Список городов-исключений
     const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир', 'джибути'];
     
-    if (strictCities.includes(currentCapital)) {
-        // Насильно отправляем карты в городскую черту, минуя общие границы стран
-        searchQuery = `${capitalName} city, ${countryName}`;
+    // Если кликнули по столице, проверяем правила тезок (город Джибути vs страна Джибути)
+    if (!isCountryClick) {
+        if (currentTarget === countryName.toLowerCase().trim() || strictCities.includes(currentTarget)) {
+            searchQuery = `город ${targetName}, ${countryName}`;
+        } else {
+            searchQuery = `${targetName}, ${countryName}`;
+        }
+    }
+
+    // Железная защита от обрезки ссылок: собираем адрес по буквам
+    const webProtocol = "https://";
+    const serviceName = "maps.";
+    const brandName = "apple";
+    const zoneName = ".com";
+    const paramName = "/?q=";
+    const appleBaseUrl = webProtocol + serviceName + brandName + zoneName + paramName;
+    
+    const googleBaseUrl = "https://google.com";
+
+    // Проверяем, запущено ли приложение на устройстве Apple
+    const isApple = /iPhone|iPad|iPod|Macintosh/i.test(navigator.userAgent);
+    
+    let finalUrl = "";
+    if (isApple) {
+        finalUrl = appleBaseUrl + encodeURIComponent(searchQuery);
     } else {
-        // Дефолтный режим "Город, Страна" для всей остальной базы (включая Тирасполь)
-        searchQuery = `${capitalName}, ${countryName}`;
+        finalUrl = googleBaseUrl + encodeURIComponent(searchQuery);
     }
     
-    // Открываем карты по идеально точному и защищённому URL-адресу
-    const finalUrl = baseMapsUrl + `?api=1&query=${encodeURIComponent(searchQuery)}`;
-    window.open(finalUrl, '_blank');
+    // Бесшовное открытие имитацией клика (100% без предупреждений)
+    const secureLink = document.createElement('a');
+    secureLink.href = finalUrl;
+    secureLink.rel = 'noopener noreferrer';
+    document.body.appendChild(secureLink);
+    secureLink.click();
+    document.body.removeChild(secureLink);
 }
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
