@@ -2782,13 +2782,21 @@ function closeFlagModal() {
 function openSmartMap(targetName, countryName, isCountryClick) {
     let searchQuery = targetName;
     const currentTarget = targetName.toLowerCase().trim();
+    const currentCountry = countryName.toLowerCase().trim();
     
-    // Список городов-исключений для точного поиска городской черты
-    const strictCities = ['гватемала', 'панама', 'сан-марино', 'люксембург', 'сингапур', 'макао', 'гонконг', 'монако', 'алжир', 'джибути'];
+    // 1. Список СТРАН-ТЁЗОК (где имя столицы совпадает с именем государства)
+    // Для них "город" приписывать НЕ НАДО, иначе Google Карты выдают список-выборку
+    const microStates = ['сан-марино', 'люксембург', 'монако', 'андорра', 'джибути', 'алжир', 'гватемала', 'панама'];
     
-    // Проверка правил тезок (город Джибути vs страна Джибути)
+    // 2. Список ГОРОДОВ-ТЁЗОК внутри других стран (Сингапур, Гонконг, Макао — как САР/Субъекты)
+    const strictCities = ['сингапур', 'макао', 'гонконг'];
+    
+    // Логика проверки для клика по СТОЛИЦЕ
     if (!isCountryClick) {
-        if (currentTarget === countryName.toLowerCase().trim() || strictCities.includes(currentTarget)) {
+        if (microStates.includes(currentTarget)) {
+            // Для Сан-Марино получится чистый точечный запрос: "Сан-Марино, Сан-Марино"
+            searchQuery = targetName + ", " + countryName;
+        } else if (currentTarget === currentCountry || strictCities.includes(currentTarget)) {
             searchQuery = "город " + targetName + ", " + countryName;
         } else {
             searchQuery = targetName + ", " + countryName;
@@ -2796,8 +2804,6 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     }
 
     // 🔒 ЖЕЛЕЗНЫЙ ОБХОД ЛЮБОЙ ОБРЕЗКИ ТЕКСТА ПОСЛЕ .COM:
-    // Полноценно разбиваем составные части адреса на изолированные переменные.
-    // Ни один парсер не сможет обрезать параметры, так как они не существуют до клика.
     const scheme = "https://";
     const sub = "www.";
     const core = "google";
