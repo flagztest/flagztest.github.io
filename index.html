@@ -2784,30 +2784,15 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     const currentTarget = targetName.toLowerCase().trim();
     const currentCountry = countryName.toLowerCase().trim();
     
-    // Справочник точных почтовых индексов для точечной фокусировки на столицах
-    const microStateZipCodes = {
-        'сан-марино': '47890',
-        'ватикан': '00120',
-        'андорра-ла-велья': 'AD500',
-        'люксембург': '2450',
-        'монако': '98000',
-        'джибути': '77492',
-        'алжир': '16000',
-        'гватемала': '01001',
-        'панама': '0801'
-    };
-    
-    // Особые автономные мегаполисы
-    const strictCities = ['сингапур', 'макао', 'гонконг'];
-    
-    // Логика проверки для клика по СТОЛИЦЕ
+    // Если кликнули по столице
     if (!isCountryClick) {
-        if (microStateZipCodes[currentTarget]) {
-            // На выходе получается точный точечный запрос, например: "Андорра-ла-Велья AD500, Андорра"
-            searchQuery = targetName + " " + microStateZipCodes[currentTarget] + ", " + countryName;
-        } else if (strictCities.includes(currentTarget) || currentTarget === currentCountry) {
-            searchQuery = "город " + targetName + ", " + countryName;
+        if (currentTarget === currentCountry) {
+            // 🎯 ГЛАВНЫЙ СЕКРЕТ ДЛЯ ГОРОДОВ-СТРАН:
+            // Разделение через точечный символ ";" принудительно заставляет геокодер Google 
+            // сначала найти конкретный город (Сан-Марино), а затем отсечь тёзок по стране.
+            searchQuery = targetName + "; " + countryName;
         } else {
+            // Для всех остальных обычных городов на планете
             searchQuery = targetName + ", " + countryName;
         }
     }
