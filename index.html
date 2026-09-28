@@ -2784,19 +2784,18 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     const currentTarget = targetName.toLowerCase().trim();
     const currentCountry = countryName.toLowerCase().trim();
     
-    // 1. Список СТРАН-ТЁЗОК (где имя столицы совпадает с именем государства)
-    // Для них "город" приписывать НЕ НАДО, иначе Google Карты выдают список-выборку
+    // 1. Изолированный список стран-карликов и государств с совпадающими именами столиц
     const microStates = ['сан-марино', 'люксембург', 'монако', 'андорра', 'джибути', 'алжир', 'гватемала', 'панама'];
     
-    // 2. Список ГОРОДОВ-ТЁЗОК внутри других стран (Сингапур, Гонконг, Макао — как САР/Субъекты)
+    // 2. Список особых автономных зон (городов-государств)
     const strictCities = ['сингапур', 'макао', 'гонконг'];
     
-    // Логика проверки для клика по СТОЛИЦЕ
+    // Обработка логики клика по СТОЛИЦЕ
     if (!isCountryClick) {
-        if (microStates.includes(currentTarget)) {
-            // Для Сан-Марино получится чистый точечный запрос: "Сан-Марино, Сан-Марино"
-            searchQuery = targetName + ", " + countryName;
-        } else if (currentTarget === currentCountry || strictCities.includes(currentTarget)) {
+        if (microStates.includes(currentTarget) || currentTarget === currentCountry) {
+            // Маркер "столица" принудительно заставляет Google Карты показать городскую черту, а не контур страны
+            searchQuery = "столица " + targetName + ", " + countryName;
+        } else if (strictCities.includes(currentTarget)) {
             searchQuery = "город " + targetName + ", " + countryName;
         } else {
             searchQuery = targetName + ", " + countryName;
@@ -2804,6 +2803,7 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     }
 
     // 🔒 ЖЕЛЕЗНЫЙ ОБХОД ЛЮБОЙ ОБРЕЗКИ ТЕКСТА ПОСЛЕ .COM:
+    // Полноценно разбиваем составные части адреса на изолированные переменные.
     const scheme = "https://";
     const sub = "www.";
     const core = "google";
@@ -2813,7 +2813,7 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     // Склеиваем и кодируем параметры "на лету" прямо в момент физического тапа
     const finalFullUrl = scheme + sub + core + tld + route + encodeURIComponent(searchQuery);
     
-    // 🍏 ХАК ДЛЯ ВЫТАЛКИВАНИЯ ССЫЛКИ ИЗ ОКНА PWA ДОМОЙ:
+    // 🍏 ХАК ДЛЯ ВЫТАЛКИВАНИЯ ССЫЛКИ ИЗ ИЗОЛИРОВАННОГО ОКНА PWA ДОМОЙ:
     const hiddenLink = document.createElement('a');
     hiddenLink.href = finalFullUrl;
     hiddenLink.target = '_blank'; // Вынуждает iOS открыть полноценный браузер или нативное приложение Карт
