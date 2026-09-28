@@ -2592,31 +2592,21 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         });
     }
 
-    // 🌟 ОЖИВЛЯЕМ ВОПРОС (СТРАНУ): делаем кликабельной после ответа
+    // Клик по тексту вопроса (стране) ведёт на карту всей страны
     const questionEl = document.getElementById('quizCapitalQuestionTarget');
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
     questionEl.onclick = () => {
-        // 🎯 КОНСТРУКТОР ССЫЛКИ ДЛЯ КВИЗА: собираем чистый поисковый адрес API Google Maps
-        const p1 = "https://www.";
-        const p2 = "google.com";
-        const p3 = "/maps/search/";
-        const baseMapsUrl = p1 + p2 + p3;
-
-        // Если вопрос про Приднестровье, отправляем официальный термин, иначе — обычное имя страны
-        const finalQuery = currentCapTarget.name === 'Приднестровье' 
-            ? "Административно-территориальные единицы левобережья Днестра" 
-            : currentCapTarget.name;
-
-        window.open(baseMapsUrl + `?api=1&query=${encodeURIComponent(finalQuery)}`, '_blank');
+        openSmartMap(currentCapTarget.name, currentCapTarget.name, true);
     };
 
-    // 🌟 ОЖИВЛЯЕМ ВАРИАНТЫ (СТОЛИЦЫ): привязываем openSmartMap к каждой кнопке
+    // ОЖИВЛЯЕМ ВАРИАНТЫ (СТОЛИЦЫ): 
+    // Теперь при клике на кнопки столиц вызывается openSmartMap с флагом false (клик по столице),
+    // переводя поиск на ваш настраиваемый справочник cityOverrides!
     options.forEach(b => {
         b.style.cursor = 'pointer';
-        // Находим объект страны для этого конкретного города-кнопки
         const matchedCountry = allCountriesList.find(c => c.capital === b.textContent) || currentCapTarget;
-        b.onclick = () => openSmartMap(b.textContent, matchedCountry.name);
+        b.onclick = () => openSmartMap(b.textContent, matchedCountry.name, false);
     });
     
     let bestCap = localStorage.getItem('highScore_capitals') || 0;
@@ -2689,19 +2679,21 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         });
     }
 
-    // 🌟 ОЖИВЛЯЕМ ВОПРОС (СТОЛИЦУ): Клик по тексту ведет на УМНЫЕ карты городов-тезок
+    // Клик по тексту вопроса-столицы вызывает openSmartMap с флагом false (клик по столице).
+    // Если это Сан-Марино, в поиск нативно улетит ваше кастомное значение "San Marino city"!
     const questionEl = document.getElementById('quizCountryQuestionTarget');
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
     questionEl.onclick = () => {
-        openSmartMap(currentCountryTarget.capital, currentCountryTarget.name);
+        openSmartMap(currentCountryTarget.capital, currentCountryTarget.name, false);
     };
 
-    // 🌟 ОЖИВЛЯЕМ ВАРИАНТЫ (СТРАНЫ): Клик по заблокированным кнопкам ведет на карты стран
+    // ОЖИВЛЯЕМ ВАРИАНТЫ (СТРАНЫ): 
+    // Клик по кнопкам-странам вызывает openSmartMap с флагом true (поиск страны целиком)
     options.forEach(b => {
         b.style.cursor = 'pointer';
         b.onclick = () => {
-            window.open(`https://google.com/maps/search/?api=1&query=${encodeURIComponent(b.textContent)}`, '_blank');
+            openSmartMap(b.textContent, b.textContent, true);
         };
     });
     
@@ -2782,17 +2774,27 @@ function closeFlagModal() {
 function openSmartMap(targetName, countryName, isCountryClick) {
     let searchQuery = targetName;
     const currentTarget = targetName.toLowerCase().trim();
-    const currentCountry = countryName.toLowerCase().trim();
     
-    // Если кликнули по столице
+    // 🎯 ВРУЧНУЮ НАСТРАИВАЕМЫЙ СПРАВОЧНИК ИСКЛЮЧЕНИЙ ДЛЯ СТОЛИЦ:
+    // Если кликают по названию города (слева), скрипт проверяет этот список.
+    // Вы можете вписать сюда любое текстовое значение, которое намертво вобьется в поиск Google.
+    const cityOverrides = {
+        'сан-марино': 'San Marino city',
+        'люксембург': 'Luxembourg City',
+        'джибути': 'Djibouti City',
+        'алжир': 'Algiers',
+        'гватемала': 'Guatemala City',
+        'панама': 'Panama City',
+        'тунис': 'Tunis Governorate'
+    };
+    
+    // Логика проверки: если кликнули по СТОЛИЦЕ
     if (!isCountryClick) {
-        if (currentTarget === currentCountry) {
-            // 🎯 ГЛАВНЫЙ СЕКРЕТ ДЛЯ ГОРОДОВ-СТРАН:
-            // Разделение через точечный символ ";" принудительно заставляет геокодер Google 
-            // сначала найти конкретный город (Сан-Марино), а затем отсечь тёзок по стране.
-            searchQuery = targetName + "; " + countryName;
+        if (cityOverrides[currentTarget] !== undefined && cityOverrides[currentTarget] !== '') {
+            // Если для города есть ручное текстовое исключение — берем его целиком
+            searchQuery = cityOverrides[currentTarget];
         } else {
-            // Для всех остальных обычных городов на планете
+            // Для всех остальных обычных городов мира и России шлем стандартный запрос
             searchQuery = targetName + ", " + countryName;
         }
     }
@@ -2807,7 +2809,7 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     // Склеиваем и кодируем параметры "на лету" прямо в момент физического тапа
     const finalFullUrl = scheme + sub + core + tld + route + encodeURIComponent(searchQuery);
     
-    // 🍏 ХАК ДЛЯ ВЫТАЛКИВАНИЯ ССЫЛКИ ИЗ ОКНА PWA ДОМОЙ:
+    // 🍏 ХАК ДЛЯ ВЫТАЛКИВАНИЯ ССЫЛКИ ИЗ ИЗОЛИРОВАННОГО ОКНА PWA ДОМОЙ:
     const hiddenLink = document.createElement('a');
     hiddenLink.href = finalFullUrl;
     hiddenLink.target = '_blank'; // Вынуждает iOS открыть полноценный браузер или нативное приложение Карт
@@ -2817,6 +2819,7 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     hiddenLink.click(); // Эмулируем системное нажатие
     document.body.removeChild(hiddenLink); // Стираем временную ссылку из дерева DOM
 }
+
 
 // 🌟 СБОРКА 6 АККОРДЕОНОВ СУБЪЕКТОВ РФ В ВИДЕ НАТИВНЫХ КОНТИНЕНТОВ С КРАСИВЫМ ПРИЛЕГАНИЕМ ЛИНИЙ
 function generateRussiaSubjectsTables() {
