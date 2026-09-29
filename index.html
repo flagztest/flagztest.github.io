@@ -1763,7 +1763,7 @@ const countriesData = {
         { name: "Сирия", capital: "Дамаск", iso: "sy", special: true },
         { name: "Таджикистан", capital: "Душанбе", iso: "tj", special: true },
         { name: "Таиланд", capital: "Бангкок", iso: "th", special: true },
-        { name: "Тимор-Леште", capital: "Дили", iso: "tl", special: true },
+        { name: "Тимор-Лешти", capital: "Дили", iso: "tl", special: true },
         { name: "Туркменистан", capital: "Ашхабад", iso: "tm", special: true },
         { name: "Турция", capital: "Анкара", iso: "tr", special: true },
         { name: "Узбекистан", capital: "Ташкент", iso: "uz", special: true },
@@ -2774,10 +2774,9 @@ function closeFlagModal() {
 function openSmartMap(targetName, countryName, isCountryClick) {
     let searchQuery = targetName;
     const currentTarget = targetName.toLowerCase().trim();
+    const currentCountry = countryName.toLowerCase().trim();
     
-    // 🎯 ВРУЧНУЮ НАСТРАИВАЕМЫЙ СПРАВОЧНИК ИСКЛЮЧЕНИЙ ДЛЯ СТОЛИЦ:
-    // Если кликают по названию города (слева), скрипт проверяет этот список.
-    // Вы можете вписать сюда любое текстовое значение, которое намертво вобьется в поиск Google.
+    // 🎯 1. ВРУЧНУЮ НАСТРАИВАЕМЫЙ СПРАВОЧНИК ИСКЛЮЧЕНИЙ ДЛЯ СТОЛИЦ (isCountryClick === false)
     const cityOverrides = {
         'сан-марино': 'San Marino city',
         'люксембург': 'Luxembourg City',
@@ -2788,40 +2787,51 @@ function openSmartMap(targetName, countryName, isCountryClick) {
         'тунис': 'Tunis Governorate',
         'монако': 'Монако-Виль'
     };
+
+    // 🎯 2. НОВЫЙ ВРУЧНУЮ НАСТРАИВАЕМЫЙ СПРАВОЧНИК ДЛЯ СТРАН/РЕГИОНОВ (isCountryClick === true)
+    // Сюда пишите название страны из базы маленькими буквами в кавычках, 
+    // а напротив — то, что должно намертво вбиваться в поисковую строку Google Карт.
+    const countryOverrides = {
+        'мадагаскар': 'Республика Мадагаскар',
+        'того': 'Тоголезская Республика',
+        'САДР': 'Западная Сахара'
+    };
     
-    // Логика проверки: если кликнули по СТОЛИЦЕ
-    if (!isCountryClick) {
+    // Логика проверки: строго разделяем обработку городов и стран
+    if (isCountryClick) {
+        // Если это клик по стране/региону и для неё настроено ручное исключение
+        if (countryOverrides[currentTarget] !== undefined && countryOverrides[currentTarget] !== '') {
+            searchQuery = countryOverrides[currentTarget];
+        }
+    } else {
+        // Если это клик по столице/городу
         if (cityOverrides[currentTarget] !== undefined && cityOverrides[currentTarget] !== '') {
-            // Если для города есть ручное текстовое исключение — берем его целиком
             searchQuery = cityOverrides[currentTarget];
         } else {
-            // Для всех остальных обычных городов мира и России шлем стандартный запрос
             searchQuery = targetName + ", " + countryName;
         }
     }
 
     // 🔒 ЖЕЛЕЗНЫЙ ОБХОД ОБРЕЗКИ .COM + АНТИ-КЭШ GOOGLE MAPS:
-    // Мы переводим ссылки на шлюз /?q= и добавляем уникальный динамический хвостик времени nocache.
-    // Карты видят новый уникальный URL и ОБЯЗАНЫ выполнить свежий поиск с нуля!
     const scheme = "https://";
     const sub = "www.";
     const core = "google";
     const tld = ".com";
     const route = "/maps?q=";
-    const antiCache = "&nocache=" + new Date().getTime(); // Генерирует случайное число (миллисекунды времени)
+    const antiCache = "&nocache=" + new Date().getTime(); // Сбрасывает старый кэш поиска в ноль при каждом тапе
     
     // Склеиваем финальный адрес на лету
     const finalFullUrl = scheme + sub + core + tld + route + encodeURIComponent(searchQuery) + antiCache;
     
-    // 🍏 ХАК ДЛЯ ВЫТАЛКИВАНИЯ ССЫЛКИ ИЗ ИЗОЛИРОВАННОГО ОКНА PWA ДОМОЙ:
+    // 🍏 ХАК ДЛЯ ВЫТАЛКИВАНИЯ ССЫЛКИ ИЗ ОКНА PWA ДОМОЙ:
     const hiddenLink = document.createElement('a');
     hiddenLink.href = finalFullUrl;
-    hiddenLink.target = '_blank'; // Вынуждает iOS открыть полноценный браузер или нативное приложение Карт
+    hiddenLink.target = '_blank'; // Насильно выталкивает в нативное приложение Карт
     hiddenLink.rel = 'noopener noreferrer';
     
     document.body.appendChild(hiddenLink);
     hiddenLink.click(); // Эмулируем системное нажатие
-    document.body.removeChild(hiddenLink); // Стираем временную ссылку из дерева DOM
+    document.body.removeChild(hiddenLink); // Удаляем ссылку из дерева DOM
 }
 
 
