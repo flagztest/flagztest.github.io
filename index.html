@@ -2517,18 +2517,16 @@ function checkFlagAnswer(selectedBtn, chosenName) {
         });
     }
     
-    // 🌟 ПРАВИЛЬНЫЙ ОТВЕТ ПРЕВРАЩАЕТСЯ В ССЫЛКУ НА КАРТЫ
-    // Точно так же, как текст вопроса в квизах «Столицы» и «Страны»: подчёркивание,
-    // курсор-рука и клик через openSmartMap (открывает страну целиком, как в «Странах»).
-    const correctBtn = isCorrect
-        ? selectedBtn
-        : Array.from(document.querySelectorAll('#quizFlagOptions .option-btn'))
-            .find(b => b.innerHTML.startsWith(currentFlagTarget.name));
-    if (correctBtn) {
-        correctBtn.disabled = false; // заблокированная кнопка не получает клики — снимаем блокировку
-        correctBtn.style.textDecoration = 'underline';
-        correctBtn.style.cursor = 'pointer';
-        correctBtn.onclick = () => openSmartMap(currentFlagTarget.name, currentFlagTarget.name, true);
+    // ПРАВИЛЬНЫЙ ОТВЕТ СТАНОВИТСЯ ССЫЛКОЙ НА КАРТЫ (страна целиком)
+    let correctFlagBtn = null;
+    document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
+        if (b.classList.contains('correct')) correctFlagBtn = b;
+    });
+    if (correctFlagBtn) {
+        correctFlagBtn.disabled = false;
+        correctFlagBtn.style.textDecoration = 'underline';
+        correctFlagBtn.style.cursor = 'pointer';
+        correctFlagBtn.onclick = () => openSmartMap(currentFlagTarget.name, currentFlagTarget.name, true);
     }
 
     // Проверяем и обновляем High Score в памяти телефона на лету
@@ -2614,14 +2612,18 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         openSmartMap(currentCapTarget.name, currentCapTarget.name, true);
     };
 
-    // ОЖИВЛЯЕМ ВАРИАНТЫ (СТОЛИЦЫ): 
-    // Теперь при клике на кнопки столиц вызывается openSmartMap с флагом false (клик по столице),
-    // переводя поиск на ваш настраиваемый справочник cityOverrides!
+    // ПРАВИЛЬНЫЙ ОТВЕТ СТАНОВИТСЯ ССЫЛКОЙ НА КАРТЫ (клик по столице — через справочник cityOverrides)
+    let correctCapBtn = null;
     options.forEach(b => {
-        b.style.cursor = 'pointer';
-        const matchedCountry = allCountriesList.find(c => c.capital === b.textContent) || currentCapTarget;
-        b.onclick = () => openSmartMap(b.textContent, matchedCountry.name, false);
+        if (b.classList.contains('correct')) correctCapBtn = b;
     });
+    if (correctCapBtn) {
+        correctCapBtn.disabled = false;
+        correctCapBtn.style.textDecoration = 'underline';
+        correctCapBtn.style.cursor = 'pointer';
+        const matchedCountry = allCountriesList.find(c => c.capital === correctCapBtn.textContent) || currentCapTarget;
+        correctCapBtn.onclick = () => openSmartMap(correctCapBtn.textContent, matchedCountry.name, false);
+    }
     
     let bestCap = localStorage.getItem('highScore_capitals') || 0;
     if (capScore > parseInt(bestCap)) {
@@ -2702,14 +2704,17 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         openSmartMap(currentCountryTarget.capital, currentCountryTarget.name, false);
     };
 
-    // ОЖИВЛЯЕМ ВАРИАНТЫ (СТРАНЫ): 
-    // Клик по кнопкам-странам вызывает openSmartMap с флагом true (поиск страны целиком)
+    // ПРАВИЛЬНЫЙ ОТВЕТ СТАНОВИТСЯ ССЫЛКОЙ НА КАРТЫ (страна целиком)
+    let correctCountryBtn = null;
     options.forEach(b => {
-        b.style.cursor = 'pointer';
-        b.onclick = () => {
-            openSmartMap(b.textContent, b.textContent, true);
-        };
+        if (b.classList.contains('correct')) correctCountryBtn = b;
     });
+    if (correctCountryBtn) {
+        correctCountryBtn.disabled = false;
+        correctCountryBtn.style.textDecoration = 'underline';
+        correctCountryBtn.style.cursor = 'pointer';
+        correctCountryBtn.onclick = () => openSmartMap(correctCountryBtn.textContent, correctCountryBtn.textContent, true);
+    }
     
     let bestCountry = localStorage.getItem('highScore_countries') || 0;
     if (countryScore > parseInt(bestCountry)) {
