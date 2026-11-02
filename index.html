@@ -923,6 +923,7 @@ tr[data-name*="иркутск"] .flag-wrapper {
             </div>
             <div class="quiz-options" id="quizFlagOptions"></div>
             <button id="nextFlagBtn" class="action-btn" style="display:none;" onclick="loadQuizFlagRound()">Следующий флаг</button>
+            <button id="goToFlagCountryBtn" class="action-btn" style="display:none; margin-left:8px;" onclick="goToFlagCountry()">Открыть страну</button>
             <div class="quiz-stats" id="quizFlagStats">Очки: 0 | Раунд: 1</div>
         </div>
     </div>
@@ -2415,6 +2416,8 @@ function loadQuizFlagRound() {
     }
     
     document.getElementById('nextFlagBtn').style.display = 'none';
+    const mapBtn = document.getElementById('goToFlagCountryBtn');
+    if (mapBtn) mapBtn.style.display = 'none';
     currentFlagTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
     
     let highResUrl = getFlagUrl(currentFlagTarget);
@@ -2538,6 +2541,24 @@ function checkFlagAnswer(selectedBtn, chosenName) {
     }
     
     nextBtn.style.display = 'inline-block';
+
+    // 🗺️ Кнопка перехода к стране правильного ответа
+    const mapBtn = document.getElementById('goToFlagCountryBtn');
+    if (mapBtn && currentFlagTarget) {
+        mapBtn.textContent = 'Открыть: ' + currentFlagTarget.name;
+        mapBtn.style.display = 'inline-block';
+    }
+}
+
+
+// 🗺️ Переход к стране правильного ответа из квиза флагов (открывает карту так же, как в базе)
+function goToFlagCountry() {
+    if (!currentFlagTarget) return;
+    let mapQuery = currentFlagTarget.name;
+    if (mapQuery.toLowerCase().trim() === 'приднестровье') {
+        mapQuery = "Административно-территориальные единицы левобережья Днестра";
+    }
+    openSmartMap(mapQuery, currentFlagTarget.name, true);
 }
 
 
@@ -2787,7 +2808,8 @@ function openSmartMap(targetName, countryName, isCountryClick) {
         'тунис': 'Tunis Governorate',
         'монако': 'Монако-Виль',
         'великий новгород': 'Великий Новгород, Новгородская область',
-        'геническ': 'Геническ, Херсонская область'
+        'геническ': 'Геническ, Херсонская область',
+        'ижевск': 'Ижевск, Удмуртия'
     };
 
     // 🎯 2. НОВЫЙ ВРУЧНУЮ НАСТРАИВАЕМЫЙ СПРАВОЧНИК ДЛЯ СТРАН/РЕГИОНОВ (isCountryClick === true)
@@ -2796,7 +2818,8 @@ function openSmartMap(targetName, countryName, isCountryClick) {
     const countryOverrides = {
         'мадагаскар': 'Республика Мадагаскар',
         'того': 'Тоголезская Республика',
-        'садр': 'Западная Сахара'
+        'садр': 'Западная Сахара',
+        'республика крым': 'крымский полуостров'
     };
     
     // Логика проверки: строго разделяем обработку городов и стран
