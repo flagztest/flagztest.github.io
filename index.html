@@ -325,7 +325,6 @@
             background: transparent !important; /* Убираем фоновый прямоугольник сзади флага */
         }
 .quiz-flag-img {
-    cursor: pointer;
     height: 120px;
     width: auto;
     object-fit: contain;
@@ -818,7 +817,19 @@ tr[data-name*="иркутск"] .flag-wrapper {
          display: block;
      }
  
-    </style>
+    
+    /* 🎉 Пульсация очков при правильном ответе */
+    @keyframes scorePulse {
+        0%   { transform: scale(1); }
+        35%  { transform: scale(1.25); color: #2ecc71; }
+        100% { transform: scale(1); }
+    }
+    .pulse-score {
+        display: inline-block;
+        animation: scorePulse 0.7s ease;
+    }
+
+</style>
 </head>
 <body>
 
@@ -920,7 +931,7 @@ tr[data-name*="иркутск"] .flag-wrapper {
  <div id="quizFlagsView" class="view-section" style="padding-top: 40px !important; box-sizing: border-box;">
         <div class="quiz-panel" style="padding-top: 10px !important; margin-top: 0px !important;">
             <div class="quiz-flag-container">
-                <img id="quizFlagImg" class="quiz-flag-img" src="" alt="Флаг" onclick="if(this.getAttribute('src') && this.src.indexOf('data:') !== 0) openFlagModal(this.src)">
+                <img id="quizFlagImg" class="quiz-flag-img" src="" alt="Флаг" onclick="if(this.getAttribute('src')) openFlagModal(this.src)" style="cursor: pointer;">
             </div>
             <div class="quiz-options" id="quizFlagOptions"></div>
             <button id="nextFlagBtn" class="action-btn" style="display:none;" onclick="loadQuizFlagRound()">Следующий флаг</button>
@@ -2518,16 +2529,6 @@ function checkFlagAnswer(selectedBtn, chosenName) {
         });
     }
     
-    // ССЫЛКА НА КАРТЫ: превращаем в ссылку только ПРАВИЛЬНЫЙ ответ
-    document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
-        if (b.innerHTML.startsWith(currentFlagTarget.name)) {
-            b.disabled = false;
-            b.style.textDecoration = 'underline';
-            b.style.cursor = 'pointer';
-            b.onclick = () => openSmartMap(currentFlagTarget.name, currentFlagTarget.name, true);
-        }
-    });
-    
     // Проверяем и обновляем High Score в памяти телефона на лету
     let bestFlag = localStorage.getItem('highScore_flags') || 0;
     if (flagScore > parseInt(bestFlag)) {
@@ -2536,7 +2537,10 @@ function checkFlagAnswer(selectedBtn, chosenName) {
     }
     
     // Выводим статистику: Очки и Раунд остаются ТЕКУЩИМИ (не обнуляются раньше времени!)
-    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
+    document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;
+    /* 🎉 Конфетти в цветах флага + пульсация очков */
+    if (isCorrect) celebrate(currentFlagTarget.iso, 'quizFlagStats');
+|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
 
     // Переименовываем кнопку и взводим триггер сброса на единицу для следующего раунда
     const nextBtn = document.getElementById('nextFlagBtn');
@@ -2549,6 +2553,16 @@ function checkFlagAnswer(selectedBtn, chosenName) {
     }
     
     nextBtn.style.display = 'inline-block';
+
+    // Правильный ответ становится ссылкой на карты (как в базах)
+    document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
+        if (b.innerHTML.startsWith(currentFlagTarget.name)) {
+            b.disabled = false;
+            b.style.textDecoration = 'underline';
+            b.style.cursor = 'pointer';
+            b.onclick = () => openSmartMap(currentFlagTarget.name, currentFlagTarget.name, true);
+        }
+    });
 }
 
 
@@ -2611,7 +2625,7 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         openSmartMap(currentCapTarget.name, currentCapTarget.name, true);
     };
 
-    // ССЫЛКА НА КАРТЫ: превращаем в ссылку только ПРАВИЛЬНЫЙ ответ
+    // В ссылку превращается только правильный ответ (клик по столице — через cityOverrides)
     options.forEach(b => {
         if (b.textContent === currentCapTarget.capital) {
             b.disabled = false;
@@ -2628,7 +2642,10 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         bestCap = capScore;
     }
     
-    document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
+    document.getElementById('quizCapitalStats').innerHTML = `🏆 Рекорд: ${bestCap} &nbsp;
+    /* 🎉 Конфетти в цветах флага + пульсация очков */
+    if (isCorrect) celebrate(currentCapTarget.iso, 'quizCapitalStats');
+|&nbsp; 🎯 Очки: ${capScore} &nbsp;|&nbsp; 📋 Раунд: ${capRound}`;
     
     const nextBtn = document.getElementById('nextCapitalBtn');
     if (!isCorrect) {
@@ -2701,7 +2718,7 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         openSmartMap(currentCountryTarget.capital, currentCountryTarget.name, false);
     };
 
-    // ССЫЛКА НА КАРТЫ: превращаем в ссылку только ПРАВИЛЬНЫЙ ответ
+    // В ссылку превращается только правильный ответ (клик по стране целиком — через countryOverrides)
     options.forEach(b => {
         if (b.textContent === currentCountryTarget.name) {
             b.disabled = false;
@@ -2717,7 +2734,10 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         bestCountry = countryScore;
     }
     
-    document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
+    document.getElementById('quizCountryStats').innerHTML = `🏆 Рекорд: ${bestCountry} &nbsp;
+    /* 🎉 Конфетти в цветах флага + пульсация очков */
+    if (isCorrect) celebrate(currentCountryTarget.iso, 'quizCountryStats');
+|&nbsp; 🎯 Очки: ${countryScore} &nbsp;|&nbsp; 📋 Раунд: ${countryRound}`;
     
     const nextBtn = document.getElementById('nextCountryBtn');
     if (!isCorrect) {
@@ -2812,7 +2832,8 @@ function openSmartMap(targetName, countryName, isCountryClick) {
         'мадагаскар': 'Республика Мадагаскар',
         'того': 'Тоголезская Республика',
         'садр': 'Западная Сахара',
-        'республика крым': 'крымский полуостров'
+        'республика крым': 'крымский полуостров',
+        'приднестровье': 'Административно-территориальные единицы левобережья Днестра'
     };
     
     // Логика проверки: строго разделяем обработку городов и стран
@@ -3118,5 +3139,193 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
+
+// ═══════════ 🎉 СПЕЦЭФФЕКТЫ: конфетти в цветах флага + пульсация очков ═══════════
+// Справочник цветов флагов по iso-коду. Чего нет — падает золотое конфетти.
+const confettiColors = {
+    ru: ['#ffffff', '#0039a6', '#d52b1e'],
+    ua: ['#0057b7', '#ffd700'],
+    de: ['#000000', '#dd0000', '#ffce00'],
+    fr: ['#0055a4', '#ffffff', '#ef4135'],
+    it: ['#009246', '#ffffff', '#ce2b37'],
+    es: ['#aa151b', '#f1bf00'],
+    pl: ['#ffffff', '#dc143c'],
+    nl: ['#ae1c28', '#ffffff', '#21468b'],
+    se: ['#006aa7', '#fecc02'],
+    no: ['#ba0c2f', '#ffffff', '#00205b'],
+    fi: ['#003580', '#ffffff'],
+    dk: ['#c8102e', '#ffffff'],
+    is: ['#02529c', '#ffffff', '#dc1e35'],
+    pt: ['#046a38', '#da291c', '#ffe900'],
+    gr: ['#0d5eaf', '#ffffff'],
+    ch: ['#da291c', '#ffffff'],
+    at: ['#ed2939', '#ffffff'],
+    be: ['#000000', '#fdda24', '#ef3340'],
+    ie: ['#169b62', '#ffffff', '#ff883e'],
+    cz: ['#ffffff', '#d7141a', '#11457e'],
+    hu: ['#cd2a3e', '#ffffff', '#436f4d'],
+    ro: ['#002b7f', '#fcd116', '#ce1126'],
+    bg: ['#ffffff', '#00966e', '#d62612'],
+    hr: ['#ff0000', '#ffffff', '#171796'],
+    rs: ['#c6363c', '#0c4076', '#ffffff'],
+    sk: ['#ffffff', '#0b4ea2', '#ee1c25'],
+    si: ['#ffffff', '#005ce5', '#ed1c24'],
+    lt: ['#fdb913', '#006a44', '#c1272d'],
+    lv: ['#9e3039', '#ffffff'],
+    ee: ['#0072ce', '#000000', '#ffffff'],
+    by: ['#ce1720', '#00a650', '#ffffff'],
+    md: ['#0046ae', '#ffd200', '#cc092f'],
+    al: ['#e41e20', '#000000'],
+    mk: ['#d20000', '#ffe600'],
+    me: ['#c40308', '#d4af37', '#00539f'],
+    ba: ['#002f6c', '#fecb00', '#ffffff'],
+    mt: ['#ffffff', '#cf142b'],
+    lu: ['#ef3340', '#ffffff', '#00a2e1'],
+    am: ['#d90012', '#0033a0', '#f2a800'],
+    ge: ['#ffffff', '#ff0000'],
+    az: ['#00b9e4', '#ed2939', '#3f9c35'],
+    tr: ['#e30a17', '#ffffff'],
+    cy: ['#ffffff', '#d47600', '#4e5b31'],
+    jp: ['#ffffff', '#bc002d'],
+    kr: ['#ffffff', '#cd2e3a', '#0047a0'],
+    cn: ['#de2910', '#ffde00'],
+    in: ['#ff9933', '#ffffff', '#138808', '#000080'],
+    id: ['#ce1126', '#ffffff'],
+    my: ['#010066', '#cc0001', '#ffcc00', '#ffffff'],
+    sg: ['#ed2939', '#ffffff'],
+    th: ['#a51931', '#f4f5f8', '#2d2a4a'],
+    vn: ['#da251d', '#ffff00'],
+    ph: ['#0038a8', '#ce1126', '#ffffff', '#fcd116'],
+    br: ['#009c3b', '#ffdf00', '#002776'],
+    ar: ['#74acdf', '#ffffff', '#f6b40e'],
+    cl: ['#ffffff', '#d52b1e', '#0039a6'],
+    mx: ['#006847', '#ffffff', '#ce1126'],
+    pe: ['#d91023', '#ffffff'],
+    co: ['#fcd116', '#003893', '#ce1126'],
+    ve: ['#ffcc00', '#00247d', '#cf142b'],
+    ec: ['#ffd100', '#0072ce', '#ef3340'],
+    us: ['#b22234', '#ffffff', '#3c3b6e'],
+    ca: ['#ff0000', '#ffffff'],
+    au: ['#012169', '#ffffff', '#e4002b'],
+    nz: ['#012169', '#ffffff', '#c8102e'],
+    za: ['#007a4d', '#ffb612', '#de3831', '#000000', '#ffffff', '#002395'],
+    eg: ['#ce1126', '#ffffff', '#000000'],
+    ma: ['#c1272d', '#006233'],
+    dz: ['#006233', '#ffffff', '#d21034'],
+    tn: ['#e70013', '#ffffff'],
+    ng: ['#008751', '#ffffff'],
+    ke: ['#000000', '#bb0000', '#006600', '#ffffff'],
+    et: ['#078930', '#fcdd09', '#da121a'],
+    gh: ['#ce1126', '#fcd116', '#006b3f'],
+    sn: ['#00853f', '#fdef42', '#e31b23'],
+    cm: ['#007a5e', '#ce1126', '#fcd116'],
+    sa: ['#006c35', '#ffffff'],
+    ae: ['#00732f', '#ffffff', '#000000', '#ff0000'],
+    il: ['#0038b8', '#ffffff'],
+    ir: ['#239f40', '#ffffff', '#da0000'],
+    iq: ['#ce1126', '#ffffff', '#000000'],
+    pk: ['#01411c', '#ffffff'],
+    bd: ['#006a4e', '#f42a41'],
+    lk: ['#8d153a', '#ffb700', '#00534e'],
+    mm: ['#fecb00', '#34bd23', '#ea2839'],
+    np: ['#dc143c', '#003893'],
+    kz: ['#00afca', '#fec50c'],
+    uz: ['#0099b5', '#ffffff', '#1eb53a'],
+    kg: ['#e8112d', '#ffef00'],
+    tj: ['#cc0000', '#ffffff', '#006600'],
+    tm: ['#00843d', '#ffffff', '#d32011'],
+    mn: ['#c4272f', '#015197'],
+    af: ['#000000', '#d32011', '#007a36'],
+    py: ['#d52b1e', '#ffffff', '#0038a8'],
+    uy: ['#ffffff', '#0038a8'],
+    bo: ['#d52b1e', '#ffffff', '#007934'],
+    cr: ['#002b7f', '#ffffff', '#ce1126'],
+    pa: ['#ffffff', '#005293', '#d21034'],
+    cu: ['#002a8f', '#ffffff', '#cf142b'],
+    do_: ['#002d62', '#ffffff', '#ce1126'],
+    hn: ['#0073cf', '#ffffff'],
+    gt: ['#4997d0', '#ffffff'],
+    sv: ['#0f47af', '#ffffff'],
+    ni: ['#0067c6', '#ffffff'],
+    jm: ['#009b3a', '#fed100', '#000000', '#ed2939'],
+    tt: ['#ce1126', '#ffffff', '#000000'],
+    bs: ['#00abc9', '#ffffff', '#fae042', '#000000'],
+    bb: ['#00267f', '#ffcd00'],
+    sg2: []
+};
+
+function getConfettiColors(iso) {
+    if (!iso) return null;
+    return confettiColors[iso.toLowerCase()] || null;
+}
+
+// Пульсация строки статистики + конфетти одним вызовом
+function celebrate(iso, statsId) {
+    const statsEl = document.getElementById(statsId);
+    if (statsEl) {
+        statsEl.classList.remove('pulse-score');
+        void statsEl.offsetWidth; /* принудительный reflow — анимация перезапускается */
+        statsEl.classList.add('pulse-score');
+    }
+    launchConfetti(getConfettiColors(iso));
+}
+
+/* Канва конфетти: одна на всё приложение, не перехватывает клики, сама очищается */
+let confettiCanvas = null, confettiCtx = null, confettiPieces = [], confettiAnimId = null;
+
+function launchConfetti(colors) {
+    /* Нейтральное золотое — если цветов флага в справочнике нет */
+    const palette = (colors && colors.length) ? colors : ['#ffd700', '#ffb300', '#fff176', '#f59f00'];
+
+    if (!confettiCanvas) {
+        confettiCanvas = document.createElement('canvas');
+        confettiCanvas.id = 'confettiCanvas';
+        confettiCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99998;';
+        document.body.appendChild(confettiCanvas);
+        confettiCtx = confettiCanvas.getContext('2d');
+    }
+    if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+
+    const w = confettiCanvas.width = window.innerWidth;
+    const h = confettiCanvas.height = window.innerHeight;
+    confettiPieces = [];
+    const count = 140;
+    for (let i = 0; i < count; i++) {
+        confettiPieces.push({
+            x: Math.random() * w,
+            y: -20 - Math.random() * h * 0.5,
+            w: 6 + Math.random() * 6,
+            h: 10 + Math.random() * 10,
+            color: palette[Math.floor(Math.random() * palette.length)],
+            vy: 2 + Math.random() * 3.5,
+            vx: -1.5 + Math.random() * 3,
+            rot: Math.random() * Math.PI * 2,
+            vr: -0.1 + Math.random() * 0.2
+        });
+    }
+
+    const tick = () => {
+        confettiCtx.clearRect(0, 0, w, h);
+        let alive = false;
+        confettiPieces.forEach(p => {
+            p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+            if (p.y < h + 30) alive = true;
+            confettiCtx.save();
+            confettiCtx.translate(p.x, p.y);
+            confettiCtx.rotate(p.rot);
+            confettiCtx.fillStyle = p.color;
+            confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            confettiCtx.restore();
+        });
+        if (alive) {
+            confettiAnimId = requestAnimationFrame(tick);
+        } else {
+            confettiCtx.clearRect(0, 0, w, h);
+            confettiAnimId = null;
+        }
+    };
+    confettiAnimId = requestAnimationFrame(tick);
+}
+// ═══════════ КОНЕЦ СПЕЦЭФФЕКТОВ ═══════════
 </body>
 </html>
