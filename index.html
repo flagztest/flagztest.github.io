@@ -325,6 +325,7 @@
             background: transparent !important; /* Убираем фоновый прямоугольник сзади флага */
         }
 .quiz-flag-img {
+    cursor: pointer;
     height: 120px;
     width: auto;
     object-fit: contain;
@@ -919,7 +920,7 @@ tr[data-name*="иркутск"] .flag-wrapper {
  <div id="quizFlagsView" class="view-section" style="padding-top: 40px !important; box-sizing: border-box;">
         <div class="quiz-panel" style="padding-top: 10px !important; margin-top: 0px !important;">
             <div class="quiz-flag-container">
-                <img id="quizFlagImg" class="quiz-flag-img" src="" alt="Флаг" onclick="if(this.getAttribute('src')) openFlagModal(this.src)" style="cursor: pointer;">
+                <img id="quizFlagImg" class="quiz-flag-img" src="" alt="Флаг" onclick="if(this.getAttribute('src') && this.src.indexOf('data:') !== 0) openFlagModal(this.src)">
             </div>
             <div class="quiz-options" id="quizFlagOptions"></div>
             <button id="nextFlagBtn" class="action-btn" style="display:none;" onclick="loadQuizFlagRound()">Следующий флаг</button>
@@ -2517,6 +2518,16 @@ function checkFlagAnswer(selectedBtn, chosenName) {
         });
     }
     
+    // ССЫЛКА НА КАРТЫ: превращаем в ссылку только ПРАВИЛЬНЫЙ ответ
+    document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
+        if (b.innerHTML.startsWith(currentFlagTarget.name)) {
+            b.disabled = false;
+            b.style.textDecoration = 'underline';
+            b.style.cursor = 'pointer';
+            b.onclick = () => openSmartMap(currentFlagTarget.name, currentFlagTarget.name, true);
+        }
+    });
+    
     // Проверяем и обновляем High Score в памяти телефона на лету
     let bestFlag = localStorage.getItem('highScore_flags') || 0;
     if (flagScore > parseInt(bestFlag)) {
@@ -2538,16 +2549,6 @@ function checkFlagAnswer(selectedBtn, chosenName) {
     }
     
     nextBtn.style.display = 'inline-block';
-
-    // Правильный ответ становится ссылкой на карты (как в базах)
-    document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
-        if (b.innerHTML.startsWith(currentFlagTarget.name)) {
-            b.disabled = false;
-            b.style.textDecoration = 'underline';
-            b.style.cursor = 'pointer';
-            b.onclick = () => openSmartMap(currentFlagTarget.name, currentFlagTarget.name, true);
-        }
-    });
 }
 
 
@@ -2610,7 +2611,7 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         openSmartMap(currentCapTarget.name, currentCapTarget.name, true);
     };
 
-    // В ссылку превращается только правильный ответ (клик по столице — через cityOverrides)
+    // ССЫЛКА НА КАРТЫ: превращаем в ссылку только ПРАВИЛЬНЫЙ ответ
     options.forEach(b => {
         if (b.textContent === currentCapTarget.capital) {
             b.disabled = false;
@@ -2700,7 +2701,7 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         openSmartMap(currentCountryTarget.capital, currentCountryTarget.name, false);
     };
 
-    // В ссылку превращается только правильный ответ (клик по стране целиком — через countryOverrides)
+    // ССЫЛКА НА КАРТЫ: превращаем в ссылку только ПРАВИЛЬНЫЙ ответ
     options.forEach(b => {
         if (b.textContent === currentCountryTarget.name) {
             b.disabled = false;
@@ -2811,8 +2812,7 @@ function openSmartMap(targetName, countryName, isCountryClick) {
         'мадагаскар': 'Республика Мадагаскар',
         'того': 'Тоголезская Республика',
         'садр': 'Западная Сахара',
-        'республика крым': 'крымский полуостров',
-        'приднестровье': 'Административно-территориальные единицы левобережья Днестра'
+        'республика крым': 'крымский полуостров'
     };
     
     // Логика проверки: строго разделяем обработку городов и стран
