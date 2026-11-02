@@ -2516,17 +2516,17 @@ function checkFlagAnswer(selectedBtn, chosenName) {
             if(b.innerHTML.startsWith(currentFlagTarget.name)) b.classList.add('correct');
         });
     }
-    
-    // 🎯 ПРАВИЛЬНЫЙ ОТВЕТ СТАНОВИТСЯ ССЫЛКОЙ НА КАРТЫ (как вопрос в других квизах)
+
+    // Правильный ответ превращается в ссылку на карты (как в базах)
     document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
         if (b.innerHTML.startsWith(currentFlagTarget.name)) {
-            b.disabled = false; // disabled-кнопки не принимают клики в браузерах
+            b.disabled = false;
             b.style.textDecoration = 'underline';
             b.style.cursor = 'pointer';
             b.onclick = () => openSmartMap(currentFlagTarget.name, currentFlagTarget.name, true);
         }
     });
-    
+
     // Проверяем и обновляем High Score в памяти телефона на лету
     let bestFlag = localStorage.getItem('highScore_flags') || 0;
     if (flagScore > parseInt(bestFlag)) {
@@ -2610,10 +2610,10 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         openSmartMap(currentCapTarget.name, currentCapTarget.name, true);
     };
 
-    // 🎯 В ССЫЛКУ ПРЕВРАЩАЕТСЯ ТОЛЬКО ПРАВИЛЬНЫЙ ОТВЕТ (справочник cityOverrides в openSmartMap)
+    // В ссылку на карты превращается только правильный ответ (как в базах)
     options.forEach(b => {
         if (b.textContent === currentCapTarget.capital) {
-            b.disabled = false; // disabled-кнопки не принимают клики в браузерах
+            b.disabled = false;
             b.style.textDecoration = 'underline';
             b.style.cursor = 'pointer';
             const matchedCountry = allCountriesList.find(c => c.capital === b.textContent) || currentCapTarget;
@@ -2700,10 +2700,10 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         openSmartMap(currentCountryTarget.capital, currentCountryTarget.name, false);
     };
 
-    // 🎯 В ССЫЛКУ ПРЕВРАЩАЕТСЯ ТОЛЬКО ПРАВИЛЬНЫЙ ОТВЕТ (справочник countryOverrides в openSmartMap)
+    // В ссылку на карты превращается только правильный ответ (как в базах)
     options.forEach(b => {
         if (b.textContent === currentCountryTarget.name) {
-            b.disabled = false; // disabled-кнопки не принимают клики в браузерах
+            b.disabled = false;
             b.style.textDecoration = 'underline';
             b.style.cursor = 'pointer';
             b.onclick = () => openSmartMap(b.textContent, b.textContent, true);
