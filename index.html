@@ -819,31 +819,14 @@ tr[data-name*="иркутск"] .flag-wrapper {
      }
  
     
-    /* 🎉 Спецэффекты: тряска при ошибке, пружина при верном ответе, пульс очков */
-    @keyframes btnShake {
-        0%, 100% { transform: translateX(0); }
-        20% { transform: translateX(-7px); }
-        40% { transform: translateX(7px); }
-        60% { transform: translateX(-5px); }
-        80% { transform: translateX(5px); }
-    }
-    .btn-shake { animation: btnShake 0.45s ease; }
-    @keyframes btnPop {
-        0% { transform: scale(1); }
-        35% { transform: scale(1.14); }
-        60% { transform: scale(0.96); }
-        80% { transform: scale(1.07); }
-        100% { transform: scale(1); }
-    }
-    .btn-pop { animation: btnPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    @keyframes scorePulse {
-        0% { transform: scale(1); }
-        40% { transform: scale(1.18); color: #2ecc71; }
-        100% { transform: scale(1); }
-    }
-    .score-pulse { animation: scorePulse 0.6s ease; }
-
-    </style>
+/* === СПЕЦЭФФЕКТЫ: пульсация очков === */
+@keyframes statsPulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.25); color: #27ae60; }
+    100% { transform: scale(1); }
+}
+.stats-pulse { animation: statsPulse 0.6s ease; display: inline-block; }
+</style>
 </head>
 <body>
 
@@ -2527,6 +2510,116 @@ function loadQuizFlagRound() {
     document.getElementById('quizFlagStats').innerHTML = `🏆 Рекорд: ${bestFlag} &nbsp;|&nbsp; 🎯 Очки: ${flagScore} &nbsp;|&nbsp; 📋 Раунд: ${flagRound}`;
 }
 
+
+// ==================== 🎉 СПЕЦЭФФЕКТЫ: конфетти в цветах флага + пульсация очков ====================
+// Справочник цветов флагов по iso-коду. Чего нет — падает золотое конфетти.
+const confettiColors = {
+    ru: ['#ffffff', '#0039a6', '#d52b1e'], ua: ['#0057b7', '#ffd700'],
+    de: ['#000000', '#dd0000', '#ffce00'], fr: ['#0055a4', '#ffffff', '#ef4135'],
+    it: ['#009246', '#ffffff', '#ce2b37'], es: ['#aa151b', '#f1bf00'],
+    pl: ['#ffffff', '#dc143c'], nl: ['#ae1c28', '#ffffff', '#21468b'],
+    se: ['#006aa7', '#fecc02'], no: ['#ba0c2f', '#ffffff', '#00205b'],
+    fi: ['#003580', '#ffffff'], dk: ['#c8102e', '#ffffff'],
+    is: ['#02529c', '#ffffff', '#dc1e35'], pt: ['#046a38', '#da291c', '#ffe900'],
+    gr: ['#0d5eaf', '#ffffff'], ch: ['#da291c', '#ffffff'],
+    at: ['#ed2939', '#ffffff'], be: ['#000000', '#fdda24', '#ef3340'],
+    ie: ['#169b62', '#ffffff', '#ff883e'], cz: ['#ffffff', '#d7141a', '#11457e'],
+    hu: ['#cd2a3e', '#ffffff', '#436f4d'], ro: ['#002b7f', '#fcd116', '#ce1126'],
+    bg: ['#ffffff', '#00966e', '#d62612'], hr: ['#ff0000', '#ffffff', '#171796'],
+    rs: ['#c6363c', '#0c4076', '#ffffff'], sk: ['#ffffff', '#0b4ea2', '#ee1c25'],
+    si: ['#ffffff', '#005ce5', '#ed1c24'], lt: ['#fdb913', '#006a44', '#c1272d'],
+    lv: ['#9e3039', '#ffffff'], ee: ['#0072ce', '#000000', '#ffffff'],
+    by: ['#ce1720', '#00a650', '#ffffff'], md: ['#0046ae', '#ffd200', '#cc092f'],
+    al: ['#e41e20', '#000000'], mk: ['#d20000', '#ffe600'],
+    me: ['#c40308', '#d3ae3b'], ba: ['#002f6c', '#f9e300'],
+    gb: ['#012169', '#ffffff', '#c8102e'], us: ['#3c3b6e', '#ffffff', '#b22234'],
+    ca: ['#ff0000', '#ffffff'], mx: ['#006847', '#ffffff', '#ce1126'],
+    br: ['#009c3b', '#ffdf00', '#002776'], ar: ['#74acdf', '#ffffff', '#74acdf'],
+    cl: ['#0039a6', '#ffffff', '#d52b1e'], co: ['#fcd116', '#003893', '#ce1126'],
+    pe: ['#d91023', '#ffffff'], ve: ['#ffcc00', '#00247d', '#cf142b'],
+    ec: ['#ffd100', '#0072ce', '#ef3340'], uy: ['#7b9fd4', '#ffffff'],
+    py: ['#0038a8', '#ffffff', '#d52b1e'], bo: ['#d52b1e', '#ffffff', '#007934'],
+    cn: ['#de2910', '#ffde00'], jp: ['#ffffff', '#bc002d'],
+    kr: ['#ffffff', '#cd2e3a', '#0047a0'], kp: ['#024fa2', '#ed1c27', '#ffffff'],
+    in: ['#ff9933', '#ffffff', '#138808'], np: ['#dc143c', '#003893'],
+    pk: ['#01411c', '#ffffff'], bd: ['#006a4e', '#f42a41'],
+    lk: ['#8d153a', '#ffb700', '#00534e'], th: ['#a51931', '#f4f5f8', '#2d2a4a'],
+    vn: ['#da251d', '#ffff00'], id: ['#ce1126', '#ffffff'],
+    my: ['#010066', '#cc0001', '#ffffff'], sg: ['#ef3340', '#ffffff'],
+    ph: ['#0038a8', '#ce1126', '#ffffff'], kh: ['#032ea1', '#032ea1', '#e00025'],
+    ae: ['#ff0000', '#ffffff', '#000000', '#00732f'], sa: ['#006c35', '#ffffff'],
+    tr: ['#e30a17', '#ffffff'], il: ['#0038b8', '#ffffff'],
+    ir: ['#239f40', '#ffffff', '#da0000'], eg: ['#ce1126', '#ffffff', '#000000'],
+    ma: ['#c1272d', '#006233'], za: ['#007a4d', '#ffffff', '#ffb612', '#de3831'],
+    ng: ['#008751', '#ffffff'], et: ['#078930', '#fcdd09', '#da121a'],
+    ke: ['#922529', '#ffffff', '#0b4c29'], gh: ['#ce1126', '#fcd116', '#006b3f'],
+    tz: ['#1eb53a', '#fcd116', '#00a3dd'], ua2: [],
+    au: ['#012169', '#ffffff'], nz: ['#00247d', '#ffffff'],
+    au2: [], ge: ['#ff0000', '#ffffff'], am: ['#d90012', '#0033a0', '#f2a800'],
+    kz: ['#00afca', '#fec50c'], uz: ['#0099b5', '#ffffff', '#1eb53a'],
+    mn: ['#c4272f', '#015197'], kz2: []
+};
+const GOLD = ['#ffd700', '#ffb300', '#ffec8b', '#d4af37'];
+
+function launchConfetti(iso) {
+    try {
+        const canvas = document.getElementById('confettiCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let colors = (iso && confettiColors[iso.toLowerCase()]) || null;
+        colors = (colors && colors.length) ? colors : GOLD;
+        const pieces = [];
+        const COUNT = 140;
+        for (let i = 0; i < COUNT; i++) {
+            pieces.push({
+                x: Math.random() * canvas.width,
+                y: -20 - Math.random() * canvas.height * 0.3,
+                w: 6 + Math.random() * 6,
+                h: 10 + Math.random() * 8,
+                vy: 2 + Math.random() * 3.5,
+                vx: -1.5 + Math.random() * 3,
+                rot: Math.random() * Math.PI * 2,
+                vr: -0.12 + Math.random() * 0.24,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            });
+        }
+        const endAt = Date.now() + 3200;
+        cancelAnimationFrame(canvas._rafId);
+        (function frame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let alive = false;
+            for (const p of pieces) {
+                p.y += p.vy; p.x += p.vx; p.rot += p.vr;
+                if (p.y < canvas.height + 30) alive = true;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                ctx.restore();
+            }
+            if (alive && Date.now() < endAt + 2500) {
+                canvas._rafId = requestAnimationFrame(frame);
+            } else {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        })();
+    } catch (e) { /* эффекты не должны ломать квиз */ }
+}
+
+function pulseStats(statsId) {
+    try {
+        const el = document.getElementById(statsId);
+        if (!el) return;
+        el.classList.remove('stats-pulse');
+        void el.offsetWidth; // перезапуск анимации
+        el.classList.add('stats-pulse');
+    } catch (e) { /* эффекты не должны ломать квиз */ }
+}
+// ==================== /СПЕЦЭФФЕКТЫ ====================
+
 function checkFlagAnswer(selectedBtn, chosenName) {
     document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => b.disabled = true);
     
@@ -2535,6 +2628,7 @@ function checkFlagAnswer(selectedBtn, chosenName) {
     if (isCorrect) {
         selectedBtn.classList.add('correct');
         flagScore++;
+        try { launchConfetti(currentFlagTarget.iso); pulseStats('quizFlagStats'); } catch (e) {}
         // ЛИШНЕЕ УДВОЕНИЕ flagRound++ ОТСЮДА УБРАНО!
     } else {
         selectedBtn.classList.add('wrong');
@@ -2543,17 +2637,6 @@ function checkFlagAnswer(selectedBtn, chosenName) {
         });
     }
     
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
-    try {
-        if (isCorrect) {
-            launchConfetti(currentFlagTarget.iso, currentFlagTarget.name);
-            pulseScoreStats(document.getElementById('quizFlagStats'));
-            popBtn(selectedBtn);
-        } else {
-            shakeBtn(selectedBtn);
-        }
-    } catch (fxError) { /* эффекты не должны ломать квиз */ }
-
     // ССЫЛКА НА КАРТЫ: превращаем в ссылку только ПРАВИЛЬНЫЙ ответ
     document.querySelectorAll('#quizFlagOptions .option-btn').forEach(b => {
         if (b.innerHTML.startsWith(currentFlagTarget.name)) {
@@ -2632,23 +2715,13 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
     if (isCorrect) {
         selectedBtn.classList.add('correct');
         capScore++;
+        try { launchConfetti(currentCapTarget.iso); pulseStats('quizCapitalStats'); } catch (e) {}
     } else {
         selectedBtn.classList.add('wrong');
         options.forEach(b => {
             if(b.textContent === currentCapTarget.capital) b.classList.add('correct');
         });
     }
-
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
-    try {
-        if (isCorrect) {
-            launchConfetti(currentCapTarget.iso, currentCapTarget.name);
-            pulseScoreStats(document.getElementById('quizCapitalStats'));
-            popBtn(selectedBtn);
-        } else {
-            shakeBtn(selectedBtn);
-        }
-    } catch (fxError) { /* эффекты не должны ломать квиз */ }
 
     // Клик по тексту вопроса (стране) ведёт на карту всей страны
     const questionEl = document.getElementById('quizCapitalQuestionTarget');
@@ -2732,23 +2805,13 @@ function checkCountryAnswer(selectedBtn, chosenName) {
     if (isCorrect) {
         selectedBtn.classList.add('correct');
         countryScore++;
+        try { launchConfetti(currentCountryTarget.iso); pulseStats('quizCountryStats'); } catch (e) {}
     } else {
         selectedBtn.classList.add('wrong');
         options.forEach(b => {
             if(b.textContent === currentCountryTarget.name) b.classList.add('correct');
         });
     }
-
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
-    try {
-        if (isCorrect) {
-            launchConfetti(currentCountryTarget.iso, currentCountryTarget.name);
-            pulseScoreStats(document.getElementById('quizCountryStats'));
-            popBtn(selectedBtn);
-        } else {
-            shakeBtn(selectedBtn);
-        }
-    } catch (fxError) { /* эффекты не должны ломать квиз */ }
 
     // Клик по тексту вопроса-столицы вызывает openSmartMap с флагом false (клик по столице).
     // Если это Сан-Марино, в поиск нативно улетит ваше кастомное значение "San Marino city"!
@@ -3163,212 +3226,6 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaOkrugsTables();
     generateRussiaCapitalsTable();
 });
-
-// ================== 🎉 СПЕЦЭФФЕКТЫ: КОНФЕТТИ В ЦВЕТАХ ФЛАГА + ПУЛЬС + ТРЯСКА + ПРУЖИНА ==================
-// Справочник цветов флагов по iso-коду. Покрывает ВСЕ страны и территории из баз приложения.
-const confettiColors = {
-    ru: ['#ffffff', '#0039a6', '#d52b1e'], ua: ['#0057b7', '#ffd700'], by: ['#ce1720', '#007c30', '#ffffff'],
-    abh: ['#ffffff', '#009639', '#ce1126'],
-    ad: ['#10069f', '#fedd00', '#d0103a'], ae: ['#00732f', '#ffffff', '#000000', '#ce1126'],
-    af: ['#000000', '#ce1126', '#006600', '#ffffff'], ag: ['#ce1126', '#fcd116', '#003087', '#ffffff', '#000000'],
-    al: ['#da291c', '#000000'], am: ['#d90012', '#0033a0', '#f2a800'], ao: ['#cc092f', '#000000', '#fcd116'],
-    ar: ['#74acdf', '#ffffff', '#f6b40e'], at: ['#ed2939', '#ffffff'], au: ['#00247d', '#ffffff', '#cf142b'],
-    aw: ['#418fde', '#f9e300', '#d21034', '#ffffff'], az: ['#00b5e2', '#ef3340', '#509e2f'],
-    ba: ['#002395', '#fecb00', '#ffffff'], bb: ['#00267f', '#ffd700', '#000000'],
-    bd: ['#006a4e', '#f42a41'], be: ['#000000', '#fdda24', '#ef3340'],
-    bf: ['#ef2b2d', '#009e49', '#fcd116'], bg: ['#ffffff', '#00966e', '#d62612'],
-    bh: ['#ffffff', '#ce1126'], bi: ['#ce1126', '#ffffff', '#1eb53a'],
-    bj: ['#008751', '#fcd116', '#e8112d'], bn: ['#f7e017', '#ffffff', '#000000', '#cf1124'],
-    bo: ['#d52b1e', '#f9e300', '#007934'], br: ['#009b3a', '#ffdf00', '#002776', '#ffffff'],
-    bs: ['#00abc9', '#000000', '#fae042'], bt: ['#ffcc33', '#ff6720', '#ffffff'],
-    bw: ['#75aadb', '#ffffff', '#000000'], bz: ['#003f87', '#ce1126', '#ffffff'],
-    ca: ['#ff0000', '#ffffff'], cd: ['#007fff', '#f7d618', '#ce1021'],
-    cf: ['#003082', '#ffffff', '#009e60', '#ffce00', '#d21034'], cg: ['#009543', '#fbde4a', '#dc241f'],
-    ch: ['#da291c', '#ffffff'], ci: ['#f77f00', '#ffffff', '#009e60'],
-    ck: ['#00247d', '#ffffff', '#cf142b'], cl: ['#ffffff', '#d52b1e', '#0039a6'],
-    cm: ['#007a5e', '#ce1126', '#fcd116'], cn: ['#de2910', '#ffde00'],
-    co: ['#fcd116', '#003893', '#ce1126'], cr: ['#002b7f', '#ffffff', '#ce1126'],
-    cu: ['#002a8f', '#ffffff', '#cf1425'], cv: ['#003893', '#ffffff', '#cf2027', '#f7d116'],
-    cw: ['#002b7f', '#f9e814', '#ffffff'], cy: ['#ffffff', '#d47600', '#4e5b31'],
-    cz: ['#ffffff', '#d7141a', '#11457e'], de: ['#000000', '#dd0000', '#ffce00'],
-    dj: ['#6ab2e7', '#12ad2b', '#ffffff', '#ce1126'], dk: ['#c8102e', '#ffffff'],
-    dm: ['#006b3f', '#fcd116', '#000000', '#ffffff', '#d21034'], do: ['#002d62', '#ce1126', '#ffffff'],
-    dz: ['#006233', '#ffffff', '#d21034'], ec: ['#ffd100', '#0072ce', '#ef3340'],
-    ee: ['#0072ce', '#000000', '#ffffff'], eg: ['#ce1126', '#ffffff', '#000000'],
-    eh: ['#000000', '#ffffff', '#007a3d', '#ce1126'], er: ['#12ad2b', '#ea0437', '#00a3dd'],
-    es: ['#aa151b', '#f1bf00'], et: ['#078930', '#fcdd09', '#da121a'],
-    fi: ['#003580', '#ffffff'], fj: ['#68c5ed', '#ffffff', '#cf142b'],
-    fm: ['#75b2dd', '#ffffff'], fo: ['#ffffff', '#ed2939', '#0065bd'],
-    fr: ['#0055a4', '#ffffff', '#ef4135'], ga: ['#009e60', '#fcd116', '#3a75c4'],
-    gb: ['#012169', '#ffffff', '#c8102e'], gd: ['#ce1126', '#fcd116', '#007a5e'],
-    ge: ['#ffffff', '#ff0000'], gh: ['#ce1126', '#fcd116', '#006b3f'],
-    gl: ['#ffffff', '#d00c33'], gm: ['#ce1126', '#3a75c4', '#ffffff', '#0c8040'],
-    gn: ['#ce1126', '#fcd116', '#009460'], gq: ['#3e9a00', '#ffffff', '#e32118', '#0073ce'],
-    gr: ['#0d5eaf', '#ffffff'], gt: ['#4997d0', '#ffffff'],
-    gw: ['#ce1126', '#fcd116', '#009e49'], gy: ['#009e49', '#fcd116', '#ce1126', '#ffffff', '#000000'],
-    hk: ['#de2910', '#ffffff'], hn: ['#0073cf', '#ffffff'],
-    hr: ['#ff0000', '#ffffff', '#171796'], ht: ['#00209f', '#d21034'],
-    hu: ['#cd2a3e', '#ffffff', '#436f4d'], id: ['#ce1126', '#ffffff'],
-    ie: ['#169b62', '#ffffff', '#ff883e'], il: ['#ffffff', '#0038b8'],
-    im: ['#cf142b', '#ffffff', '#f9dd16'], in: ['#ff9933', '#ffffff', '#138808'],
-    iq: ['#ce1126', '#ffffff', '#000000', '#007a3d'], ir: ['#239f40', '#ffffff', '#da0000'],
-    is: ['#02529c', '#ffffff', '#dc1e35'], it: ['#009246', '#ffffff', '#ce2b37'],
-    jm: ['#009b3a', '#fed100', '#000000'], jo: ['#000000', '#ffffff', '#007a3d', '#ce1126'],
-    jp: ['#ffffff', '#bc002d'], ke: ['#000000', '#bb0000', '#006600', '#ffffff'],
-    kg: ['#e8112d', '#f9e300'], kh: ['#032ea1', '#e00025', '#ffffff'],
-    ki: ['#ce1126', '#003f87', '#fcd116', '#ffffff'], km: ['#ffc61e', '#ffffff', '#ce1126', '#3a75c4', '#3d8e33'],
-    kn: ['#009e49', '#fcd116', '#ce1126', '#000000', '#ffffff'], kp: ['#024fa2', '#ffffff', '#ed1c27'],
-    kr: ['#ffffff', '#cd2e3a', '#0047a0', '#000000'], kw: ['#007a3d', '#ffffff', '#ce1126', '#000000'],
-    kz: ['#00afca', '#fec50c'], la: ['#ce1126', '#002868', '#ffffff'],
-    lb: ['#ed1c24', '#ffffff', '#00a651'], lc: ['#65cfff', '#fcd116', '#000000', '#ffffff'],
-    li: ['#002b7f', '#ce1126', '#ffce00'], lk: ['#8d153a', '#ffb700', '#00534e', '#eb7400'],
-    lr: ['#bf0a30', '#ffffff', '#00206b'], ls: ['#00209f', '#ffffff', '#009543'],
-    lt: ['#fdb913', '#006a44', '#c1272d'], lu: ['#ef3340', '#ffffff', '#00a2e1'],
-    lv: ['#9e3039', '#ffffff'], ly: ['#e70013', '#000000', '#239e46', '#ffffff'],
-    ma: ['#c1272d', '#006233'], mc: ['#ce1126', '#ffffff'],
-    md: ['#0046ae', '#ffd200', '#cc092f'], me: ['#c40308', '#f5d130'],
-    mg: ['#ffffff', '#fc3d32', '#007e3a'], mh: ['#003da5', '#dd4814', '#ffffff'],
-    mk: ['#d20000', '#ffe600'], ml: ['#14b53a', '#fcd116', '#ce1126'],
-    mm: ['#fecb00', '#34b233', '#ce1126', '#ffffff'], mn: ['#c4272f', '#015197', '#f9d616'],
-    mo: ['#00785e', '#ffffff'], mr: ['#008d46', '#ffce00', '#d21034'],
-    mt: ['#ffffff', '#cf142b'], mu: ['#ea2839', '#1a206d', '#ffd500', '#00a551'],
-    mv: ['#d21034', '#007e3a', '#ffffff'], mw: ['#000000', '#ce1126', '#339e35'],
-    mx: ['#006847', '#ffffff', '#ce1126'], my: ['#cc0001', '#ffffff', '#010066', '#ffcc00'],
-    mz: ['#009639', '#000000', '#ffd100', '#d21034', '#ffffff'], na: ['#003580', '#c8102e', '#009543', '#ffffff', '#ffce00'],
-    ncyprus: ['#ffffff', '#e30a17'], ne: ['#e05206', '#ffffff', '#0db02b'],
-    ng: ['#008751', '#ffffff'], ni: ['#0067c6', '#ffffff'],
-    nl: ['#ae1c28', '#ffffff', '#21468b'], no: ['#ba0c2f', '#ffffff', '#00205b'],
-    np: ['#dc143c', '#003893', '#ffffff'], nr: ['#0021ad', '#fcd116', '#ffffff'],
-    nu: ['#ffce00', '#00247d', '#cf142b', '#ffffff'], nz: ['#00247d', '#ffffff', '#cc142b'],
-    om: ['#ffffff', '#db161b', '#008000'], ossetia: ['#ce1126', '#fcd116', '#ffffff'],
-    pa: ['#ffffff', '#005293', '#d21034'], pe: ['#d91023', '#ffffff'],
-    pg: ['#ce1126', '#000000', '#fcd116', '#ffffff'], ph: ['#0038a8', '#ce1126', '#ffffff', '#fcd116'],
-    pk: ['#01411c', '#ffffff'], pl: ['#ffffff', '#dc143c'],
-    pr: ['#ed0000', '#ffffff', '#0050f0'], prid: ['#ee2b34', '#009a44', '#ffffff'],
-    ps: ['#000000', '#ffffff', '#007a3d', '#ce1126'], pt: ['#046a38', '#da291c', '#ffe900'],
-    pw: ['#4aadd6', '#ffde00'], py: ['#d52b1e', '#ffffff', '#0038a8'],
-    qa: ['#ffffff', '#8d1b3d'], ro: ['#002b7f', '#fcd116', '#ce1126'],
-    rs: ['#c6363c', '#0c4076', '#ffffff'], rw: ['#00a1de', '#fad201', '#20603d'],
-    sa: ['#006c35', '#ffffff'], sb: ['#0051ba', '#215b33', '#fcd116', '#ffffff'],
-    sc: ['#003f87', '#fcd856', '#d62828', '#ffffff', '#007a3d'], sd: ['#d21034', '#ffffff', '#000000', '#007229'],
-    se: ['#006aa7', '#fecc02'], sg: ['#ef3340', '#ffffff'],
-    si: ['#ffffff', '#005ce5', '#ed1c24'], sk: ['#ffffff', '#0b4ea2', '#ee1c25'],
-    sl: ['#1eb53a', '#ffffff', '#0072c6'], sm: ['#ffffff', '#5eb6e4'],
-    sn: ['#00853f', '#fdef42', '#e31b23'], so: ['#4189dd', '#ffffff'],
-    somaliland: ['#0d7a3f', '#ffffff', '#d21034', '#000000'], sr: ['#377e3f', '#ffffff', '#b40a2d', '#ecc81d'],
-    ss: ['#000000', '#ce1126', '#078930', '#002f6c', '#fcdd09', '#ffffff'], st: ['#12ad2b', '#ffce00', '#d21034', '#000000', '#ffffff'],
-    sv: ['#0f47af', '#ffffff'], sx: ['#ae1c28', '#003f87', '#ffffff', '#f9dd16'],
-    sy: ['#007a3d', '#ffffff', '#000000', '#ce1126'], sz: ['#3e5eb9', '#ffd900', '#b10c0c', '#ffffff', '#000000'],
-    td: ['#002664', '#fecb00', '#c60c30'], tg: ['#006a4e', '#ffce00', '#d21034', '#ffffff'],
-    th: ['#a51931', '#f4f5f8', '#2d2a4a'], tj: ['#cc0000', '#ffffff', '#006600'],
-    tl: ['#dc241f', '#000000', '#ffcc00', '#ffffff'], tm: ['#00843d', '#ffffff', '#d81e05'],
-    tn: ['#e70013', '#ffffff'], to: ['#c10000', '#ffffff'],
-    tr: ['#e30a17', '#ffffff'], tt: ['#ce1126', '#ffffff', '#000000'],
-    tv: ['#5cc6ff', '#00247d', '#cf142b', '#ffffff'], tw: ['#fe0000', '#000095', '#ffffff'],
-    tz: ['#1eb53a', '#00a3dd', '#000000', '#fcd116'], ug: ['#000000', '#fcdc04', '#d90000', '#ffffff'],
-    us: ['#b22234', '#ffffff', '#3c3b6e'], uy: ['#ffffff', '#0038a8', '#fcd116'],
-    uz: ['#0099b5', '#ffffff', '#1eb53a', '#ce1126'], va: ['#ffe600', '#ffffff'],
-    vc: ['#0072c6', '#fcd116', '#009e49'], ve: ['#ffcc00', '#00247d', '#cf1425'],
-    vn: ['#da251d', '#ffff00'], vu: ['#d21034', '#009543', '#000000', '#fdce12', '#00247d'],
-    ws: ['#ce1126', '#00247d', '#ffffff'], xk: ['#244aa5', '#d0a650', '#ffffff'],
-    ye: ['#ce1126', '#ffffff', '#000000'], za: ['#007749', '#ffffff', '#000000', '#ffb81c', '#de3831', '#001489'],
-    zm: ['#198a00', '#de2010', '#000000', '#ef7d00'], zw: ['#319208', '#ffd200', '#d40000', '#000000', '#ffffff', '#0064ad']
-};
-// На случай страны вне справочника (в базах её больше нет, но пусть будет запаска) — тёплое золото.
-const confettiFallback = ['#f6c744', '#e8b423', '#c9971d', '#ffd700'];
-
-function getConfettiPalette(iso, countryName) {
-    if (iso && confettiColors[String(iso).toLowerCase()]) return confettiColors[String(iso).toLowerCase()];
-    if (countryName && confettiColors[countryName.toLowerCase()]) return confettiColors[countryName.toLowerCase()];
-    return confettiFallback;
-}
-
-// Канва конфетти на весь экран: не перехватывает клики и сама прячется, когда всё упало.
-let fxCtx = null, fxParticles = [], fxAnimId = null, fxCanvasEl = null;
-function fxInitCanvas() {
-    if (fxCanvasEl) return;
-    fxCanvasEl = document.createElement('canvas');
-    fxCanvasEl.id = 'fxConfettiCanvas';
-    fxCanvasEl.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;display:none;';
-    document.body.appendChild(fxCanvasEl);
-    fxCtx = fxCanvasEl.getContext('2d');
-}
-function launchConfetti(iso, countryName) {
-    try {
-        fxInitCanvas();
-        if (!fxCtx) return;
-        const palette = getConfettiPalette(iso, countryName);
-        const W = window.innerWidth, H = window.innerHeight;
-        fxCanvasEl.width = W; fxCanvasEl.height = H;
-        fxCanvasEl.style.display = 'block';
-        for (let i = 0; i < 140; i++) {
-            fxParticles.push({
-                x: Math.random() * W,
-                y: -30 - Math.random() * H * 0.4,
-                w: 6 + Math.random() * 6,
-                h: 10 + Math.random() * 8,
-                vx: (Math.random() - 0.5) * 2.2,
-                vy: 2.2 + Math.random() * 3.2,
-                rot: Math.random() * Math.PI * 2,
-                vr: (Math.random() - 0.5) * 0.25,
-                drift: Math.random() * Math.PI * 2,
-                color: palette[Math.floor(Math.random() * palette.length)]
-            });
-        }
-        if (!fxAnimId) fxTick();
-    } catch (e) { console.log('Эффект конфетти недоступен:', e); }
-}
-function fxTick() {
-    if (!fxCtx || !fxCanvasEl) return;
-    fxCtx.clearRect(0, 0, fxCanvasEl.width, fxCanvasEl.height);
-    fxParticles = fxParticles.filter(p => p.y < fxCanvasEl.height + 40);
-    fxParticles.forEach(p => {
-        p.drift += 0.05;
-        p.x += p.vx + Math.sin(p.drift) * 0.6;
-        p.y += p.vy;
-        p.rot += p.vr;
-        fxCtx.save();
-        fxCtx.translate(p.x, p.y);
-        fxCtx.rotate(p.rot);
-        fxCtx.fillStyle = p.color;
-        fxCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        fxCtx.restore();
-    });
-    if (fxParticles.length > 0) {
-        fxAnimId = requestAnimationFrame(fxTick);
-    } else {
-        fxAnimId = null;
-        fxCanvasEl.style.display = 'none';
-    }
-}
-// Пульс строки очков при верном ответе
-function pulseScoreStats(statsEl) {
-    try {
-        if (!statsEl) return;
-        statsEl.classList.remove('score-pulse');
-        void statsEl.offsetWidth;
-        statsEl.classList.add('score-pulse');
-    } catch (e) { /* эффекты не должны ломать квиз */ }
-}
-// Тряска кнопки при ошибке
-function shakeBtn(btn) {
-    try {
-        if (!btn) return;
-        btn.classList.remove('btn-shake');
-        void btn.offsetWidth;
-        btn.classList.add('btn-shake');
-    } catch (e) { /* эффекты не должны ломать квиз */ }
-}
-// Пружинящее «надувание» кнопки при верном ответе
-function popBtn(btn) {
-    try {
-        if (!btn) return;
-        btn.classList.remove('btn-pop');
-        void btn.offsetWidth;
-        btn.classList.add('btn-pop');
-    } catch (e) { /* эффекты не должны ломать квиз */ }
-}
-
 // 🍏 АВТОНОМНЫЙ РЕЖИМ PWA: Регистрация сервис-воркера для работы без интернета
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -3382,5 +3239,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
+
+<canvas id="confettiCanvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 </body>
 </html>
