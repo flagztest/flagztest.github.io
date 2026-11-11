@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<!-- FlagZilla build: wiki-v3 | 2026-11-11 | пульс удалён, конфетти 214, зажатие->вики -->
+<!-- FlagZilla build: wiki-v6 | 2026-11-11 | пульс удалён | конфетти 214 | зажатие→вики -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
@@ -838,8 +838,8 @@ tr[data-name*="иркутск"] .flag-wrapper {
     }
     .btn-pop { animation: btnPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
+    /* 📚 ЗАЖАТИЕ НАЗВАНИЯ → ВИКИПЕДИЯ */
     [data-wiki] { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
-
     </style>
 </head>
 <body>
@@ -980,7 +980,6 @@ tr[data-name*="иркутск"] .flag-wrapper {
 
 
 <script>
-console.log('FlagZilla build: wiki-v3 | 2026-11-11');
 // 🌟 ШАГ ИСПРАВЛЕНИЯ: Намертво отключаем мобильный кэш скролла браузера при жесткой перезагрузке страницы!
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual'; // Запрещаем Safari самостоятельно двигать экран после обновления
@@ -2517,9 +2516,8 @@ function loadQuizFlagRound() {
     choices.forEach(c => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.setAttribute('data-wiki', c.name);
         btn.innerHTML = `${c.name} <span style="font-weight:normal; font-size:13px; opacity:0.85;">(${c.capital})</span>`;
-        btn.onclick = () => checkFlagAnswer(btn, c.name);
+        btn.onclick = () => checkFlagAnswer(btn, c.name); btn.dataset.wiki = c.name;
         container.appendChild(btn);
     });
     const bestFlag = localStorage.getItem('highScore_flags') || 0;
@@ -2542,7 +2540,7 @@ function checkFlagAnswer(selectedBtn, chosenName) {
         });
     }
     
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
+    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага / тряска и пружина кнопки
     try {
         if (isCorrect) {
             launchConfetti(currentFlagTarget.iso, currentFlagTarget.name);
@@ -2601,6 +2599,7 @@ function loadQuizCapitalRound() {
     }
     currentCapTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
     document.getElementById('quizCapitalQuestionTarget').textContent = currentCapTarget.name;
+    document.getElementById('quizCapitalQuestionTarget').dataset.wiki = currentCapTarget.name;
     
     let choices = [currentCapTarget.capital];
     while(choices.length < 4) {
@@ -2614,9 +2613,8 @@ function loadQuizCapitalRound() {
     choices.forEach(capital => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.setAttribute('data-wiki', capital);
         btn.textContent = capital;
-        btn.onclick = () => checkCapitalAnswer(btn, capital);
+        btn.onclick = () => checkCapitalAnswer(btn, capital); btn.dataset.wiki = capital;
         container.appendChild(btn);
     });
     let bestCap = localStorage.getItem('highScore_capitals') || 0;
@@ -2638,7 +2636,7 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         });
     }
 
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
+    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага / тряска и пружина кнопки
     try {
         if (isCorrect) {
             launchConfetti(currentCapTarget.iso, currentCapTarget.name);
@@ -2652,7 +2650,6 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
     const questionEl = document.getElementById('quizCapitalQuestionTarget');
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
-    questionEl.setAttribute('data-wiki', currentCapTarget.name);
     questionEl.onclick = () => {
         openSmartMap(currentCapTarget.name, currentCapTarget.name, true);
     };
@@ -2702,6 +2699,7 @@ function loadQuizCountryRound() {
     }
     currentCountryTarget = allCountriesList[Math.floor(Math.random() * allCountriesList.length)];
     document.getElementById('quizCountryQuestionTarget').textContent = currentCountryTarget.capital;
+    document.getElementById('quizCountryQuestionTarget').dataset.wiki = currentCountryTarget.capital;
     
     let choices = [currentCountryTarget.name];
     while(choices.length < 4) {
@@ -2715,9 +2713,8 @@ function loadQuizCountryRound() {
     choices.forEach(name => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.setAttribute('data-wiki', name);
         btn.textContent = name;
-        btn.onclick = () => checkCountryAnswer(btn, name);
+        btn.onclick = () => checkCountryAnswer(btn, name); btn.dataset.wiki = name;
         container.appendChild(btn);
     });
     let bestCountry = localStorage.getItem('highScore_countries') || 0;
@@ -2739,7 +2736,7 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         });
     }
 
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
+    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага / тряска и пружина кнопки
     try {
         if (isCorrect) {
             launchConfetti(currentCountryTarget.iso, currentCountryTarget.name);
@@ -2754,7 +2751,6 @@ function checkCountryAnswer(selectedBtn, chosenName) {
     const questionEl = document.getElementById('quizCountryQuestionTarget');
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
-    questionEl.setAttribute('data-wiki', currentCountryTarget.name);
     questionEl.onclick = () => {
         openSmartMap(currentCountryTarget.capital, currentCountryTarget.name, false);
     };
@@ -2940,13 +2936,13 @@ function generateRussiaSubjectsTables() {
                        </div>
                     </td>
                     <td>
-                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" data-wiki="${safeName}" 
+                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" data-wiki="${r.name}" 
                               style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;">
                             ${r.name}
                         </span>
                     </td>
                     <td>
-                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" data-wiki="${safeCapital}" 
+                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" data-wiki="${r.capital}" 
                               style="color: inherit; text-decoration: none; cursor: pointer;">
                             ${r.capital}
                         </span> 
@@ -3059,7 +3055,7 @@ function generateRussiaCapitalsTable() {
                     </span>
                 </td>
                 <td>
-                    <span onclick="openSmartMap('${safeSubject}', 'Россия', true)" data-wiki="${safeSubject}" 
+                    <span onclick="openSmartMap('${safeSubject}', 'Россия', true)" data-wiki="${c.subjectName}" 
                           style="color: inherit; text-decoration: none; cursor: pointer;">
                         ${c.subjectName}
                     </span>
@@ -3120,13 +3116,13 @@ function generateRussiaOkrugsTables() {
                        </div>
                     </td>
                     <td>
-                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" data-wiki="${safeName}" 
+                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" data-wiki="${r.name}" 
                               style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;">
                             ${r.name}
                         </span>
                     </td>
                     <td>
-                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" data-wiki="${safeCapital}" 
+                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" data-wiki="${r.capital}" 
                               style="color: inherit; text-decoration: none; cursor: pointer;">
                             ${r.capital}
                         </span>
@@ -3164,7 +3160,7 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaCapitalsTable();
 });
 
-// ================== 🎉 СПЕЦЭФФЕКТЫ: КОНФЕТТИ В ЦВЕТАХ ФЛАГА + ПУЛЬС + ТРЯСКА + ПРУЖИНА ==================
+// ================== 🎉 СПЕЦЭФФЕКТЫ: КОНФЕТТИ В ЦВЕТАХ ФЛАГА + ТРЯСКА + ПРУЖИНА ==================
 // Справочник цветов флагов по iso-коду. Покрывает ВСЕ страны и территории из баз приложения.
 const confettiColors = {
     ru: ['#ffffff', '#0039a6', '#d52b1e'], ua: ['#0057b7', '#ffd700'], by: ['#ce1720', '#007c30', '#ffffff'],
@@ -3371,69 +3367,93 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// ===== ЗАЖАТИЕ → ВИКИПЕДИЯ (делегирование, работает и для динамических кнопок) =====
-(function initWikiLongPress() {
+/* ================= 📚 ЗАЖАТИЕ НАЗВАНИЯ → ВИКИПЕДИЯ (wiki-v6) ================= */
+let wikiSuppressClick = false;
+
+function openWikiForName(rawName) {
     try {
-        let pressTimer = null, pressX = 0, pressY = 0, suppressClick = false, fired = false;
-        const openWiki = (title) => {
-            window.open('https://ru.wikipedia.org/wiki/' + encodeURIComponent(title), '_blank');
-        };
-        const start = (e) => {
-            const el = e.target && e.target.closest ? e.target.closest('[data-wiki]') : null;
-            if (!el) return;
-            const title = el.getAttribute('data-wiki');
-            if (!title) return;
-            fired = false;
-            const pt = (e.touches && e.touches[0]) || e;
-            pressX = pt.clientX; pressY = pt.clientY;
-            clearTimeout(pressTimer);
-            pressTimer = setTimeout(() => {
-                if (fired) return;
-                fired = true;
-                pressTimer = null;
-                suppressClick = true;
-                try { if (navigator.vibrate) navigator.vibrate(30); } catch (err) {}
-                openWiki(title);
-                setTimeout(() => { suppressClick = false; }, 700);
-            }, 600);
-        };
-        const move = (e) => {
-            if (!pressTimer) return;
-            const pt = (e.touches && e.touches[0]) || e;
-            if (pt && typeof pt.clientX === 'number' &&
-                Math.hypot(pt.clientX - pressX, pt.clientY - pressY) > 10) {
-                clearTimeout(pressTimer); pressTimer = null;
-            }
-        };
-        const end = () => { clearTimeout(pressTimer); pressTimer = null; };
-        document.addEventListener('touchstart', start, { passive: true });
-        document.addEventListener('touchmove', move, { passive: true });
-        document.addEventListener('touchend', end);
-        document.addEventListener('touchcancel', end);
-        document.addEventListener('mousedown', (e) => { if (e.button === 0) start(e); });
-        document.addEventListener('mousemove', move);
-        document.addEventListener('mouseup', end);
-        // правый клик / системное меню — сразу Википедия, без дублирования с таймером
-        document.addEventListener('contextmenu', (e) => {
-            const el = e.target && e.target.closest ? e.target.closest('[data-wiki]') : null;
-            if (el && el.getAttribute('data-wiki')) {
-                e.preventDefault();
-                clearTimeout(pressTimer); pressTimer = null;
-                if (!fired) {
-                    fired = true;
-                    suppressClick = true;
-                    try { if (navigator.vibrate) navigator.vibrate(30); } catch (err) {}
-                    openWiki(el.getAttribute('data-wiki'));
-                    setTimeout(() => { suppressClick = false; }, 700);
-                }
-            }
-        });
-        // подавляем клик, следующий сразу после сработавшего зажатия
-        document.addEventListener('click', (e) => {
-            if (suppressClick) { e.stopPropagation(); e.preventDefault(); }
-        }, true);
-    } catch (e) { /* зажатие не должно ломать приложение */ }
-})();
+        const name = (rawName || '').trim();
+        if (!name) return false;
+        const url = 'https://ru.wikipedia.org/wiki/' + encodeURIComponent(name);
+        let win = null;
+        try { win = window.open(url, '_blank'); } catch (e) { win = null; }
+        if (!win) {
+            // Запасной путь: если браузер заблокировал новую вкладку — открываем в текущей
+            window.location.href = url;
+        }
+        if (navigator.vibrate) { try { navigator.vibrate(30); } catch (e) {} }
+        return true;
+    } catch (e) { return false; }
+}
+
+// Первый же клик после зажатия подавляем — чтобы не открылась карта и не засчитался ответ
+document.addEventListener('click', function (e) {
+    if (wikiSuppressClick) {
+        wikiSuppressClick = false;
+        e.preventDefault();
+        e.stopPropagation();
+    }
+}, true);
+
+function wikiOnPressStart(x, y, target) {
+    const el = target && target.closest ? target.closest('[data-wiki]') : null;
+    if (!el || !el.dataset.wiki) return;
+    const startX = x, startY = y;
+    let fired = false;
+    const timer = setTimeout(function () {
+        fired = true;
+        wikiSuppressClick = true;
+        openWikiForName(el.dataset.wiki);
+    }, 600);
+    function onMove(ev) {
+        const nx = ev.clientX !== undefined ? ev.clientX : 0;
+        const ny = ev.clientY !== undefined ? ev.clientY : 0;
+        if (Math.abs(nx - startX) > 10 || Math.abs(ny - startY) > 10) {
+            clearTimeout(timer);
+            cleanup();
+        }
+    }
+    function cleanup() {
+        clearTimeout(timer);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onUp);
+        document.removeEventListener('touchcancel', onUp);
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        document.removeEventListener('pointercancel', onUp);
+    }
+    function onUp() { cleanup(); }
+    document.addEventListener('touchmove', onMove, { passive: true });
+    document.addEventListener('touchend', onUp);
+    document.addEventListener('touchcancel', onUp);
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+    document.addEventListener('pointercancel', onUp);
+}
+
+document.addEventListener('touchstart', function (e) {
+    if (e.touches && e.touches.length === 1) {
+        wikiOnPressStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
+    }
+}, { passive: true });
+
+document.addEventListener('mousedown', function (e) {
+    if (e.button === 0) wikiOnPressStart(e.clientX, e.clientY, e.target);
+});
+
+// Правый клик мышью по названию → та же Википедия
+document.addEventListener('contextmenu', function (e) {
+    const el = e.target && e.target.closest ? e.target.closest('[data-wiki]') : null;
+    if (el && el.dataset.wiki) {
+        e.preventDefault();
+        if (!wikiSuppressClick) {
+            wikiSuppressClick = true;
+            openWikiForName(el.dataset.wiki);
+        }
+    }
+});
+
+console.log('FlagZilla build: wiki-v6 | зажатие → Википедия активно');
 </script>
 
 
