@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<!-- FlagZilla build: wiki-v3 | 2026-11-11 | пульс удалён, конфетти 214, зажатие->вики -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
@@ -819,7 +820,7 @@ tr[data-name*="иркутск"] .flag-wrapper {
      }
  
     
-    /* 🎉 Спецэффекты: тряска при ошибке, пружина при верном ответе */
+    /* 🎉 Спецэффекты: тряска при ошибке, пружина при верном ответе, пульс очков */
     @keyframes btnShake {
         0%, 100% { transform: translateX(0); }
         20% { transform: translateX(-7px); }
@@ -836,6 +837,8 @@ tr[data-name*="иркутск"] .flag-wrapper {
         100% { transform: scale(1); }
     }
     .btn-pop { animation: btnPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+    [data-wiki] { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 
     </style>
 </head>
@@ -977,6 +980,7 @@ tr[data-name*="иркутск"] .flag-wrapper {
 
 
 <script>
+console.log('FlagZilla build: wiki-v3 | 2026-11-11');
 // 🌟 ШАГ ИСПРАВЛЕНИЯ: Намертво отключаем мобильный кэш скролла браузера при жесткой перезагрузке страницы!
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual'; // Запрещаем Safari самостоятельно двигать экран после обновления
@@ -1969,14 +1973,14 @@ function createContinentBlock(continent, countries) {
                    </div>
                 </td>
                 <td>
-                    <span onclick="openSmartMap('${mapQuery.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}', true)" 
+                    <span onclick="openSmartMap('${mapQuery.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}', true)" data-wiki="${c.name}" 
                           style="color: inherit; text-decoration: none; cursor: pointer;">
                         <strong>${c.name}</strong>
                     </span>
                     ${subText}
                 </td>
                 <td>
-                    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}', false)" 
+                    <span onclick="openSmartMap('${c.capital.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}', false)" data-wiki="${c.capital}" 
                           style="color: inherit; text-decoration: none; cursor: pointer;">
                         ${c.capital}
                     </span> 
@@ -2513,6 +2517,7 @@ function loadQuizFlagRound() {
     choices.forEach(c => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
+        btn.setAttribute('data-wiki', c.name);
         btn.innerHTML = `${c.name} <span style="font-weight:normal; font-size:13px; opacity:0.85;">(${c.capital})</span>`;
         btn.onclick = () => checkFlagAnswer(btn, c.name);
         container.appendChild(btn);
@@ -2537,7 +2542,7 @@ function checkFlagAnswer(selectedBtn, chosenName) {
         });
     }
     
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + тряска и пружина кнопки
+    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
     try {
         if (isCorrect) {
             launchConfetti(currentFlagTarget.iso, currentFlagTarget.name);
@@ -2609,6 +2614,7 @@ function loadQuizCapitalRound() {
     choices.forEach(capital => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
+        btn.setAttribute('data-wiki', capital);
         btn.textContent = capital;
         btn.onclick = () => checkCapitalAnswer(btn, capital);
         container.appendChild(btn);
@@ -2632,7 +2638,7 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
         });
     }
 
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + тряска и пружина кнопки
+    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
     try {
         if (isCorrect) {
             launchConfetti(currentCapTarget.iso, currentCapTarget.name);
@@ -2646,6 +2652,7 @@ function checkCapitalAnswer(selectedBtn, chosenCapital) {
     const questionEl = document.getElementById('quizCapitalQuestionTarget');
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
+    questionEl.setAttribute('data-wiki', currentCapTarget.name);
     questionEl.onclick = () => {
         openSmartMap(currentCapTarget.name, currentCapTarget.name, true);
     };
@@ -2708,6 +2715,7 @@ function loadQuizCountryRound() {
     choices.forEach(name => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
+        btn.setAttribute('data-wiki', name);
         btn.textContent = name;
         btn.onclick = () => checkCountryAnswer(btn, name);
         container.appendChild(btn);
@@ -2731,7 +2739,7 @@ function checkCountryAnswer(selectedBtn, chosenName) {
         });
     }
 
-    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + тряска и пружина кнопки
+    // 🎉 ЭФФЕКТЫ: конфетти в цветах флага + пульс очков / тряска и пружина кнопки
     try {
         if (isCorrect) {
             launchConfetti(currentCountryTarget.iso, currentCountryTarget.name);
@@ -2746,6 +2754,7 @@ function checkCountryAnswer(selectedBtn, chosenName) {
     const questionEl = document.getElementById('quizCountryQuestionTarget');
     questionEl.style.textDecoration = 'underline';
     questionEl.style.cursor = 'pointer';
+    questionEl.setAttribute('data-wiki', currentCountryTarget.name);
     questionEl.onclick = () => {
         openSmartMap(currentCountryTarget.capital, currentCountryTarget.name, false);
     };
@@ -2931,13 +2940,13 @@ function generateRussiaSubjectsTables() {
                        </div>
                     </td>
                     <td>
-                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" 
+                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" data-wiki="${safeName}" 
                               style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;">
                             ${r.name}
                         </span>
                     </td>
                     <td>
-                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" 
+                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" data-wiki="${safeCapital}" 
                               style="color: inherit; text-decoration: none; cursor: pointer;">
                             ${r.capital}
                         </span> 
@@ -3044,13 +3053,13 @@ function generateRussiaCapitalsTable() {
                    </div>
                 </td>
                 <td>
-                    <span onclick="openSmartMap('${safeCity}', 'Россия', false)" 
+                    <span onclick="openSmartMap('${safeCity}', 'Россия', false)" data-wiki="${c.cityName}" 
                           style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;">
                         ${c.cityName}
                     </span>
                 </td>
                 <td>
-                    <span onclick="openSmartMap('${safeSubject}', 'Россия', true)" 
+                    <span onclick="openSmartMap('${safeSubject}', 'Россия', true)" data-wiki="${safeSubject}" 
                           style="color: inherit; text-decoration: none; cursor: pointer;">
                         ${c.subjectName}
                     </span>
@@ -3111,13 +3120,13 @@ function generateRussiaOkrugsTables() {
                        </div>
                     </td>
                     <td>
-                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" 
+                        <span onclick="openSmartMap('${safeName}', 'Россия', true)" data-wiki="${safeName}" 
                               style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;">
                             ${r.name}
                         </span>
                     </td>
                     <td>
-                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" 
+                        <span onclick="openSmartMap('${safeCapital}', 'Россия', false)" data-wiki="${safeCapital}" 
                               style="color: inherit; text-decoration: none; cursor: pointer;">
                             ${r.capital}
                         </span>
@@ -3155,7 +3164,7 @@ window.addEventListener('DOMContentLoaded', () => {
     generateRussiaCapitalsTable();
 });
 
-// ================== 🎉 СПЕЦЭФФЕКТЫ: КОНФЕТТИ В ЦВЕТАХ ФЛАГА + ТРЯСКА + ПРУЖИНА ==================
+// ================== 🎉 СПЕЦЭФФЕКТЫ: КОНФЕТТИ В ЦВЕТАХ ФЛАГА + ПУЛЬС + ТРЯСКА + ПРУЖИНА ==================
 // Справочник цветов флагов по iso-коду. Покрывает ВСЕ страны и территории из баз приложения.
 const confettiColors = {
     ru: ['#ffffff', '#0039a6', '#d52b1e'], ua: ['#0057b7', '#ffd700'], by: ['#ce1720', '#007c30', '#ffffff'],
@@ -3361,6 +3370,70 @@ if ('serviceWorker' in navigator) {
         });
     });
 }
+
+// ===== ЗАЖАТИЕ → ВИКИПЕДИЯ (делегирование, работает и для динамических кнопок) =====
+(function initWikiLongPress() {
+    try {
+        let pressTimer = null, pressX = 0, pressY = 0, suppressClick = false, fired = false;
+        const openWiki = (title) => {
+            window.open('https://ru.wikipedia.org/wiki/' + encodeURIComponent(title), '_blank');
+        };
+        const start = (e) => {
+            const el = e.target && e.target.closest ? e.target.closest('[data-wiki]') : null;
+            if (!el) return;
+            const title = el.getAttribute('data-wiki');
+            if (!title) return;
+            fired = false;
+            const pt = (e.touches && e.touches[0]) || e;
+            pressX = pt.clientX; pressY = pt.clientY;
+            clearTimeout(pressTimer);
+            pressTimer = setTimeout(() => {
+                if (fired) return;
+                fired = true;
+                pressTimer = null;
+                suppressClick = true;
+                try { if (navigator.vibrate) navigator.vibrate(30); } catch (err) {}
+                openWiki(title);
+                setTimeout(() => { suppressClick = false; }, 700);
+            }, 600);
+        };
+        const move = (e) => {
+            if (!pressTimer) return;
+            const pt = (e.touches && e.touches[0]) || e;
+            if (pt && typeof pt.clientX === 'number' &&
+                Math.hypot(pt.clientX - pressX, pt.clientY - pressY) > 10) {
+                clearTimeout(pressTimer); pressTimer = null;
+            }
+        };
+        const end = () => { clearTimeout(pressTimer); pressTimer = null; };
+        document.addEventListener('touchstart', start, { passive: true });
+        document.addEventListener('touchmove', move, { passive: true });
+        document.addEventListener('touchend', end);
+        document.addEventListener('touchcancel', end);
+        document.addEventListener('mousedown', (e) => { if (e.button === 0) start(e); });
+        document.addEventListener('mousemove', move);
+        document.addEventListener('mouseup', end);
+        // правый клик / системное меню — сразу Википедия, без дублирования с таймером
+        document.addEventListener('contextmenu', (e) => {
+            const el = e.target && e.target.closest ? e.target.closest('[data-wiki]') : null;
+            if (el && el.getAttribute('data-wiki')) {
+                e.preventDefault();
+                clearTimeout(pressTimer); pressTimer = null;
+                if (!fired) {
+                    fired = true;
+                    suppressClick = true;
+                    try { if (navigator.vibrate) navigator.vibrate(30); } catch (err) {}
+                    openWiki(el.getAttribute('data-wiki'));
+                    setTimeout(() => { suppressClick = false; }, 700);
+                }
+            }
+        });
+        // подавляем клик, следующий сразу после сработавшего зажатия
+        document.addEventListener('click', (e) => {
+            if (suppressClick) { e.stopPropagation(); e.preventDefault(); }
+        }, true);
+    } catch (e) { /* зажатие не должно ломать приложение */ }
+})();
 </script>
 
 
