@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- FlagZilla build: wiki-v12 | 2026-11-19 | тап=карты, зажатие=вики, квизы: вики после ответа, буферы 2px -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🌟 АВТО-ИМЯ ДЛЯ ЗАКЛАДОК: при создании ярлыка Safari сам напишет FlagZilla -->
@@ -31,7 +30,6 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            overscroll-behavior: none; /* 🔧 v12: резинка iOS не уводит слой за границы */
             /* 🍏 БРОНЯ IOS ДОМОЙ: Страница намертво заперта по высоте стекла, общий скролл отключен */
             height: 100dvh !important;
             width: 100vw;
@@ -74,7 +72,6 @@
             /* 🍏 ОБНУЛЕНИЕ: убрали padding-top, чтобы перенести контроль зазора на нативный бампер */
             padding: 0px 4px 40px 4px;
             box-sizing: border-box;
-            overscroll-behavior: contain; /* 🔧 v12 */
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
         }
@@ -842,6 +839,8 @@ tr[data-name*="иркутск"] .flag-wrapper {
 
     </style>
 </head>
+<!-- FlagZilla build: wiki-v13 | 2026-11-19 | тап=карта/ответ, зажатие=вики (квизы: после ответа; флаги: страна без скобок) -->
+<style>html,body{overscroll-behavior:none;}</style>
 <body>
 
 
@@ -3369,156 +3368,128 @@ if ('serviceWorker' in navigator) {
 
 
 <script>
-/* ===== FlagZilla v12: молоток перерисовки при возврате из Safari/Википедии ===== */
-(function(){
-  function repaintFix(){
-    var layers = [document.getElementById('mainScrollContent')];
-    try { window.scrollTo(0, 0); } catch(_) {}
-    layers.forEach(function(el){
-      if(!el) return;
-      try {
-        var maxScroll = Math.max(0, el.scrollHeight - el.clientHeight);
-        if (el.scrollTop > maxScroll) el.scrollTop = maxScroll;
-      } catch(_) {}
+// FlagZilla wiki-v13: молоток перерисовки при возврате на вкладку
+(function () {
+    function clampLayer() {
+        var layer = document.getElementById('mainScrollContent');
+        if (layer) {
+            var max = Math.max(0, layer.scrollHeight - layer.clientHeight);
+            if (layer.scrollTop > max) layer.scrollTop = max;
+            if (layer.scrollTop < 0) layer.scrollTop = 0;
+            layer.style.display = 'none';
+            void layer.offsetHeight;
+            layer.style.display = '';
+        }
+        window.scrollTo(0, 0);
+    }
+    function onReturn() {
+        clampLayer();
+        setTimeout(clampLayer, 120);
+        setTimeout(clampLayer, 500);
+    }
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) onReturn();
     });
-    layers.forEach(function(el){
-      if(!el) return;
-      var prev = el.style.display;
-      el.style.display = 'none';
-      void el.offsetHeight;
-      el.style.display = prev || 'block';
-    });
-  }
-  function hammer(){
-    if (document.hidden) return;
-    repaintFix();
-    setTimeout(repaintFix, 120);
-    setTimeout(repaintFix, 500);
-  }
-  document.addEventListener('visibilitychange', function(){
-    if (!document.hidden) hammer();
-  });
-  window.addEventListener('pageshow', function(e){
-    if (e.persisted || true) hammer();
-  });
-  window.addEventListener('focus', function(){
-    repaintFix();
-    setTimeout(repaintFix, 200);
-  });
+    window.addEventListener('pageshow', function () { onReturn(); });
+    window.addEventListener('focus', function () { onReturn(); });
 })();
 </script>
 
 <script>
-/* ===== FlagZilla v12: зажатие названия = Википедия. Обычный клик НЕ трогается:
-   карты и ответы работают как раньше. В квизах вики только после ответа. ===== */
-(function(){
-  var TIMER = null, TARGET_NAME = null, X0 = 0, Y0 = 0, SUPPRESS = false;
-  var HOLD_MS = 550;
+// FlagZilla wiki-v13: зажатие -> Википедия (тап не трогаем)
+(function () {
+    console.log('FlagZilla build: wiki-v13');
+    var holdTimer = null;
+    var holdEl = null;
+    var startX = 0, startY = 0;
+    var suppressClick = false;
 
-  function nameFrom(el){
-    var node = el;
-    while (node && node !== document.body){
-      var tag = node.tagName;
-      if (tag === 'SPAN' && node.getAttribute && String(node.getAttribute('onclick') || '').indexOf('openSmartMap') > -1){
-        var t = node.textContent || '';
-        t = t.replace(/\s+/g, ' ').trim();
-        if (t) return t;
+    function wikiTarget(el) {
+        if (!el || !el.closest) return null;
+        var opt = el.closest('.option-btn');
+        if (opt) {
+            var opts = opt.parentNode ? opt.parentNode.querySelectorAll('.option-btn') : [];
+            var answered = opts.length > 0 && opts[0].disabled;
+            return answered ? opt : null;
+        }
+        var q = el.closest('#quizCapitalQuestionTarget, #quizCountryQuestionTarget');
+        if (q) {
+            var dec = q.style.textDecoration || '';
+            return dec.indexOf('underline') !== -1 ? q : null;
+        }
+        var s = el.closest('span[onclick]');
+        if (s && (s.getAttribute('onclick') || '').indexOf('openSmartMap') !== -1) return s;
         return null;
-      }
-      if (tag === 'BUTTON' && String(node.className || '').indexOf('option-btn') > -1){
-        var t2 = node.textContent || '';
-        t2 = t2.replace(/\s+/g, ' ').trim();
-        if (t2) return t2;
-        return null;
-      }
-      if (node.id === 'quizCapitalQuestionTarget' || node.id === 'quizCountryQuestionTarget'){
-        var t3 = (node.textContent || '').replace(/\s+/g, ' ').trim();
-        return t3 || null;
-      }
-      node = node.parentElement;
     }
-    return null;
-  }
 
-  function inQuiz(el){
-    var node = el;
-    while (node){
-      if (node.id === 'quizFlagOptions' || node.id === 'quizCapitalOptions' || node.id === 'quizCountryOptions' ||
-          node.id === 'quizCapitalQuestionTarget' || node.id === 'quizCountryQuestionTarget') return true;
-      node = node.parentElement;
+    function cleanName(el) {
+        var raw = el.textContent || '';
+        if (el.closest('#quizFlagOptions')) {
+            raw = raw.replace(/\s*\([^)]*\)\s*$/, '');
+        }
+        return raw.trim();
     }
-    return false;
-  }
 
-  function quizAnswered(){
-    var q1 = document.getElementById('quizCapitalQuestionTarget');
-    if (q1 && q1.style.textDecoration === 'underline') return true;
-    var q2 = document.getElementById('quizCountryQuestionTarget');
-    if (q2 && q2.style.textDecoration === 'underline') return true;
-    var opts = document.querySelectorAll('#quizFlagOptions .option-btn');
-    for (var i = 0; i < opts.length; i++){
-      if (opts[i].style.textDecoration === 'underline') return true;
+    function openWiki(el) {
+        var name = cleanName(el);
+        if (!name) return;
+        if (navigator.vibrate) navigator.vibrate(30);
+        suppressClick = true;
+        setTimeout(function () { suppressClick = false; }, 800);
+        var url = 'https://ru.wikipedia.org/wiki/' + encodeURIComponent(name);
+        var w = window.open(url, '_blank');
+        if (!w) { window.location.href = url; }
     }
-    return false;
-  }
 
-  function openWiki(name){
-    var url = 'https://ru.wikipedia.org/wiki/' + encodeURIComponent(name);
-    var w = null;
-    try { w = window.open(url, '_blank'); } catch(_) {}
-    if (!w) { try { window.location.href = url; } catch(_) {} }
-  }
+    document.addEventListener('touchstart', function (e) {
+        var el = wikiTarget(e.target);
+        if (!el) return;
+        holdEl = el;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        if (holdTimer) clearTimeout(holdTimer);
+        holdTimer = setTimeout(function () {
+            holdTimer = null;
+            if (holdEl) openWiki(holdEl);
+            holdEl = null;
+        }, 550);
+    }, { passive: true });
 
-  document.addEventListener('touchstart', function(e){
-    var el = e.target;
-    if (!el) return;
-    var name = nameFrom(el);
-    if (!name) return;
-    TARGET_NAME = name;
-    X0 = e.touches[0].clientX;
-    Y0 = e.touches[0].clientY;
-    var startEl = el;
-    TIMER = setTimeout(function(){
-      TIMER = null;
-      if (inQuiz(startEl) && !quizAnswered()){
-        TARGET_NAME = null;
-        return;
-      }
-      if (!TARGET_NAME) return;
-      SUPPRESS = true;
-      try { if (navigator.vibrate) navigator.vibrate(30); } catch(_) {}
-      openWiki(TARGET_NAME);
-      TARGET_NAME = null;
-      setTimeout(function(){ SUPPRESS = false; }, 400);
-    }, HOLD_MS);
-  }, {passive:true});
+    document.addEventListener('touchmove', function (e) {
+        if (!holdTimer) return;
+        var dx = e.touches[0].clientX - startX;
+        var dy = e.touches[0].clientY - startY;
+        if (dx * dx + dy * dy > 100) {
+            clearTimeout(holdTimer);
+            holdTimer = null;
+            holdEl = null;
+        }
+    }, { passive: true });
 
-  document.addEventListener('touchmove', function(e){
-    if (TIMER && e.touches[0]){
-      var dx = e.touches[0].clientX - X0;
-      var dy = e.touches[0].clientY - Y0;
-      if (dx*dx + dy*dy > 100) { clearTimeout(TIMER); TIMER = null; TARGET_NAME = null; }
+    function cancelHold() {
+        if (holdTimer) clearTimeout(holdTimer);
+        holdTimer = null;
+        holdEl = null;
     }
-  }, {passive:true});
+    document.addEventListener('touchend', cancelHold, { passive: true });
+    document.addEventListener('touchcancel', cancelHold, { passive: true });
 
-  function cancelLP(){ if (TIMER){ clearTimeout(TIMER); TIMER = null; TARGET_NAME = null; } }
-  document.addEventListener('touchend', cancelLP, {passive:true});
-  document.addEventListener('touchcancel', cancelLP, {passive:true});
+    document.addEventListener('click', function (e) {
+        if (suppressClick) {
+            e.stopPropagation();
+            e.preventDefault();
+            suppressClick = false;
+        }
+    }, true);
 
-  document.addEventListener('click', function(e){
-    if (SUPPRESS){
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      SUPPRESS = false;
-    }
-  }, true);
-
-  document.addEventListener('contextmenu', function(e){
-    var name = nameFrom(e.target);
-    if (name){ e.preventDefault(); openWiki(name); }
-  });
+    document.addEventListener('contextmenu', function (e) {
+        var el = wikiTarget(e.target);
+        if (el) {
+            e.preventDefault();
+            openWiki(el);
+        }
+    });
 })();
 </script>
-
 </body>
 </html>
